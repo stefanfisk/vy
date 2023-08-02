@@ -11,15 +11,11 @@ use StefanFisk\PhpReact\Node;
 use StefanFisk\PhpReact\Renderer;
 
 use function assert;
-use function is_string;
-use function is_subclass_of;
 
 class ContextHook extends Hook
 {
     /**
      * @param class-string<Context> $context
-     *
-     * @return array{mixed,Closure(mixed):void}
      */
     public static function use(string $context): mixed
     {
@@ -41,7 +37,7 @@ class ContextHook extends Hook
             node: $node,
         );
 
-        $contextNode = $this->getContextNode($node->parent);
+        $contextNode = $this->getContextNode($context, $node->parent);
 
         if (!$contextNode) {
             $this->nextValue = $context::getDefaultValue();
@@ -92,13 +88,11 @@ class ContextHook extends Hook
         ($this->unsubscribe)();
     }
 
-    private function getContextNode(Node | null $node): Node | null
+    /** @param class-string<Context> $context */
+    private function getContextNode(string $context, Node | null $node): Node | null
     {
         for (; $node; $node = $node->parent) {
-            if (
-                $node->type instanceof Context
-                || is_string($node->type) && is_subclass_of($node->type, Context::class)
-            ) {
+            if ($node->type === $context) {
                 return $node;
             }
         }

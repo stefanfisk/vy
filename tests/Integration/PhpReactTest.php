@@ -7,6 +7,7 @@ namespace StefanFisk\PhpReact\Tests\Integration;
 use Closure;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use StefanFisk\PhpReact\Components\Context;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
@@ -445,6 +446,33 @@ class PhpReactTest extends TestCase
                     el($c2, [], [
                         el($c3),
                     ]),
+                ]),
+            ]),
+        );
+    }
+
+    public function testParallellContexts(): void
+    {
+        $ctx1 = new class extends Context {
+        };
+        $ctx2 = new class extends Context {
+        };
+
+        $c1 = fn (mixed ...$props): mixed => $ctx1::use();
+
+        $c2 = fn (mixed ...$props): mixed => $ctx2::use();
+
+        $this->assertRenderMatches(
+            'ctx1,ctx2',
+            el($ctx1::class, [
+                'value' => 'ctx1',
+            ], [
+                el($ctx2::class, [
+                    'value' => 'ctx2',
+                ], [
+                    el($c1),
+                    ',',
+                    el($c2),
                 ]),
             ]),
         );
