@@ -12,50 +12,47 @@ use StefanFisk\PhpReact\Serialization\Html\Middleware\StringableMiddleware;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\StyleAttributeMiddleware;
 use StefanFisk\PhpReact\Serialization\SerializerInterface;
 
+use function assert;
 use function ob_end_clean;
 use function ob_get_clean;
 use function ob_get_level;
 use function ob_start;
 
-/** @psalm-api */
+/**
+ * @psalm-api
+ * @template T
+ */
 class PhpReact
 {
+    /** @param SerializerInterface<T> $serializer */
     public function __construct(
         private readonly Renderer $renderer = new Renderer(),
-    ) {
-    }
-
-    /**
-     * @param SerializerInterface<T> $serializer,
-     *
-     * @return T
-     *
-     * @template T
-     */
-    public function render(
-        Element $el,
-        SerializerInterface $serializer = new HtmlSerializer(middlewares: [
+        private SerializerInterface $serializer = new HtmlSerializer(middlewares: [
             new ClosureMiddleware(),
             new StringableMiddleware(),
             new ClassAttributeMiddleware(),
             new StyleAttributeMiddleware(),
         ]),
+    ) {
+    }
+
+    /**
+     * @return T
+     */
+    public function render(
+        Element $el,
     ): mixed {
         return $this->renderer->renderAndSerialize(
             el: $el,
-            serializer: $serializer,
+            serializer: $this->serializer,
         );
     }
 
     public function renderToString(
         Element $el,
-        EchoingSerializerInterface $serializer = new HtmlSerializer(middlewares: [
-            new ClosureMiddleware(),
-            new StringableMiddleware(),
-            new ClassAttributeMiddleware(),
-            new StyleAttributeMiddleware(),
-        ]),
     ): string {
+        assert($this->serializer instanceof EchoingSerializerInterface);
+
         $obLevel = ob_get_level();
 
         try {
@@ -63,7 +60,7 @@ class PhpReact
 
             $this->renderer->renderAndSerialize(
                 el: $el,
-                serializer: $serializer,
+                serializer: $this->serializer, // @phpstan-ignore-line
             );
 
             return (string) ob_get_clean();
