@@ -36,7 +36,7 @@ class HookTest extends TestCase
         $hook = new class (renderer: $this->renderer, node: $node) extends Hook {
             public static function use(string $str, object $obj): object
             {
-                return static::useWith($str, $obj);
+                return (object) static::useWith($str, $obj);
             }
 
             public function initialRender(mixed ...$args): mixed

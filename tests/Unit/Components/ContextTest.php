@@ -59,7 +59,7 @@ class ContextTest extends TestCase
 
         $this->expectException(Error::class);
 
-        $context->render(...['foo' => 'bar']);
+        $context->render(...['foo' => 'bar']); // @phpstan-ignore-line
     }
 
     public function testRenderCallsContextProviderHook(): void
