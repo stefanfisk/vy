@@ -8,6 +8,10 @@
        findUnusedCode="false"
        resolveFromConfigFile="true">
 
+    <issueHandlers>
+        <MixedAssignment errorLevel="suppress" />
+    </issueHandlers>
+
     <projectFiles>
         <directory name="./src"/>
         <ignoreFiles>

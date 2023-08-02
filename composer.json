@@ -26,11 +26,14 @@
     "autoload": {
         "psr-4": {
             "StefanFisk\\PhpReact\\": "src/"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "StefanFisk\\Test\\PhpReact\\": "tests/"
+            "StefanFisk\\PhpReact\\Tests\\": "tests/"
         }
     },
     "config": {

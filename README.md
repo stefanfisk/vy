@@ -4,11 +4,6 @@
     <strong>A simple view library inspired by React.</strong>
 </p>
 
-<!--
-TODO: Make sure the following URLs are correct and working for your project.
-      Then, remove these comments to display the badges, giving users a quick
-      overview of your package.
-
 <p align="center">
     <a href="https://github.com/stefanfisk/phpreact"><img src="https://img.shields.io/badge/source-stefanfisk/phpreact-blue.svg?style=flat-square" alt="Source Code"></a>
     <a href="https://packagist.org/packages/stefanfisk/phpreact"><img src="https://img.shields.io/packagist/v/stefanfisk/phpreact.svg?style=flat-square&label=release" alt="Download Package"></a>
@@ -18,8 +13,6 @@ TODO: Make sure the following URLs are correct and working for your project.
     <a href="https://codecov.io/gh/stefanfisk/phpreact"><img src="https://img.shields.io/codecov/c/gh/stefanfisk/phpreact?label=codecov&logo=codecov&style=flat-square" alt="Codecov Code Coverage"></a>
     <a href="https://shepherd.dev/github/stefanfisk/phpreact"><img src="https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fshepherd.dev%2Fgithub%2Fstefanfisk%2Fphpreact%2Fcoverage" alt="Psalm Type Coverage"></a>
 </p>
--->
-
 
 ## About
 
