@@ -8,22 +8,30 @@ use StefanFisk\PhpReact\Errors\RenderException;
 use StefanFisk\PhpReact\Node;
 use StefanFisk\PhpReact\Renderer;
 
+use function array_pop;
 use function assert;
+use function end;
 
 abstract class Hook
 {
-    private static HookHandlerInterface | null $handler = null;
+    /** @var list<HookHandlerInterface> */
+    private static array $handlerStack = [];
 
     public static function getHandler(): HookHandlerInterface | null
     {
-        return self::$handler;
+        return end(self::$handlerStack) ?: null;
     }
 
-    public static function setHandler(HookHandlerInterface | null $handler): void
+    public static function pushHandler(HookHandlerInterface $handler): void
     {
-        assert(!(self::$handler === null && $handler === null));
+        assert($handler !== end(self::$handlerStack));
 
-        self::$handler = $handler;
+        self::$handlerStack[] = $handler;
+    }
+
+    public static function popHandler(): HookHandlerInterface | null
+    {
+        return array_pop(self::$handlerStack);
     }
 
     final protected static function useWith(mixed ...$args): mixed

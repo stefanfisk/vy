@@ -30,12 +30,15 @@ trait MocksHookHandlerTrait
         $this->hookHandler = $this->getMockBuilder(HookHandlerInterface::class)
             ->disableAutoReturnValueGeneration()
             ->getMock();
-        Hook::setHandler($this->hookHandler);
+        Hook::pushHandler($this->hookHandler);
     }
 
     #[After]
     protected function tearDownMocksHookHandlerTrait(): void
     {
-        Hook::setHandler(null);
+        $this->assertSame(
+            $this->hookHandler,
+            Hook::popHandler(),
+        );
     }
 }

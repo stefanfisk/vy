@@ -164,7 +164,7 @@ class Renderer implements HookHandlerInterface
         $component = $node->component ?: fn (mixed ...$props): mixed => $props['children'] ?? null;
 
         try {
-            Hook::setHandler($this);
+            Hook::pushHandler($this);
             $this->currentNode = $node;
 
             $i = 0;
@@ -210,7 +210,8 @@ class Renderer implements HookHandlerInterface
             );
         } finally {
             $this->currentNode = null;
-            Hook::setHandler(null);
+            $poppedHandler = Hook::popHandler();
+            assert($poppedHandler === $this);
         }
 
         $node->children = $this->renderChildren(
