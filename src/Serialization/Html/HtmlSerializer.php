@@ -16,6 +16,7 @@ use StefanFisk\PhpReact\Support\HtmlableInterface;
 use Throwable;
 
 use function array_filter;
+use function array_reverse;
 use function assert;
 use function gettype;
 use function htmlspecialchars;
@@ -259,7 +260,7 @@ class HtmlSerializer implements EchoingSerializerInterface
     {
         $next = fn (mixed $value): mixed => $value;
 
-        foreach ($this->attributeValueMiddleware as $middleware) {
+        foreach (array_reverse($this->attributeValueMiddleware) as $middleware) {
             $next = fn (mixed $value): mixed => $middleware->processAttributeValue($name, $value, $next);
         }
 
@@ -270,7 +271,7 @@ class HtmlSerializer implements EchoingSerializerInterface
     {
         $next = fn (mixed $value): mixed => $value;
 
-        foreach ($this->nodeValueMiddleware as $middleware) {
+        foreach (array_reverse($this->nodeValueMiddleware) as $middleware) {
             $next = fn (mixed $value): mixed => $middleware->processNodeValue($value, $next);
         }
 

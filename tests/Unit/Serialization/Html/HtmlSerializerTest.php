@@ -360,4 +360,9 @@ class HtmlSerializerTest extends TestCase
             ]),
         );
     }
+
+    public function testAppliesMiddlewaresInOrder(): void
+    {
+        $this->markTestIncomplete();
+    }
 }
