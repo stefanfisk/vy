@@ -8,7 +8,7 @@ use StefanFisk\PhpReact\Errors\RenderException;
 use StefanFisk\PhpReact\Hooks\Hook;
 use StefanFisk\PhpReact\Hooks\HookHandlerInterface;
 use StefanFisk\PhpReact\Serialization\SerializerInterface;
-use StefanFisk\PhpReact\Support\PropsComparator;
+use StefanFisk\PhpReact\Support\Comparator;
 use Throwable;
 
 use function array_filter;
@@ -31,7 +31,7 @@ class Renderer implements HookHandlerInterface
 
     public function __construct(
         private readonly NodeFactory $nodeFactory = new NodeFactory(),
-        private readonly PropsComparator $propsComparator = new PropsComparator(),
+        private readonly Comparator $comparator = new Comparator(),
     ) {
     }
 
@@ -65,7 +65,7 @@ class Renderer implements HookHandlerInterface
     /** @param array<mixed> $nextProps */
     private function giveNodeNextProps(Node $node, array $nextProps): void
     {
-        if ($node->props !== null && $this->propsComparator->propsAreEqual($node->props, $nextProps)) {
+        if ($node->props !== null && $this->comparator->valuesAreEqual($node->props, $nextProps)) {
             $node->nextProps = null;
 
             return;

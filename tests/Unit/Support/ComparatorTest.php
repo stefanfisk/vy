@@ -6,22 +6,22 @@ namespace StefanFisk\PhpReact\Tests\Unit\Support;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use StefanFisk\PhpReact\Support\PropsComparator;
+use StefanFisk\PhpReact\Support\Comparator;
 
 use function StefanFisk\PhpReact\el;
 
-#[CoversClass(PropsComparator::class)]
-class PropsComparatorTest extends TestCase
+#[CoversClass(Comparator::class)]
+class ComparatorTest extends TestCase
 {
     /**
      * @param array<mixed> $a
      * @param array<mixed> $b
      */
-    private function assertPropsAreEqual(array $a, array $b): void
+    private function assertValuesAreEqual(array $a, array $b): void
     {
-        $comparator = new PropsComparator();
+        $comparator = new Comparator();
 
-        $this->assertTrue($comparator->propsAreEqual($a, $b));
+        $this->assertTrue($comparator->valuesAreEqual($a, $b));
     }
 
     /**
@@ -30,14 +30,14 @@ class PropsComparatorTest extends TestCase
      */
     private function assertPropsAreNotEqual(array $a, array $b): void
     {
-        $comparator = new PropsComparator();
+        $comparator = new Comparator();
 
-        $this->assertFalse($comparator->propsAreEqual($a, $b));
+        $this->assertFalse($comparator->valuesAreEqual($a, $b));
     }
 
     public function testEmptyArraysAreEqual(): void
     {
-        $this->assertPropsAreEqual(
+        $this->assertValuesAreEqual(
             [],
             [],
         );
@@ -61,7 +61,7 @@ class PropsComparatorTest extends TestCase
 
     public function testNestedArraysAreEqual(): void
     {
-        $this->assertPropsAreEqual(
+        $this->assertValuesAreEqual(
             [[1]],
             [[1]],
         );
@@ -111,7 +111,7 @@ class PropsComparatorTest extends TestCase
 
     public function testIdenticalElementsAreEqual(): void
     {
-        $this->assertPropsAreEqual(
+        $this->assertValuesAreEqual(
             [el('div', ['foo' => 'bar'], 'baz')],
             [el('div', ['foo' => 'bar'], 'baz')],
         );

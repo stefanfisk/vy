@@ -13,18 +13,9 @@ use function key;
 use function next;
 use function reset;
 
-class PropsComparator implements PropsComparatorInterface
+class Comparator implements ComparatorInterface
 {
-    /**
-     * @param array<mixed> $a
-     * @param array<mixed> $b
-     */
-    public function propsAreEqual(array $a, array $b): bool
-    {
-        return $this->valuesAreEqual($a, $b);
-    }
-
-    private function valuesAreEqual(mixed $a, mixed $b): bool
+    public function valuesAreEqual(mixed $a, mixed $b): bool
     {
         if (is_array($a) && is_array($b)) {
             return $this->arraysAreEqual($a, $b);
