@@ -65,6 +65,8 @@ class Renderer implements HookHandlerInterface
     /** @param array<mixed> $nextProps */
     public function giveNodeNextProps(Node $node, array $nextProps): void
     {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+
         if ($node->props !== null && $this->comparator->valuesAreEqual($node->props, $nextProps)) {
             $node->nextProps = null;
 
@@ -78,6 +80,8 @@ class Renderer implements HookHandlerInterface
 
     public function enqueueRender(Node $node): void
     {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+
         if ($node->state & Node::STATE_RENDER_ENQUEUED) {
             return;
         }
@@ -102,6 +106,8 @@ class Renderer implements HookHandlerInterface
 
     private function needsRender(Node $node): bool
     {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+
         if ($node->state & Node::STATE_INITIAL) {
             return true;
         }
@@ -121,6 +127,8 @@ class Renderer implements HookHandlerInterface
 
     private function render(Node $node): void
     {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+
         if (!$this->needsRender($node)) {
             return;
         }
@@ -234,6 +242,8 @@ class Renderer implements HookHandlerInterface
 
     public function unmount(Node $node): void
     {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+
         foreach ($node->children as $child) {
             if ($child instanceof Node) {
                 $this->unmount($child);
