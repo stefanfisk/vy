@@ -17,11 +17,9 @@ use function array_splice;
 use function assert;
 use function count;
 use function current;
-use function in_array;
 use function is_subclass_of;
 use function next;
 use function reset;
-use function sprintf;
 
 class Renderer implements HookHandlerInterface
 {
@@ -33,6 +31,7 @@ class Renderer implements HookHandlerInterface
     public function __construct(
         private readonly NodeFactory $nodeFactory = new NodeFactory(),
         private readonly Comparator $comparator = new Comparator(),
+        private readonly Differ $differ = new Differ(),
     ) {
     }
 
@@ -47,9 +46,9 @@ class Renderer implements HookHandlerInterface
         Element $el,
         SerializerInterface $serializer,
     ): mixed {
-        $node = $this->nodeFactory->createNode(
-            el: $el,
+        $node = $this->createNode(
             parent: null,
+            el: $el,
         );
 
         $this->giveNodeNextProps($node, $el->props);
@@ -63,8 +62,13 @@ class Renderer implements HookHandlerInterface
         return $serialized;
     }
 
+    public function createNode(Node | null $parent, Element $el): Node
+    {
+        return $this->nodeFactory->createNode(parent: $parent, el: $el);
+    }
+
     /** @param array<mixed> $nextProps */
-    private function giveNodeNextProps(Node $node, array $nextProps): void
+    public function giveNodeNextProps(Node $node, array $nextProps): void
     {
         if ($node->props !== null && $this->comparator->valuesAreEqual($node->props, $nextProps)) {
             $node->nextProps = null;
@@ -215,11 +219,14 @@ class Renderer implements HookHandlerInterface
             assert($poppedHandler === $this);
         }
 
-        $node->children = $this->diffChildren(
+        $newChildren = $this->differ->diffChildren(
+            renderer: $this,
             parent: $node,
             oldChildren: $oldChildren,
             renderChildren: $renderChildren,
         );
+
+        $node->children = $newChildren;
     }
 
     /** @param class-string<Hook> $class */
@@ -257,126 +264,7 @@ class Renderer implements HookHandlerInterface
         }
     }
 
-    /**
-     * @param list<mixed> $oldChildren
-     *
-     * @return list<mixed>
-     */
-    private function diffChildren(Node $parent, array $oldChildren, mixed $renderChildren): array
-    {
-        // Index the old children
-
-        /** @var array<string,Node> $oldKeyToChild */
-        $oldKeyToChild = [];
-        /** @var list<mixed> $oldIToChild */
-        $oldIToChild = [];
-
-        foreach ($oldChildren as $child) {
-            if ($child instanceof Node && $child->key) {
-                $oldKeyToChild[$child->key] = $child;
-            } else {
-                $oldIToChild[] = $child;
-            }
-        }
-
-        // Flatten the render children and remove empty items
-
-        $renderChildren = Element::toChildArray($renderChildren);
-
-        // Index the render children
-
-        /** array<int,int> $renderChildIToChildI */
-        $renderChildIToChildI = [];
-        /** array<string,Element> $keyToRenderChild */
-        $keyToRenderChild = [];
-
-        for ($i = 0, $j = 0; $i < count($renderChildren); $i++) {
-            $renderChild = $renderChildren[$i];
-
-            if ($renderChild instanceof Element && $renderChild->key) {
-                if (isset($keyToRenderChild[$renderChild->key])) {
-                    throw new RenderException(
-                        message: sprintf('Duplicate key "%s".', $renderChild->key),
-                        node: $parent,
-                        el: $renderChild,
-                    );
-                }
-
-                $keyToRenderChild[$renderChild->key] = $renderChild;
-            } else {
-                $renderChildIToChildI[$i] = $j++;
-            }
-        }
-
-        // Diff the children
-
-        /** @var list<mixed> $newChildren */
-        $newChildren = [];
-
-        foreach ($renderChildren as $i => $renderChild) {
-            $oldChild = null;
-
-            if ($renderChild instanceof Element && $renderChild->key) {
-                $oldChild = $oldKeyToChild[$renderChild->key] ?? null;
-            } else {
-                $oldChild = $oldIToChild[$renderChildIToChildI[$i]] ?? null;
-            }
-
-            $newChild = $this->diffChild(
-                parent: $parent,
-                oldChild: $oldChild,
-                renderChild: $renderChild,
-            );
-
-            $newChildren[] = $newChild;
-        }
-
-        // Unmount new orphans
-
-        foreach ($oldChildren as $oldChild) {
-            if (!$oldChild instanceof Node || in_array($oldChild, $newChildren)) {
-                continue;
-            }
-
-            $this->unmount($oldChild);
-        }
-
-        // Done
-
-        return $newChildren;
-    }
-
-    private function diffChild(Node $parent, mixed $oldChild, mixed $renderChild): mixed
-    {
-        $newChild = null;
-
-        if (
-            $oldChild instanceof Node
-            && $renderChild instanceof Element
-            && $oldChild->type === $renderChild->type
-        ) {
-            $newChild = $oldChild;
-
-            $this->giveNodeNextProps($newChild, $renderChild->props);
-        }
-
-        if (! $newChild) {
-            if ($renderChild instanceof Element) {
-                $newChild = $this->nodeFactory->createNode(
-                    el: $renderChild,
-                    parent: $parent,
-                );
-
-                $this->giveNodeNextProps($newChild, $renderChild->props);
-            } else {
-                $newChild = $renderChild;
-            }
-        }
-
-        return $newChild;
-    }
-
-    private function unmount(Node $node): void
+    public function unmount(Node $node): void
     {
         foreach ($node->children as $child) {
             if ($child instanceof Node) {
