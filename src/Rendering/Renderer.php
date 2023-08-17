@@ -12,10 +12,7 @@ use StefanFisk\PhpReact\Serialization\SerializerInterface;
 use StefanFisk\PhpReact\Support\Comparator;
 use Throwable;
 
-use function array_filter;
-use function array_splice;
 use function assert;
-use function count;
 use function current;
 use function is_subclass_of;
 use function next;
@@ -23,14 +20,12 @@ use function reset;
 
 class Renderer implements HookHandlerInterface
 {
-    /** @var array<Node> */
-    private array $renderQueue = [];
-
     private Node | null $currentNode = null;
 
     public function __construct(
         private readonly NodeFactory $nodeFactory = new NodeFactory(),
         private readonly Comparator $comparator = new Comparator(),
+        private readonly Queue $queue = new Queue(),
         private readonly Differ $differ = new Differ(),
     ) {
     }
@@ -91,45 +86,18 @@ class Renderer implements HookHandlerInterface
             return;
         }
 
-        $this->renderQueue[] = $node;
+        $this->queue->insert($node);
+
         $node->state |= Node::STATE_RENDER_ENQUEUED;
     }
 
     private function processRenderQueue(): void
     {
-        while ($node = $this->getNextNodeInRenderQueue()) {
+        while ($node = $this->queue->poll()) {
             $node->state &= ~Node::STATE_RENDER_ENQUEUED;
 
             $this->render($node);
         }
-    }
-
-    private function getNextNodeInRenderQueue(): Node | null
-    {
-        if (!$this->renderQueue) {
-            return null;
-        }
-
-        // Find the first node with the lowest depth and render it
-
-        $count = count($this->renderQueue);
-        $i = 0;
-        $a = $this->renderQueue[$i];
-
-        for ($j = 1; $j < $count; $j++) {
-            $b = $this->renderQueue[$j];
-
-            if ($a->depth <= $b->depth) {
-                continue;
-            }
-
-            $i = $j;
-            $a = $b;
-        }
-
-        array_splice($this->renderQueue, $i, 1);
-
-        return $a;
     }
 
     private function needsRender(Node $node): bool
@@ -278,6 +246,6 @@ class Renderer implements HookHandlerInterface
             $hook->unmount();
         }
 
-        $this->renderQueue = array_filter($this->renderQueue, static fn ($n) => $n === $node);
+        $this->queue->remove($node);
     }
 }
