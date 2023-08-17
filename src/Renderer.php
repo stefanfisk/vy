@@ -214,7 +214,7 @@ class Renderer implements HookHandlerInterface
             assert($poppedHandler === $this);
         }
 
-        $node->children = $this->renderChildren(
+        $node->children = $this->diffChildren(
             parent: $node,
             oldChildren: $oldChildren,
             renderChildren: $renderChildren,
@@ -261,7 +261,7 @@ class Renderer implements HookHandlerInterface
      *
      * @return list<mixed>
      */
-    private function renderChildren(Node $parent, array $oldChildren, mixed $renderChildren): array
+    private function diffChildren(Node $parent, array $oldChildren, mixed $renderChildren): array
     {
         // Index the old children
 
@@ -321,30 +321,11 @@ class Renderer implements HookHandlerInterface
                 $oldChild = $oldIToChild[$renderChildIToChildI[$i]] ?? null;
             }
 
-            $newChild = null;
-
-            if (
-                $oldChild instanceof Node
-                && $renderChild instanceof Element
-                && $oldChild->type === $renderChild->type
-            ) {
-                $newChild = $oldChild;
-
-                $this->giveNodeNextProps($newChild, $renderChild->props);
-            }
-
-            if (! $newChild) {
-                if ($renderChild instanceof Element) {
-                    $newChild = $this->nodeFactory->createNode(
-                        el: $renderChild,
-                        parent: $parent,
-                    );
-
-                    $this->giveNodeNextProps($newChild, $renderChild->props);
-                } else {
-                    $newChild = $renderChild;
-                }
-            }
+            $newChild = $this->diffChild(
+                parent: $parent,
+                oldChild: $oldChild,
+                renderChild: $renderChild,
+            );
 
             $newChildren[] = $newChild;
         }
@@ -362,6 +343,36 @@ class Renderer implements HookHandlerInterface
         // Done
 
         return $newChildren;
+    }
+
+    private function diffChild(Node $parent, mixed $oldChild, mixed $renderChild): mixed
+    {
+        $newChild = null;
+
+        if (
+            $oldChild instanceof Node
+            && $renderChild instanceof Element
+            && $oldChild->type === $renderChild->type
+        ) {
+            $newChild = $oldChild;
+
+            $this->giveNodeNextProps($newChild, $renderChild->props);
+        }
+
+        if (! $newChild) {
+            if ($renderChild instanceof Element) {
+                $newChild = $this->nodeFactory->createNode(
+                    el: $renderChild,
+                    parent: $parent,
+                );
+
+                $this->giveNodeNextProps($newChild, $renderChild->props);
+            } else {
+                $newChild = $renderChild;
+            }
+        }
+
+        return $newChild;
     }
 
     private function unmount(Node $node): void
