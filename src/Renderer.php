@@ -215,7 +215,7 @@ class Renderer implements HookHandlerInterface
         }
 
         $node->children = $this->renderChildren(
-            node: $node,
+            parent: $node,
             oldChildren: $oldChildren,
             renderChildren: $renderChildren,
         );
@@ -261,7 +261,7 @@ class Renderer implements HookHandlerInterface
      *
      * @return list<mixed>
      */
-    public function renderChildren(Node $node, array $oldChildren, mixed $renderChildren): array
+    private function renderChildren(Node $parent, array $oldChildren, mixed $renderChildren): array
     {
         // Index the old children
 
@@ -296,7 +296,7 @@ class Renderer implements HookHandlerInterface
                 if (isset($keyToRenderChild[$renderChild->key])) {
                     throw new RenderException(
                         message: sprintf('Duplicate key "%s".', $renderChild->key),
-                        node: $node,
+                        node: $parent,
                         el: $renderChild,
                     );
                 }
@@ -338,7 +338,7 @@ class Renderer implements HookHandlerInterface
                 if ($renderChild instanceof Element) {
                     $newChild = $this->nodeFactory->createNode(
                         el: $renderChild,
-                        parent: $node,
+                        parent: $parent,
                     );
 
                     $this->giveNodeNextProps($newChild, $renderChild->props);
