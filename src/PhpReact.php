@@ -16,11 +16,6 @@ use StefanFisk\PhpReact\Serialization\Html\Middleware\StringableMiddleware;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\StyleAttributeMiddleware;
 use StefanFisk\PhpReact\Support\Comparator;
 
-use function ob_end_clean;
-use function ob_get_clean;
-use function ob_get_level;
-use function ob_start;
-
 class PhpReact
 {
     private readonly HtmlSerializer $serializer;
@@ -44,7 +39,7 @@ class PhpReact
         $this->serializer = new HtmlSerializer(middlewares: $middlewares);
     }
 
-    public function render(Element $el): void
+    public function render(Element $el): string
     {
         $node = $this->renderer->createNode(parent: null, el: $el);
 
@@ -52,25 +47,10 @@ class PhpReact
 
         $this->renderer->processRenderQueue();
 
-        $this->serializer->serialize($node);
+        $html = $this->serializer->serialize($node);
 
         $this->renderer->unmount($node);
-    }
 
-    public function renderToString(Element $el): string
-    {
-        $obLevel = ob_get_level();
-
-        try {
-            ob_start();
-
-            $this->render($el);
-
-            return (string) ob_get_clean();
-        } finally {
-            while (ob_get_level() > $obLevel) {
-                ob_end_clean();
-            }
-        }
+        return $html;
     }
 }

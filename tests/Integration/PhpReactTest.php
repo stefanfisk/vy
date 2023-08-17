@@ -37,7 +37,7 @@ class PhpReactTest extends TestCase
 
         $this->assertEquals(
             $expected,
-            $phpReact->renderToString($el),
+            $phpReact->render($el),
         );
     }
 
@@ -48,7 +48,7 @@ class PhpReactTest extends TestCase
 
         $this->expectException($exception);
 
-        $phpReact->renderToString($el);
+        $phpReact->render($el);
     }
 
     public function testInvalidTagName(): void

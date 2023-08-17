@@ -8,9 +8,9 @@ use StefanFisk\PhpReact\Errors\InvalidAttributeException;
 use StefanFisk\PhpReact\Errors\InvalidNodeValueException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
 use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Serialization\EchoingSerializerInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
+use StefanFisk\PhpReact\Serialization\SerializerInterface;
 use StefanFisk\PhpReact\Support\HtmlPrintableInterface;
 use StefanFisk\PhpReact\Support\HtmlableInterface;
 use Throwable;
@@ -25,13 +25,18 @@ use function is_int;
 use function is_object;
 use function is_scalar;
 use function is_string;
+use function ob_end_clean;
+use function ob_get_clean;
+use function ob_get_level;
+use function ob_start;
 use function preg_match;
 use function sprintf;
 
 use const ENT_HTML5;
 use const ENT_QUOTES;
 
-class HtmlSerializer implements EchoingSerializerInterface
+/** @implements SerializerInterface<string> */
+class HtmlSerializer implements SerializerInterface
 {
     private const VOID_ELEMENTS = [
         'area' => true,
@@ -54,6 +59,8 @@ class HtmlSerializer implements EchoingSerializerInterface
     /** @var array<HtmlNodeValueMiddlewareInterface> */
     private readonly array $nodeValueMiddleware;
 
+    private string $output = '';
+
     /** @param array<HtmlAttributeValueMiddlewareInterface|HtmlNodeValueMiddlewareInterface> $middlewares */
     public function __construct(
         array $middlewares,
@@ -68,11 +75,17 @@ class HtmlSerializer implements EchoingSerializerInterface
         );
     }
 
-    public function serialize(Node $node): mixed
+    public function serialize(Node $node): string
     {
+        $this->output = '';
+
         $this->serializeNode($node);
 
-        return null;
+        $output = $this->output;
+
+        $this->output = '';
+
+        return $output;
     }
 
     private function serializeChild(mixed $child, Node $parent): void
@@ -124,8 +137,8 @@ class HtmlSerializer implements EchoingSerializerInterface
             );
         }
 
-        echo '<';
-        echo $name;
+        $this->output .= '<';
+        $this->output .= $name;
 
         assert($node->props !== null);
         $atts = $node->props;
@@ -183,19 +196,19 @@ class HtmlSerializer implements EchoingSerializerInterface
                 continue;
             }
 
-            echo ' ';
-            echo $this->escape($attName);
+            $this->output .= ' ';
+            $this->output .= $this->escape($attName);
 
             if ($attValue === true) {
                 continue;
             }
 
-            echo '="';
-            echo $this->escape((string) $attValue);
-            echo '"';
+            $this->output .= '="';
+            $this->output .= $this->escape((string) $attValue);
+            $this->output .= '"';
         }
 
-        echo '>';
+        $this->output .= '>';
 
         $this->serializeChildren($node->children, $node);
 
@@ -203,9 +216,9 @@ class HtmlSerializer implements EchoingSerializerInterface
             return;
         }
 
-        echo '</';
-        echo $name;
-        echo '>';
+        $this->output .= '</';
+        $this->output .= $name;
+        $this->output .= '>';
     }
 
     private function serializeValue(mixed $value, Node $parent): void
@@ -226,11 +239,21 @@ class HtmlSerializer implements EchoingSerializerInterface
         }
 
         if (is_string($value) || is_int($value) || is_float($value)) {
-            echo $this->escape((string) $value);
+            $this->output .= $this->escape((string) $value);
         } elseif ($value instanceof HtmlableInterface) {
-            echo $value->toHtml();
+            $this->output .= $value->toHtml();
         } elseif ($value instanceof HtmlPrintableInterface) {
-            $value->printHtml();
+            $obLevel = ob_get_level();
+
+            try {
+                ob_start();
+                $value->printHtml();
+                $this->output .= ob_get_clean();
+            } finally {
+                while (ob_get_level() > $obLevel) {
+                    ob_end_clean();
+                }
+            }
         } else {
             throw new InvalidNodeValueException(
                 message: sprintf(

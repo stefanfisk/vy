@@ -27,10 +27,6 @@ use function is_bool;
 use function is_null;
 use function is_object;
 use function is_string;
-use function ob_end_clean;
-use function ob_get_clean;
-use function ob_get_level;
-use function ob_start;
 
 use const LIBXML_HTML_NODEFDTD;
 
@@ -154,16 +150,7 @@ class HtmlSerializerTest extends TestCase
             middlewares: [],
         );
 
-        $obLevel = ob_get_level();
-        try {
-            ob_start();
-            $serializer->serialize($node);
-            $actual = (string) ob_get_clean();
-        } finally {
-            while ($obLevel < ob_get_level()) {
-                ob_end_clean();
-            }
-        }
+        $actual = $serializer->serialize($node);
 
         $expected = $this->normalizeHtml($expected);
         $actual = $this->normalizeHtml($actual);
@@ -182,15 +169,7 @@ class HtmlSerializerTest extends TestCase
 
         $this->expectException($exception);
 
-        $obLevel = ob_get_level();
-        try {
-            ob_start();
-            $serializer->serialize($node);
-        } finally {
-            while ($obLevel < ob_get_level()) {
-                ob_end_clean();
-            }
-        }
+        $serializer->serialize($node);
     }
 
     private function normalizeHtml(string $html): string
