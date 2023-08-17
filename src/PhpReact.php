@@ -46,10 +46,15 @@ class PhpReact
 
     public function render(Element $el): void
     {
-        $this->renderer->renderAndSerialize(
-            el: $el,
-            serializer: $this->serializer,
-        );
+        $node = $this->renderer->createNode(parent: null, el: $el);
+
+        $this->renderer->giveNodeNextProps(node: $node, nextProps: $el->props);
+
+        $this->renderer->processRenderQueue();
+
+        $this->serializer->serialize($node);
+
+        $this->renderer->unmount($node);
     }
 
     public function renderToString(Element $el): string
@@ -59,10 +64,7 @@ class PhpReact
         try {
             ob_start();
 
-            $this->renderer->renderAndSerialize(
-                el: $el,
-                serializer: $this->serializer,
-            );
+            $this->render($el);
 
             return (string) ob_get_clean();
         } finally {

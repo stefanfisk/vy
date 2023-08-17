@@ -8,7 +8,6 @@ use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\RenderException;
 use StefanFisk\PhpReact\Hooks\Hook;
 use StefanFisk\PhpReact\Hooks\HookHandlerInterface;
-use StefanFisk\PhpReact\Serialization\SerializerInterface;
 use StefanFisk\PhpReact\Support\Comparator;
 use Throwable;
 
@@ -28,33 +27,6 @@ class Renderer implements HookHandlerInterface
         private readonly Queue $queue = new Queue(),
         private readonly Differ $differ = new Differ(),
     ) {
-    }
-
-    /**
-     * @param SerializerInterface<T> $serializer
-     *
-     * @return T
-     *
-     * @template T
-     */
-    public function renderAndSerialize(
-        Element $el,
-        SerializerInterface $serializer,
-    ): mixed {
-        $node = $this->createNode(
-            parent: null,
-            el: $el,
-        );
-
-        $this->giveNodeNextProps($node, $el->props);
-
-        $this->processRenderQueue();
-
-        $serialized = $serializer->serialize($node);
-
-        $this->unmount($node);
-
-        return $serialized;
     }
 
     public function createNode(Node | null $parent, Element $el): Node
@@ -95,7 +67,7 @@ class Renderer implements HookHandlerInterface
         $node->state |= Node::STATE_RENDER_ENQUEUED;
     }
 
-    private function processRenderQueue(): void
+    public function processRenderQueue(): void
     {
         while ($node = $this->queue->poll()) {
             $node->state &= ~Node::STATE_RENDER_ENQUEUED;
