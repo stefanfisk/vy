@@ -6,7 +6,7 @@ namespace StefanFisk\PhpReact\Errors;
 
 use Exception;
 use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 use Throwable;
 
 /**

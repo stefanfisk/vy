@@ -7,7 +7,7 @@ namespace StefanFisk\PhpReact\Serialization\Html;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
 use StefanFisk\PhpReact\Errors\InvalidNodeValueException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Serialization\EchoingSerializerInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;

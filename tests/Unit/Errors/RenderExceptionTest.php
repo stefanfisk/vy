@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\RenderException;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 
 #[CoversClass(RenderException::class)]
 class RenderExceptionTest extends TestCase

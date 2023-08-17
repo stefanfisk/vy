@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\InvalidElementTypeException;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 
 #[CoversClass(InvalidElementTypeException::class)]
 class InvalidElementTypeExceptionTest extends TestCase

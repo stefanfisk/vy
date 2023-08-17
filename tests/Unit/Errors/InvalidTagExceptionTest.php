@@ -8,7 +8,7 @@ use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 
 #[CoversClass(InvalidTagException::class)]
 class InvalidTagExceptionTest extends TestCase

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact;
 
 use Psr\Container\ContainerInterface;
+use StefanFisk\PhpReact\Rendering\NodeFactory;
+use StefanFisk\PhpReact\Rendering\Renderer;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\ClassAttributeMiddleware;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\ClosureMiddleware;

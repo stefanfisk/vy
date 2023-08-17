@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Errors;
 
 use StefanFisk\PhpReact\Hooks\Hook;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 use Throwable;
 
 /** @psalm-api */

@@ -7,8 +7,8 @@ namespace StefanFisk\PhpReact\Hooks;
 use Closure;
 use StefanFisk\PhpReact\Components\Context;
 use StefanFisk\PhpReact\Errors\HookException;
-use StefanFisk\PhpReact\Node;
-use StefanFisk\PhpReact\Renderer;
+use StefanFisk\PhpReact\Rendering\Node;
+use StefanFisk\PhpReact\Rendering\Renderer;
 
 use function assert;
 

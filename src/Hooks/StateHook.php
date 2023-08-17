@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Hooks;
 
 use Closure;
-use StefanFisk\PhpReact\Node;
-use StefanFisk\PhpReact\Renderer;
+use StefanFisk\PhpReact\Rendering\Node;
+use StefanFisk\PhpReact\Rendering\Renderer;
 
 class StateHook extends Hook
 {

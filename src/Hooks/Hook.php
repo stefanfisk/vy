@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Hooks;
 
 use StefanFisk\PhpReact\Errors\RenderException;
-use StefanFisk\PhpReact\Node;
-use StefanFisk\PhpReact\Renderer;
+use StefanFisk\PhpReact\Rendering\Node;
+use StefanFisk\PhpReact\Rendering\Renderer;
 
 use function array_pop;
 use function assert;

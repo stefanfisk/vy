@@ -6,7 +6,7 @@ namespace StefanFisk\PhpReact\Tests\Unit\Nodes;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 
 #[CoversClass(Node::class)]
 class NodeTest extends TestCase

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact;
+namespace StefanFisk\PhpReact\Rendering;
 
 use Closure;
 use StefanFisk\PhpReact\Hooks\Hook;

@@ -7,7 +7,7 @@ namespace StefanFisk\PhpReact\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use StefanFisk\PhpReact\Hooks\Hook;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksHookHandlerTrait;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksRendererTrait;
 use stdClass;

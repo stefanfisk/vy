@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Serialization;
 
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 
 /** @template T */
 interface SerializerInterface

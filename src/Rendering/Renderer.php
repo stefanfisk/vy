@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact;
+namespace StefanFisk\PhpReact\Rendering;
 
+use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\RenderException;
 use StefanFisk\PhpReact\Hooks\Hook;
 use StefanFisk\PhpReact\Hooks\HookHandlerInterface;

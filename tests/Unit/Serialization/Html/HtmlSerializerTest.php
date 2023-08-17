@@ -12,7 +12,7 @@ use StefanFisk\PhpReact\Errors\InvalidAttributeException;
 use StefanFisk\PhpReact\Errors\InvalidElementTypeException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
 use StefanFisk\PhpReact\Errors\RenderException;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
 use StefanFisk\PhpReact\Support\HtmlString;
 use Throwable;

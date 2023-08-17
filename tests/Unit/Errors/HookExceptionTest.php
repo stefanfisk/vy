@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Errors\HookException;
 use StefanFisk\PhpReact\Hooks\ContextHook;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 
 #[CoversClass(HookException::class)]
 class HookExceptionTest extends TestCase

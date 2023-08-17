@@ -7,7 +7,7 @@ namespace StefanFisk\PhpReact\Tests\Support\Mocks;
 use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\MockObject\MockBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
-use StefanFisk\PhpReact\Renderer;
+use StefanFisk\PhpReact\Rendering\Renderer;
 
 trait MocksRendererTrait
 {

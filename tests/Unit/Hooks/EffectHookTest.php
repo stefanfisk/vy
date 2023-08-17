@@ -8,7 +8,7 @@ use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Hooks\EffectHook;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MockInvokable;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksHookHandlerTrait;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;

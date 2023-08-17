@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact;
+namespace StefanFisk\PhpReact\Rendering;
 
 use Closure;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use StefanFisk\PhpReact\Container;
+use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\ContainerException;
 use StefanFisk\PhpReact\Errors\InvalidElementTypeException;
 

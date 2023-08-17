@@ -8,7 +8,7 @@ use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Errors\InvalidNodeValueException;
-use StefanFisk\PhpReact\Node;
+use StefanFisk\PhpReact\Rendering\Node;
 use stdClass;
 
 #[CoversClass(InvalidNodeValueException::class)]
