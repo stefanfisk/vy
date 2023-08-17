@@ -240,11 +240,11 @@ class Renderer implements HookHandlerInterface
             }
         }
 
-        $node->state = Node::STATE_UNMOUNTED;
-
         foreach ($node->hooks as $hook) {
             $hook->unmount();
         }
+
+        $node->state = Node::STATE_UNMOUNTED;
 
         $this->queue->remove($node);
     }
