@@ -314,15 +314,14 @@ class Renderer implements HookHandlerInterface
 
         foreach ($renderChildren as $i => $renderChild) {
             $oldChild = null;
-            $newChild = null;
 
             if ($renderChild instanceof Element && $renderChild->key) {
                 $oldChild = $oldKeyToChild[$renderChild->key] ?? null;
-            }
-
-            if (! $oldChild) {
+            } else {
                 $oldChild = $oldIToChild[$renderChildIToChildI[$i]] ?? null;
             }
+
+            $newChild = null;
 
             if (
                 $oldChild instanceof Node
