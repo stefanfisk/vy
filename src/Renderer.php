@@ -352,13 +352,11 @@ class Renderer implements HookHandlerInterface
         // Unmount new orphans
 
         foreach ($oldChildren as $oldChild) {
-            if (in_array($oldChild, $newChildren)) {
+            if (!$oldChild instanceof Node || in_array($oldChild, $newChildren)) {
                 continue;
             }
 
-            if ($oldChild instanceof Node) {
-                $this->unmount($oldChild);
-            }
+            $this->unmount($oldChild);
         }
 
         // Done
