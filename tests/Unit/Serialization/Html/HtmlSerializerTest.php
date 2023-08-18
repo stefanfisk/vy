@@ -10,6 +10,7 @@ use RuntimeException;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
 use StefanFisk\PhpReact\Errors\InvalidElementTypeException;
+use StefanFisk\PhpReact\Errors\InvalidNodeValueException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
 use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
@@ -186,6 +187,20 @@ class HtmlSerializerTest extends TestCase
         ];
     }
 
+    /** @return array<string,array{string}> */
+    public static function rawTextElementsProvider(): array
+    {
+        return [
+            'iframe' => ['iframe'],
+            'noembed' => ['noembed'],
+            'noframes' => ['noframes'],
+            'plaintext' => ['plaintext'],
+            'script' => ['script'],
+            'style' => ['style'],
+            'xmp' => ['xmp'],
+        ];
+    }
+
     public function testThrowForInvalidTagName(): void
     {
         $this->assertRenderthrows(
@@ -314,6 +329,15 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidTagException::class,
+            el($tagName, [], 'foo'),
+        );
+    }
+
+    #[DataProvider('rawTextElementsProvider')]
+    public function testDoesThrowsIfRawTextElementsHasScalarChildren(string $tagName): void
+    {
+        $this->assertRenderThrows(
+            InvalidNodeValueException::class,
             el($tagName, [], 'foo'),
         );
     }

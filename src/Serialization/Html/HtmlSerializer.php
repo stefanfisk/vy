@@ -51,6 +51,16 @@ class HtmlSerializer implements SerializerInterface
         'wbr' => true,
     ];
 
+    private const RAW_TEXT_ELEMENTS = [
+        'iframe' => true,
+        'noembed' => true,
+        'noframes' => true,
+        'plaintext' => true,
+        'script' => true,
+        'style' => true,
+        'xmp' => true,
+    ];
+
     /** @var array<HtmlAttributeValueMiddlewareInterface> */
     private readonly array $attributeValueMiddleware;
     /** @var array<HtmlNodeValueMiddlewareInterface> */
@@ -237,6 +247,18 @@ class HtmlSerializer implements SerializerInterface
         }
 
         if (is_string($value) || is_int($value) || is_float($value)) {
+            if (is_string($parent->type) && (self::RAW_TEXT_ELEMENTS[$parent->type] ?? false)) {
+                throw new InvalidNodeValueException(
+                    message: sprintf(
+                        '<%s> must only have HtmlableInterface or HtmlPrintableInterface children.',
+                        $parent->type,
+                    ),
+                    node: $parent,
+                    inValue: $inValue,
+                    value: $value,
+                );
+            }
+
             $this->output .= $this->escapeText((string) $value);
         } elseif ($value instanceof HtmlableInterface) {
             $this->output .= $value->toHtml();
