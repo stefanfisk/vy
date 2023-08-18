@@ -19,7 +19,6 @@ use function array_filter;
 use function array_reverse;
 use function assert;
 use function gettype;
-use function htmlspecialchars;
 use function is_float;
 use function is_int;
 use function is_object;
@@ -31,9 +30,7 @@ use function ob_get_level;
 use function ob_start;
 use function preg_match;
 use function sprintf;
-
-use const ENT_HTML5;
-use const ENT_QUOTES;
+use function strtr;
 
 /** @implements SerializerInterface<string> */
 class HtmlSerializer implements SerializerInterface
@@ -197,14 +194,14 @@ class HtmlSerializer implements SerializerInterface
             }
 
             $this->output .= ' ';
-            $this->output .= $this->escape($attName);
+            $this->output .= $attName;
 
             if ($attValue === true) {
                 continue;
             }
 
             $this->output .= '="';
-            $this->output .= $this->escape((string) $attValue);
+            $this->output .= $this->escapeAttribute((string) $attValue);
             $this->output .= '"';
         }
 
@@ -239,7 +236,7 @@ class HtmlSerializer implements SerializerInterface
         }
 
         if (is_string($value) || is_int($value) || is_float($value)) {
-            $this->output .= $this->escape((string) $value);
+            $this->output .= $this->escapeText((string) $value);
         } elseif ($value instanceof HtmlableInterface) {
             $this->output .= $value->toHtml();
         } elseif ($value instanceof HtmlPrintableInterface) {
@@ -301,8 +298,28 @@ class HtmlSerializer implements SerializerInterface
         return $next($value);
     }
 
-    private function escape(string $value): string
+    /**
+     * @see https://html.spec.whatwg.org/#escapingString
+     */
+    private function escapeText(string $value): string
     {
-        return htmlspecialchars($value, ENT_QUOTES | ENT_HTML5, 'UTF-8', true);
+        return strtr($value, [
+            '&' => '&amp;',
+            "\xc2\xa0" => '&nbsp;',
+            '<' => '&lt;',
+            '>' => '&gt;',
+        ]);
+    }
+
+    /**
+     * @see https://html.spec.whatwg.org/#escapingString
+     */
+    private function escapeAttribute(string $value): string
+    {
+        return strtr($value, [
+            '&' => '&amp;',
+            "\xc2\xa0" => '&nbsp;',
+            '"' => '&quot;',
+        ]);
     }
 }

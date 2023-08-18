@@ -149,8 +149,8 @@ class PhpReactTest extends TestCase
     public function testEncodesTextProps(): void
     {
         $this->assertRenderMatches(
-            '<div foo="&gt; bar"></div>',
-            el('div', ['foo' => '> bar']),
+            '<div foo="&amp;> bar"></div>',
+            el('div', ['foo' => '&> bar']),
         );
     }
 
@@ -165,7 +165,7 @@ class PhpReactTest extends TestCase
     public function testEncodesTextPropQuotes(): void
     {
         $this->assertRenderMatches(
-            '<div foo="&quot;Bar&quot; &apos;Baz&apos;"></div>',
+            '<div foo="&quot;Bar&quot; \'Baz\'"></div>',
             el('div', ['foo' => '"Bar" \'Baz\'']),
         );
     }

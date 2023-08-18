@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html;
 
-use DOMDocument;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use StefanFisk\PhpReact\Element;
@@ -27,8 +26,6 @@ use function is_bool;
 use function is_null;
 use function is_object;
 use function is_string;
-
-use const LIBXML_HTML_NODEFDTD;
 
 /**
  * @covers StefanFisk\PhpReact\Serialization\Html\HtmlSerializer
@@ -152,9 +149,6 @@ class HtmlSerializerTest extends TestCase
 
         $actual = $serializer->serialize($node);
 
-        $expected = $this->normalizeHtml($expected);
-        $actual = $this->normalizeHtml($actual);
-
         $this->assertSame($expected, $actual);
     }
 
@@ -170,23 +164,6 @@ class HtmlSerializerTest extends TestCase
         $this->expectException($exception);
 
         $serializer->serialize($node);
-    }
-
-    private function normalizeHtml(string $html): string
-    {
-        static $id = 'e442f1ef43914400a38c';
-
-        $doc = new DOMDocument();
-
-        @$doc->loadHTML('<div id="' . $id . '">' . $html . '</div>', LIBXML_HTML_NODEFDTD); // to ignore HTML5 errors
-
-        $normalizedHtml = '';
-
-        foreach ($doc->getElementById($id)->childNodes ?? [] as $child) {
-            $normalizedHtml .= $doc->saveHTML($child);
-        }
-
-        return $normalizedHtml;
     }
 
     public function testThrowForInvalidTagName(): void
@@ -266,8 +243,8 @@ class HtmlSerializerTest extends TestCase
     public function testEncodesTextProps(): void
     {
         $this->assertRenderMatches(
-            '<div foo="&gt; bar"></div>',
-            el('div', ['foo' => '> bar']),
+            '<div foo="&amp;> bar"></div>',
+            el('div', ['foo' => '&> bar']),
         );
     }
 
