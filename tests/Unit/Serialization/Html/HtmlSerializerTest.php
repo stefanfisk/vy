@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
 use StefanFisk\PhpReact\Errors\InvalidElementTypeException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
-use StefanFisk\PhpReact\Errors\RenderException;
 use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
 use StefanFisk\PhpReact\Support\HtmlString;
@@ -166,6 +166,26 @@ class HtmlSerializerTest extends TestCase
         $serializer->serialize($node);
     }
 
+    /** @return array<string,array{string}> */
+    public static function voidElementsProvider(): array
+    {
+        return [
+            'area' => ['area'],
+            'base' => ['base'],
+            'br' => ['br'],
+            'col' => ['col'],
+            'embed' => ['embed'],
+            'hr' => ['hr'],
+            'img' => ['img'],
+            'input' => ['input'],
+            'link' => ['link'],
+            'meta' => ['meta'],
+            'source' => ['source'],
+            'track' => ['track'],
+            'wbr' => ['wbr'],
+        ];
+    }
+
     public function testThrowForInvalidTagName(): void
     {
         $this->assertRenderthrows(
@@ -280,19 +300,21 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
-    public function testVoidElementsDoNotHaveEndTags(): void
+    #[DataProvider('voidElementsProvider')]
+    public function testVoidElementsDoNotHaveEndTags(string $tagName): void
     {
         $this->assertRenderMatches(
-            '<img foo="bar">',
-            el('img', ['foo' => 'bar']),
+            "<$tagName foo=\"bar\">",
+            el($tagName, ['foo' => 'bar']),
         );
     }
 
-    public function testThrowsIfVoidElementsHaveChildren(): void
+    #[DataProvider('voidElementsProvider')]
+    public function testThrowsIfVoidElementsHaveChildren(string $tagName): void
     {
         $this->assertRenderThrows(
-            RenderException::class,
-            el('img', [], 'foo'),
+            InvalidTagException::class,
+            el($tagName, [], 'foo'),
         );
     }
 
