@@ -13,6 +13,7 @@ class InvalidNodeValueException extends RenderException
     public function __construct(
         string $message,
         Node $node,
+        public readonly mixed $inValue,
         public readonly mixed $value,
         Throwable | null $previous = null,
     ) {

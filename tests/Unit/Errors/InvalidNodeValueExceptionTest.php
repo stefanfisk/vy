@@ -24,6 +24,7 @@ class InvalidNodeValueExceptionTest extends TestCase
             component: null,
         );
 
+        $inValue = new stdClass();
         $value = new stdClass();
 
         $previous = new Exception();
@@ -31,12 +32,14 @@ class InvalidNodeValueExceptionTest extends TestCase
         $e = new InvalidNodeValueException(
             message: 'Message.',
             node: $node,
+            inValue: $inValue,
             value: $value,
             previous: $previous,
         );
 
         $this->assertSame('Message.', $e->getMessage());
         $this->assertSame($node, $e->node);
+        $this->assertSame($inValue, $e->inValue);
         $this->assertSame($value, $e->value);
         $this->assertSame($previous, $e->getPrevious());
     }

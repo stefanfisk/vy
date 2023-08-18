@@ -218,15 +218,16 @@ class HtmlSerializer implements SerializerInterface
         $this->output .= '>';
     }
 
-    private function serializeValue(mixed $value, Node $parent): void
+    private function serializeValue(mixed $inValue, Node $parent): void
     {
         try {
-            $value = $this->applyNodeValueMiddleware($value);
+            $value = $this->applyNodeValueMiddleware($inValue);
         } catch (Throwable $e) {
             throw new InvalidNodeValueException(
                 message: 'Failed to apply node value middleware.',
                 node: $parent,
-                value: $value,
+                inValue: $inValue,
+                value: null,
                 previous: $e,
             );
         }
@@ -258,6 +259,7 @@ class HtmlSerializer implements SerializerInterface
                     is_object($value) ? $value::class : gettype($value),
                 ),
                 node: $parent,
+                inValue: $inValue,
                 value: $value,
             );
         }
