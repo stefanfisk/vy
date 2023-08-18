@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html;
 
+use Closure;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -14,8 +15,11 @@ use StefanFisk\PhpReact\Errors\InvalidNodeValueException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
 use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
+use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
+use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Support\HtmlString;
 use Throwable;
+use stdClass;
 
 use function StefanFisk\PhpReact\el;
 use function array_walk_recursive;
@@ -315,6 +319,89 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
+    public function testTrueBoolProp(): void
+    {
+        $this->assertRenderMatches(
+            '<div foo></div>',
+            el('div', ['foo' => true]),
+        );
+    }
+
+    public function testFalseBoolProp(): void
+    {
+        $this->assertRenderMatches(
+            '<div></div>',
+            el('div', ['foo' => false]),
+        );
+    }
+
+    public function testNullProp(): void
+    {
+        $this->assertRenderMatches(
+            '<div></div>',
+            el('div', ['foo' => null]),
+        );
+    }
+
+    public function testIndexedValidStringProp(): void
+    {
+        $this->assertRenderMatches(
+            '<div foo></div>',
+            el('div', ['foo']),
+        );
+    }
+
+    public function testIndexedInvalidStringProp(): void
+    {
+        $this->assertRenderThrows(
+            InvalidAttributeException::class,
+            el('div', ['foo>']),
+        );
+    }
+
+    public function testThrowsForIndexedIntProp(): void
+    {
+        $this->assertRenderThrows(
+            InvalidAttributeException::class,
+            el('div', [123]),
+        );
+    }
+
+    public function testAppliesAttributeMiddlewaresInOrder(): void
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testThrowsWhenAttributeMiddlewareThrows(): void
+    {
+        $el = el('div', ['foo' => new stdClass()]);
+
+        $node = $this->elToNode($el);
+
+        $serializer = new HtmlSerializer(
+            middlewares: [
+                new class implements HtmlAttributeValueMiddlewareInterface {
+                    public function processAttributeValue(string $name, mixed $value, Closure $next): mixed
+                    {
+                        throw new RuntimeException('Middleware failed.');
+                    }
+                },
+            ],
+        );
+
+        $this->expectException(InvalidAttributeException::class);
+
+        $serializer->serialize($node);
+    }
+
+    public function testThrowsForNonScalarProp(): void
+    {
+        $this->assertRenderThrows(
+            InvalidAttributeException::class,
+            el('div', ['foo' => new stdClass()]),
+        );
+    }
+
     #[DataProvider('voidElementsProvider')]
     public function testVoidElementsDoNotHaveEndTags(string $tagName): void
     {
@@ -363,8 +450,30 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
-    public function testAppliesMiddlewaresInOrder(): void
+    public function testAppliesValueMiddlewaresInOrder(): void
     {
         $this->markTestIncomplete();
+    }
+
+    public function testThrowsWhenValueMiddlewareThrows(): void
+    {
+        $el = el('div', [], new stdClass());
+
+        $node = $this->elToNode($el);
+
+        $serializer = new HtmlSerializer(
+            middlewares: [
+                new class implements HtmlNodeValueMiddlewareInterface {
+                    public function processNodeValue(mixed $value, Closure $next): mixed
+                    {
+                        throw new RuntimeException('Middleware failed.');
+                    }
+                },
+            ],
+        );
+
+        $this->expectException(InvalidNodeValueException::class);
+
+        $serializer->serialize($node);
     }
 }
