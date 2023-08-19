@@ -6,6 +6,7 @@ namespace StefanFisk\PhpReact\Rendering;
 
 use function array_filter;
 use function array_splice;
+use function array_values;
 use function assert;
 use function count;
 
@@ -40,7 +41,7 @@ class Queue
             return;
         }
 
-        $this->queue = array_filter($this->queue, fn ($n) => $n !== $node);
+        $this->queue = array_values(array_filter($this->queue, fn ($n) => $n !== $node));
 
         $node->state &= ~Node::STATE_ENQUEUED;
     }
