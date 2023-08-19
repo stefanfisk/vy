@@ -115,7 +115,7 @@ jobs:
         with:
           php-version: "latest"
           coverage: "pcov"
-          ini-values: "memory_limit=-1"
+          ini-values: "memory_limit=-1,zend.assertions=1"
 
       - name: "Install dependencies (Composer)"
         uses: "ramsey/composer-install@2.2.0"
@@ -161,6 +161,7 @@ jobs:
         with:
           php-version: "${{ matrix.php }}"
           coverage: "none"
+          ini-values: "memory_limit=-1,zend.assertions=1"
 
       - name: "Install dependencies (Composer)"
         uses: "ramsey/composer-install@2.2.0"
