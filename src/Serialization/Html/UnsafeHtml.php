@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Support;
+namespace StefanFisk\PhpReact\Serialization\Html;
 
 use Closure;
 use Stringable;
@@ -19,7 +19,7 @@ use function ob_get_level;
 use function ob_start;
 use function sprintf;
 
-final class Htmlable implements HtmlableInterface
+final class UnsafeHtml implements HtmlableInterface
 {
     public static function from(string | Closure $html): static
     {

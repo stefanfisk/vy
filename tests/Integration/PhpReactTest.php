@@ -14,7 +14,7 @@ use StefanFisk\PhpReact\Errors\RenderException;
 use StefanFisk\PhpReact\Hooks\EffectHook;
 use StefanFisk\PhpReact\Hooks\StateHook;
 use StefanFisk\PhpReact\PhpReact;
-use StefanFisk\PhpReact\Support\Htmlable;
+use StefanFisk\PhpReact\Serialization\Html\UnsafeHtml;
 use StefanFisk\PhpReact\Tests\Support\FooComponent;
 use StefanFisk\PhpReact\Tests\Support\FooContext;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksComponentsTrait;
@@ -265,27 +265,27 @@ class PhpReactTest extends TestCase
         );
     }
 
-    public function testRendersHtmlable(): void
+    public function testRendersUnsafeHtml(): void
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div', [], Htmlable::from('<h1 class="unsafe">bar</h1>')),
+            el('div', [], UnsafeHtml::from('<h1 class="unsafe">bar</h1>')),
         );
     }
 
-    public function testRendersClosureHtmlableReturnValue(): void
+    public function testRendersClosureUnsafeHtmlReturnValue(): void
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div', [], fn () => Htmlable::from('<h1 class="unsafe">bar</h1>')),
+            el('div', [], fn () => UnsafeHtml::from('<h1 class="unsafe">bar</h1>')),
         );
     }
 
-    public function testHtmlableRendersClosureOutput(): void
+    public function testUnsafeHtmlRendersClosureOutput(): void
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div', [], Htmlable::from(function (): void {
+            el('div', [], UnsafeHtml::from(function (): void {
                 echo '<h1 class="unsafe">bar</h1>';
             })),
         );

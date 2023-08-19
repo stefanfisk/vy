@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Support;
+namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Support\Htmlable;
+use StefanFisk\PhpReact\Serialization\Html\UnsafeHtml;
 use StefanFisk\PhpReact\Tests\TestCase;
 use Stringable;
 use UnexpectedValueException;
@@ -14,14 +14,14 @@ use stdClass;
 use function ob_get_level;
 use function ob_start;
 
-#[CoversClass(Htmlable::class)]
-class HtmlableTest extends TestCase
+#[CoversClass(UnsafeHtml::class)]
+class UnsafeHtmlTest extends TestCase
 {
     public function testFromReturnsInstance(): void
     {
         $this->assertEquals(
-            new Htmlable('<div>Foo</div>'),
-            Htmlable::from('<div>Foo</div>'),
+            new UnsafeHtml('<div>Foo</div>'),
+            UnsafeHtml::from('<div>Foo</div>'),
         );
     }
 
@@ -29,7 +29,7 @@ class HtmlableTest extends TestCase
     {
         $this->assertSame(
             '<div>Foo</div>',
-            Htmlable::from('<div>Foo</div>')->toHtml(),
+            UnsafeHtml::from('<div>Foo</div>')->toHtml(),
         );
     }
 
@@ -37,7 +37,7 @@ class HtmlableTest extends TestCase
     {
         $this->assertSame(
             '123',
-            Htmlable::from(fn () => 123)->toHtml(),
+            UnsafeHtml::from(fn () => 123)->toHtml(),
         );
     }
 
@@ -45,7 +45,7 @@ class HtmlableTest extends TestCase
     {
         $this->assertSame(
             '123.456',
-            Htmlable::from(fn () => 123.456)->toHtml(),
+            UnsafeHtml::from(fn () => 123.456)->toHtml(),
         );
     }
 
@@ -53,7 +53,7 @@ class HtmlableTest extends TestCase
     {
         $this->assertSame(
             '<div>Foo</div>',
-            Htmlable::from(fn () => '<div>Foo</div>')->toHtml(),
+            UnsafeHtml::from(fn () => '<div>Foo</div>')->toHtml(),
         );
     }
 
@@ -68,7 +68,7 @@ class HtmlableTest extends TestCase
 
         $this->assertSame(
             '<div>Foo</div>',
-            Htmlable::from(fn () => $value)->toHtml(),
+            UnsafeHtml::from(fn () => $value)->toHtml(),
         );
     }
 
@@ -76,21 +76,21 @@ class HtmlableTest extends TestCase
     {
         $this->expectException(UnexpectedValueException::class);
 
-        Htmlable::from(fn () => true)->toHtml();
+        UnsafeHtml::from(fn () => true)->toHtml();
     }
 
     public function testToHtmlThrowsForNonStringableObjectReturnValue(): void
     {
         $this->expectException(UnexpectedValueException::class);
 
-        Htmlable::from(fn () => new stdClass())->toHtml();
+        UnsafeHtml::from(fn () => new stdClass())->toHtml();
     }
 
     public function testToHtmlPrefersToReturnReturnValue(): void
     {
         $this->assertSame(
             '<div>Bar</div>',
-            Htmlable::from(function () {
+            UnsafeHtml::from(function () {
                 echo '<div>Foo</div>';
 
                 return '<div>Bar</div>';
@@ -102,7 +102,7 @@ class HtmlableTest extends TestCase
     {
         $this->assertSame(
             '<div>Foo</div>',
-            Htmlable::from(function (): void {
+            UnsafeHtml::from(function (): void {
                 echo '<div>Foo</div>';
             })->toHtml(),
         );
@@ -112,7 +112,7 @@ class HtmlableTest extends TestCase
     {
         $obLevel = ob_get_level();
 
-        Htmlable::from(function () {
+        UnsafeHtml::from(function () {
             ob_start();
         })->toHtml();
 

@@ -11,7 +11,6 @@ use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\SerializerInterface;
-use StefanFisk\PhpReact\Support\HtmlableInterface;
 use Throwable;
 
 use function array_filter;

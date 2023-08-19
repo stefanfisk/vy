@@ -15,7 +15,7 @@ use StefanFisk\PhpReact\Errors\InvalidTagException;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
-use StefanFisk\PhpReact\Support\Htmlable;
+use StefanFisk\PhpReact\Serialization\Html\UnsafeHtml;
 use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
 use StefanFisk\PhpReact\Tests\TestCase;
 use Throwable;
@@ -341,7 +341,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div', [], Htmlable::from('<h1 class="unsafe">bar</h1>')),
+            el('div', [], UnsafeHtml::from('<h1 class="unsafe">bar</h1>')),
         );
     }
 
