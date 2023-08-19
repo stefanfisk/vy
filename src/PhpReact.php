@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact;
 
 use Psr\Container\ContainerInterface;
+use StefanFisk\PhpReact\Rendering\Comparator;
 use StefanFisk\PhpReact\Rendering\NodeFactory;
 use StefanFisk\PhpReact\Rendering\Renderer;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
@@ -14,7 +15,6 @@ use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewa
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\StringableMiddleware;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\StyleAttributeMiddleware;
-use StefanFisk\PhpReact\Support\Comparator;
 
 class PhpReact
 {

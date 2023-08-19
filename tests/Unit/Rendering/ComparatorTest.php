@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Support;
+namespace StefanFisk\PhpReact\Tests\Unit\rendering;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Support\Comparator;
+use StefanFisk\PhpReact\Rendering\Comparator;
 use StefanFisk\PhpReact\Tests\TestCase;
 
 use function StefanFisk\PhpReact\el;

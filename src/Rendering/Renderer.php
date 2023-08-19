@@ -8,7 +8,6 @@ use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\RenderException;
 use StefanFisk\PhpReact\Hooks\Hook;
 use StefanFisk\PhpReact\Hooks\HookHandlerInterface;
-use StefanFisk\PhpReact\Support\Comparator;
 use Throwable;
 
 use function assert;
