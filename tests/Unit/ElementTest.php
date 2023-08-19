@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Tests\Unit;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Components\Fragment;
 use StefanFisk\PhpReact\Element;
 use stdClass;
 
-/**
- * @covers StefanFisk\PhpReact\Element
- */
+#[CoversClass(Element::class)]
 class ElementTest extends TestCase
 {
     /** @param array{key:(string|int|null),type:mixed,props:array<mixed>} $expected */

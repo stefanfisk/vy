@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\TransformingMiddleware;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MockInvokable;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
 
-/**
- * @covers StefanFisk\PhpReact\Serialization\Html\Middleware\TransformingMiddleware
- */
+#[CoversClass(TransformingMiddleware::class)]
 class TransformingMiddlewareTest extends TestCase
 {
     use MocksInvokablesTrait;

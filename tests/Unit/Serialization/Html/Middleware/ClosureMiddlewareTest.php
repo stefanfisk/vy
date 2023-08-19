@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\ClosureMiddleware;
@@ -14,9 +15,7 @@ use stdClass;
 use function ob_get_level;
 use function ob_start;
 
-/**
- * @covers StefanFisk\PhpReact\Serialization\Html\Middleware\ClosureMiddleware
- */
+#[CoversClass(ClosureMiddleware::class)]
 class ClosureMiddlewareTest extends TestCase
 {
     private ClosureMiddleware $middleware;

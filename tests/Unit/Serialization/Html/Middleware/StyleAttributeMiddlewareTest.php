@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\StyleAttributeMiddleware;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MockInvokable;
@@ -12,9 +13,7 @@ use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
 use Throwable;
 use stdClass;
 
-/**
- * @covers StefanFisk\PhpReact\Serialization\Html\Middleware\StyleAttributeMiddleware
- */
+#[CoversClass(StyleAttributeMiddleware::class)]
 class StyleAttributeMiddlewareTest extends TestCase
 {
     use MocksInvokablesTrait;

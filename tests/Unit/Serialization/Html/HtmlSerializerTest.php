@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html;
 
 use Closure;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -32,9 +33,7 @@ use function is_null;
 use function is_object;
 use function is_string;
 
-/**
- * @covers StefanFisk\PhpReact\Serialization\Html\HtmlSerializer
- */
+#[CoversClass(HtmlSerializer::class)]
 class HtmlSerializerTest extends TestCase
 {
     private int $nextNodeId = 0;

@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\StringableMiddleware;
 use Stringable;
 use stdClass;
 
-/**
- * @covers StefanFisk\PhpReact\Serialization\Html\Middleware\StringableMiddleware
- */
+#[CoversClass(StringableMiddleware::class)]
 class StringableMiddlewareTest extends TestCase
 {
     private StringableMiddleware $middleware;

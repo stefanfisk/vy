@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use StefanFisk\PhpReact\Hooks\Hook;
@@ -12,9 +13,7 @@ use StefanFisk\PhpReact\Tests\Support\Mocks\MocksHookHandlerTrait;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksRendererTrait;
 use stdClass;
 
-/**
- * @covers StefanFisk\PhpReact\Hooks\Hook
- */
+#[CoversClass(Hook::class)]
 class HookTest extends TestCase
 {
     use MocksHookHandlerTrait;
