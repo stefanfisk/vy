@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
-use StefanFisk\PhpReact\Errors\InvalidElementTypeException;
 use StefanFisk\PhpReact\Errors\InvalidNodeValueException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
 use StefanFisk\PhpReact\Rendering\Node;
@@ -26,10 +25,7 @@ use function StefanFisk\PhpReact\el;
 use function array_walk_recursive;
 use function assert;
 use function class_exists;
-use function gettype;
 use function is_array;
-use function is_bool;
-use function is_null;
 use function is_object;
 use function is_string;
 
@@ -57,14 +53,6 @@ class HtmlSerializerTest extends TestCase
                 return $this->elToComponentNode($el, $parent);
             }
 
-            if (!is_string($type) || $type === '') {
-                throw new InvalidElementTypeException(
-                    message: gettype($type),
-                    el: $el,
-                    parentNode: $parent,
-                );
-            }
-
             return $this->elToTagNode($el, $parent);
         } else {
             return $el;
@@ -83,10 +71,6 @@ class HtmlSerializerTest extends TestCase
         array_walk_recursive(
             $elChildren,
             function ($child) use (&$children, $parent) {
-                if (is_bool($child) || is_null($child)) {
-                    return;
-                }
-
                 $children[] = $this->elToNode($child, $parent);
             },
         );
@@ -100,7 +84,7 @@ class HtmlSerializerTest extends TestCase
         $type = $el->type;
         $props = $el->props;
 
-        assert(is_string($type) && $type !== '');
+        assert(is_string($type));
 
         $node = new Node(
             id: $this->nextNodeId++,
@@ -258,6 +242,14 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
+    public function testNullChild(): void
+    {
+        $this->assertRenderMatches(
+            '<div>foobar</div>',
+            el('div', [], ['foo', null, 'bar']),
+        );
+    }
+
     public function testIntChild(): void
     {
         $this->assertRenderMatches(
@@ -279,6 +271,22 @@ class HtmlSerializerTest extends TestCase
         $this->assertRenderMatches(
             '<div><div>foo</div></div>',
             el('div', [], el('div', [], ['foo'])),
+        );
+    }
+
+    public function testThrowsForElementWithEmptyStringType(): void
+    {
+        $this->assertRenderThrows(
+            InvalidTagException::class,
+            new Element(null, '', []),
+        );
+    }
+
+    public function testThrowsForUnknownChildType(): void
+    {
+        $this->assertRenderThrows(
+            InvalidNodeValueException::class,
+            el('div', [], new stdClass()),
         );
     }
 
