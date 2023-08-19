@@ -111,6 +111,8 @@ class HtmlSerializerTest extends TestCase
             component: null,
         );
 
+        $node->state = Node::STATE_NONE;
+
         $children = $this->elChildrenToNodes($props['children'] ?? [], $node);
 
         unset($props['children']);
@@ -136,6 +138,8 @@ class HtmlSerializerTest extends TestCase
                 throw new RuntimeException('Mock component.');
             },
         );
+
+        $node->state = Node::STATE_NONE;
 
         $node->props = $props;
 

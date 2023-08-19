@@ -226,8 +226,8 @@ class Renderer implements HookHandlerInterface
             $hook->unmount();
         }
 
-        $node->state = Node::STATE_UNMOUNTED;
-
         $this->queue->remove($node);
+
+        $node->state = Node::STATE_UNMOUNTED;
     }
 }
