@@ -10,8 +10,23 @@ use StefanFisk\PhpReact\Hooks\Hook;
 class Node
 {
     public const STATE_NONE = 0;
+    /**
+     * Set when the node is constructed and then unset after the first render attempt.
+     *
+     * This bit may only be unset by the renderer.
+     */
     public const STATE_INITIAL = 1;
-    public const STATE_RENDER_ENQUEUED = 2;
+    /**
+     * Set when node has been enqueued for render.
+     *
+     * This bit may only be toggled by the queue.
+     */
+    public const STATE_ENQUEUED = 2;
+    /**
+     * Set when the node has been unmounted.
+     *
+     * This bit may only be set by the renderer. Once it has been set, the node is discarded and should no longer be used. All operations on unmounted nodes should throw an exception.
+     */
     public const STATE_UNMOUNTED = 4;
 
     public int $state = self::STATE_INITIAL;

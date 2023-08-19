@@ -54,24 +54,16 @@ class Renderer implements HookHandlerInterface
     {
         assert(!($node->state & Node::STATE_UNMOUNTED));
 
-        if ($node->state & Node::STATE_RENDER_ENQUEUED) {
-            return;
-        }
-
         if ($this->currentNode === $node) {
             return;
         }
 
         $this->queue->insert($node);
-
-        $node->state |= Node::STATE_RENDER_ENQUEUED;
     }
 
     public function processRenderQueue(): void
     {
         while ($node = $this->queue->poll()) {
-            $node->state &= ~Node::STATE_RENDER_ENQUEUED;
-
             $this->render($node);
         }
     }

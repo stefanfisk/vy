@@ -6,8 +6,14 @@ namespace StefanFisk\PhpReact\Rendering;
 
 use function array_filter;
 use function array_splice;
+use function assert;
 use function count;
 
+/**
+ * A simple priority queue.
+ *
+ * Nodes with lower depth are returned first. Nodes of equal depth are returned in insertion order.
+ */
 class Queue
 {
     /** @var array<Node> */
@@ -15,12 +21,28 @@ class Queue
 
     public function insert(Node $node): void
     {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+
+        if ($node->state & Node::STATE_ENQUEUED) {
+            return;
+        }
+
         $this->queue[] = $node;
+
+        $node->state |= Node::STATE_ENQUEUED;
     }
 
     public function remove(Node $node): void
     {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+
+        if (!($node->state & Node::STATE_ENQUEUED)) {
+            return;
+        }
+
         $this->queue = array_filter($this->queue, fn ($n) => $n !== $node);
+
+        $node->state &= ~Node::STATE_ENQUEUED;
     }
 
     public function poll(): Node | null
@@ -47,6 +69,11 @@ class Queue
         }
 
         array_splice($this->queue, $i, 1);
+
+        assert((bool) ($a->state & Node::STATE_ENQUEUED));
+        assert(!($a->state & Node::STATE_UNMOUNTED));
+
+        $a->state &= ~Node::STATE_ENQUEUED;
 
         return $a;
     }
