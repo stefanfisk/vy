@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit;
 
+use AssertionError;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Rendering\Node;
@@ -23,7 +24,7 @@ class QueueTest extends TestCase
         $this->queue = new Queue();
     }
 
-    private function createNode(int $depth = 0): Node
+    private function createNode(int $depth): Node
     {
         $parent = null;
 
@@ -31,18 +32,17 @@ class QueueTest extends TestCase
             $parent = $this->createNode(depth: $depth - 1);
         }
 
-        return new Node(
+        $node = new Node(
             id: $this->nextNodeId++,
             parent: $parent,
             key: null,
             type: null,
             component: null,
         );
-    }
 
-    public function testNewQueueIsEmpty(): void
-    {
-        $this->assertTrue($this->queue->isEmpty());
+        $node->state = Node::STATE_NONE;
+
+        return $node;
     }
 
     public function testNewQueuePollReturnsNull(): void
@@ -50,41 +50,178 @@ class QueueTest extends TestCase
         $this->assertNull($this->queue->poll());
     }
 
+    public function testInsertAssertsThatNodeIsMounted(): void
+    {
+        $node = $this->createNode(depth: 0);
+        $node->state = Node::STATE_UNMOUNTED;
+
+        $this->expectException(AssertionError::class);
+
+        $this->queue->insert($node);
+    }
+
+    public function testInsertSetsStateEnqueued(): void
+    {
+        $node = $this->createNode(depth: 0);
+
+        $this->queue->insert($node);
+
+        $this->assertSame(Node::STATE_ENQUEUED, $node->state);
+    }
+
     public function testPollReturnsNodesOfSameDepthInInsertionOrder(): void
     {
-        $count = 10;
-        $nodes = [];
+        $node1 = $this->createNode(depth: 0);
+        $node2 = $this->createNode(depth: 0);
+        $node3 = $this->createNode(depth: 0);
 
-        for ($i = 0; $i < $count; $i++) {
-            $node = $this->createNode();
+        $this->queue->insert($node1);
+        $this->queue->insert($node2);
+        $this->queue->insert($node3);
 
-            $nodes[] = $node;
-            $this->queue->insert($node);
-        }
-
-        for ($i = 0; $i < $count; $i++) {
-            $node = $this->queue->poll();
-
-            $this->assertSame($nodes[$i], $node);
-        }
+        $this->assertSame($node1, $this->queue->poll());
+        $this->assertSame($node2, $this->queue->poll());
+        $this->assertSame($node3, $this->queue->poll());
+        $this->assertNull($this->queue->poll());
     }
 
     public function testPollReturnsNodesOfLowerDepthFirst(): void
     {
-        $count = 10;
-        $nodes = [];
+        $node1 = $this->createNode(depth: 0);
+        $node2 = $this->createNode(depth: 1);
+        $node3 = $this->createNode(depth: 2);
+        $node4 = $this->createNode(depth: 1);
+        $node5 = $this->createNode(depth: 0);
 
-        for ($i = 0; $i < $count; $i++) {
-            $node = $this->createNode(depth: $count - $i);
+        $this->queue->insert($node1);
+        $this->queue->insert($node2);
+        $this->queue->insert($node3);
+        $this->queue->insert($node4);
+        $this->queue->insert($node5);
 
-            $nodes[] = $node;
-            $this->queue->insert($node);
-        }
+        $this->assertSame($node1, $this->queue->poll());
+        $this->assertSame($node5, $this->queue->poll());
+        $this->assertSame($node2, $this->queue->poll());
+        $this->assertSame($node4, $this->queue->poll());
+        $this->assertSame($node3, $this->queue->poll());
+        $this->assertNull($this->queue->poll());
+    }
 
-        for ($i = $count - 1; $i >= 0; $i--) {
-            $node = $this->queue->poll();
+    public function testInsertingNodeAlreadyEnqueuedNodeDoesNothing(): void
+    {
+        $node1 = $this->createNode(depth: 0);
+        $node2 = $this->createNode(depth: 0);
 
-            $this->assertSame($nodes[$i], $node);
-        }
+        $this->queue->insert($node1);
+        $this->queue->insert($node2);
+        $this->queue->insert($node1);
+        $this->queue->insert($node2);
+
+        $this->assertSame($node1, $this->queue->poll());
+        $this->assertSame($node2, $this->queue->poll());
+        $this->assertNull($this->queue->poll());
+    }
+
+    public function testReinsertingPolledNode(): void
+    {
+        $node1 = $this->createNode(depth: 1);
+        $node2 = $this->createNode(depth: 2);
+        $node3 = $this->createNode(depth: 3);
+
+        $this->queue->insert($node1);
+        $this->queue->insert($node2);
+        $this->queue->insert($node3);
+
+        $this->assertSame($node1, $this->queue->poll());
+        $this->queue->insert($node1);
+        $this->assertSame($node1, $this->queue->poll());
+        $this->assertSame($node2, $this->queue->poll());
+        $this->assertSame($node3, $this->queue->poll());
+        $this->assertNull($this->queue->poll());
+    }
+
+    public function testPollDoesNotReturnRemovedNodes(): void
+    {
+        $node1 = $this->createNode(depth: 0);
+        $node2 = $this->createNode(depth: 0);
+        $node3 = $this->createNode(depth: 0);
+
+        $this->queue->insert($node1);
+        $this->queue->insert($node2);
+        $this->queue->insert($node3);
+
+        $this->queue->remove($node2);
+
+        $this->assertSame($node1, $this->queue->poll());
+        $this->assertSame($node3, $this->queue->poll());
+        $this->assertNull($this->queue->poll());
+    }
+
+    public function testRemoveAssertsThatNodeIsMounted(): void
+    {
+        $node = $this->createNode(depth: 0);
+
+        $node->state = Node::STATE_UNMOUNTED;
+
+        $this->expectException(AssertionError::class);
+
+        $this->queue->remove($node);
+    }
+
+    public function testRemoveDoesNothingIfNodeIsNotEnqueued(): void
+    {
+        $node = $this->createNode(depth: 0);
+
+        $this->queue->remove($node);
+
+        $this->assertNull($this->queue->poll());
+    }
+
+    public function testPollAssertsThatNodeIsEnqueued(): void
+    {
+        $node = $this->createNode(depth: 0);
+
+        $this->queue->insert($node);
+
+        $node->state = Node::STATE_NONE;
+
+        $this->expectException(AssertionError::class);
+
+        $this->queue->poll();
+    }
+
+    public function testRemoveUnsetsStateEnqueued(): void
+    {
+        $node = $this->createNode(depth: 0);
+
+        $this->queue->insert($node);
+
+        $this->queue->remove($node);
+
+        $this->assertSame(Node::STATE_NONE, $node->state);
+    }
+
+    public function testPollAssertsThatNodeIsMounted(): void
+    {
+        $node = $this->createNode(depth: 0);
+
+        $this->queue->insert($node);
+
+        $node->state = Node::STATE_UNMOUNTED;
+
+        $this->expectException(AssertionError::class);
+
+        $this->queue->poll();
+    }
+
+    public function testPollUnsetsStateEnqueued(): void
+    {
+        $node = $this->createNode(depth: 0);
+
+        $this->queue->insert($node);
+
+        $this->queue->poll();
+
+        $this->assertSame(Node::STATE_NONE, $node->state);
     }
 }
