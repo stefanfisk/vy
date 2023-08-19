@@ -18,7 +18,7 @@ use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
-use StefanFisk\PhpReact\Support\HtmlString;
+use StefanFisk\PhpReact\Support\Htmlable;
 use Throwable;
 use stdClass;
 
@@ -436,7 +436,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div', [], HtmlString::from('<h1 class="unsafe">bar</h1>')),
+            el('div', [], Htmlable::from('<h1 class="unsafe">bar</h1>')),
         );
     }
 

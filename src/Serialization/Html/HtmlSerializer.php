@@ -11,7 +11,6 @@ use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\SerializerInterface;
-use StefanFisk\PhpReact\Support\HtmlPrintableInterface;
 use StefanFisk\PhpReact\Support\HtmlableInterface;
 use Throwable;
 
@@ -24,10 +23,6 @@ use function is_int;
 use function is_object;
 use function is_scalar;
 use function is_string;
-use function ob_end_clean;
-use function ob_get_clean;
-use function ob_get_level;
-use function ob_start;
 use function preg_match;
 use function sprintf;
 use function strtr;
@@ -250,7 +245,7 @@ class HtmlSerializer implements SerializerInterface
             if (is_string($parent->type) && (self::RAW_TEXT_ELEMENTS[$parent->type] ?? false)) {
                 throw new InvalidNodeValueException(
                     message: sprintf(
-                        '<%s> must only have HtmlableInterface or HtmlPrintableInterface children.',
+                        '<%s> must only have HtmlableInterface children.',
                         $parent->type,
                     ),
                     node: $parent,
@@ -262,18 +257,6 @@ class HtmlSerializer implements SerializerInterface
             $this->output .= $this->escapeText((string) $value);
         } elseif ($value instanceof HtmlableInterface) {
             $this->output .= $value->toHtml();
-        } elseif ($value instanceof HtmlPrintableInterface) {
-            $obLevel = ob_get_level();
-
-            try {
-                ob_start();
-                $value->printHtml();
-                $this->output .= ob_get_clean();
-            } finally {
-                while (ob_get_level() > $obLevel) {
-                    ob_end_clean();
-                }
-            }
         } else {
             throw new InvalidNodeValueException(
                 message: sprintf(

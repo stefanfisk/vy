@@ -15,8 +15,7 @@ use StefanFisk\PhpReact\Errors\RenderException;
 use StefanFisk\PhpReact\Hooks\EffectHook;
 use StefanFisk\PhpReact\Hooks\StateHook;
 use StefanFisk\PhpReact\PhpReact;
-use StefanFisk\PhpReact\Support\HtmlPrintable;
-use StefanFisk\PhpReact\Support\HtmlString;
+use StefanFisk\PhpReact\Support\Htmlable;
 use StefanFisk\PhpReact\Tests\Support\FooComponent;
 use StefanFisk\PhpReact\Tests\Support\FooContext;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksComponentsTrait;
@@ -270,7 +269,7 @@ class PhpReactTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div', [], HtmlString::from('<h1 class="unsafe">bar</h1>')),
+            el('div', [], Htmlable::from('<h1 class="unsafe">bar</h1>')),
         );
     }
 
@@ -278,15 +277,15 @@ class PhpReactTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div', [], fn () => HtmlString::from('<h1 class="unsafe">bar</h1>')),
+            el('div', [], fn () => Htmlable::from('<h1 class="unsafe">bar</h1>')),
         );
     }
 
-    public function testHtmlPrintableRendersClosureOutput(): void
+    public function testHtmlableRendersClosureOutput(): void
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div', [], HtmlPrintable::from(function (): void {
+            el('div', [], Htmlable::from(function (): void {
                 echo '<h1 class="unsafe">bar</h1>';
             })),
         );
