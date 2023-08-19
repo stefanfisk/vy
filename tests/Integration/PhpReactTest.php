@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Tests\Integration;
 
 use Closure;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\PhpReact\Components\Context;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
@@ -24,7 +24,7 @@ use Throwable;
 
 use function StefanFisk\PhpReact\el;
 
-#[CoversNothing]
+#[CoversClass(PhpReact::class)]
 class PhpReactTest extends TestCase
 {
     use MocksComponentsTrait;
