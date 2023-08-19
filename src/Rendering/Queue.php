@@ -4,21 +4,25 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Rendering;
 
-use function array_filter;
+use function array_search;
+use function array_shift;
 use function array_splice;
-use function array_values;
 use function assert;
-use function count;
+use function usort;
 
 /**
  * A simple priority queue.
  *
  * Nodes with lower depth are returned first. Nodes of equal depth are returned in insertion order.
+ *
+ * Since insertions and removals are assumed to happen in bulk sorting is deferred until the next poll.
  */
 class Queue
 {
-    /** @var array<Node> */
+    /** @var list<Node> */
     private array $queue = [];
+
+    private bool $isSorted = false;
 
     public function insert(Node $node): void
     {
@@ -31,6 +35,8 @@ class Queue
         $this->queue[] = $node;
 
         $node->state |= Node::STATE_ENQUEUED;
+
+        $this->isSorted = false;
     }
 
     public function remove(Node $node): void
@@ -41,7 +47,13 @@ class Queue
             return;
         }
 
-        $this->queue = array_values(array_filter($this->queue, fn ($n) => $n !== $node));
+        $i = array_search($node, $this->queue, true);
+
+        if ($i === false) {
+            return;
+        }
+
+        array_splice($this->queue, $i, 1);
 
         $node->state &= ~Node::STATE_ENQUEUED;
     }
@@ -52,30 +64,19 @@ class Queue
             return null;
         }
 
-        // Find the first node with the lowest depth and render it
+        if (!$this->isSorted) {
+            usort($this->queue, fn (Node $a, Node $b): int => $a->depth <=> $b->depth);
 
-        $count = count($this->queue);
-        $i = 0;
-        $a = $this->queue[$i];
-
-        for ($j = 1; $j < $count; $j++) {
-            $b = $this->queue[$j];
-
-            if ($a->depth <= $b->depth) {
-                continue;
-            }
-
-            $i = $j;
-            $a = $b;
+            $this->isSorted = true;
         }
 
-        array_splice($this->queue, $i, 1);
+        $node = array_shift($this->queue);
 
-        assert((bool) ($a->state & Node::STATE_ENQUEUED));
-        assert(!($a->state & Node::STATE_UNMOUNTED));
+        assert((bool) ($node->state & Node::STATE_ENQUEUED));
+        assert(!($node->state & Node::STATE_UNMOUNTED));
 
-        $a->state &= ~Node::STATE_ENQUEUED;
+        $node->state &= ~Node::STATE_ENQUEUED;
 
-        return $a;
+        return $node;
     }
 }
