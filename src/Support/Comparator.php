@@ -13,7 +13,7 @@ use function key;
 use function next;
 use function reset;
 
-class Comparator implements ComparatorInterface
+class Comparator
 {
     public function valuesAreEqual(mixed $a, mixed $b): bool
     {
