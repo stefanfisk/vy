@@ -17,7 +17,6 @@
     beStrictAboutChangesToGlobalState="true"
     beStrictAboutOutputDuringTests="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
-    enforceTimeLimit="true"
 >
 
     <testsuites>
