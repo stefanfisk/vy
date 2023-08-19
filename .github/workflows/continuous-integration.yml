@@ -114,6 +114,7 @@ jobs:
         uses: "shivammathur/setup-php@2.25.5"
         with:
           php-version: "latest"
+          extensions: pcntl
           coverage: "pcov"
           ini-values: "memory_limit=-1,zend.assertions=1"
 
@@ -160,6 +161,7 @@ jobs:
         uses: "shivammathur/setup-php@2.25.5"
         with:
           php-version: "${{ matrix.php }}"
+          extensions: pcntl
           coverage: "none"
           ini-values: "memory_limit=-1,zend.assertions=1"
 
