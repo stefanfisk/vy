@@ -10,7 +10,7 @@ use RuntimeException;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Rendering\Node;
 
-use function array_map;
+use function array_walk_recursive;
 use function assert;
 use function class_exists;
 use function is_object;
@@ -102,14 +102,22 @@ trait CreatesStubNodesTrait
                 props: $props,
             );
 
-            $renderChildren = Element::toChildArray($props['children'] ?? []);
+            $renderChildren = (array) $props['children'];
 
-            $children = array_map(
-                fn ($renderChild) => $this->renderToStub($renderChild, $node),
+             // Wrap the array to make psalm happy
+            $wrapper = new class {
+                /** @var list<mixed> */
+                public array $children = [];
+            };
+
+            array_walk_recursive(
                 $renderChildren,
+                function (mixed $renderChild) use ($node, $wrapper): void {
+                    $wrapper->children[] = $this->renderToStub($renderChild, $node);
+                },
             );
 
-            $node->children = $children;
+            $node->children = $wrapper->children;
 
             return $node;
         } else {
