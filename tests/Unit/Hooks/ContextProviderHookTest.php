@@ -21,10 +21,10 @@ class ContextProviderHookTest extends TestCase
         $ret = new stdClass();
 
         $this->hookHandler
-            ->expects($this->once())
-            ->method('useHook')
+            ->shouldReceive('useHook')
+            ->once()
             ->with(ContextHook::class, FooContext::class)
-            ->willReturn($ret);
+            ->andReturn($ret);
 
         $this->assertSame(
             $ret,

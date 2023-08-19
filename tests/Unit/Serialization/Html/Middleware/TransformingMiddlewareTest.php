@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
 
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\TransformingMiddleware;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MockInvokable;
+use StefanFisk\PhpReact\Tests\Support\Mocks\Invokable;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
 use StefanFisk\PhpReact\Tests\TestCase;
 
@@ -16,53 +16,57 @@ class TransformingMiddlewareTest extends TestCase
 {
     use MocksInvokablesTrait;
 
-    private TransformingMiddleware&MockObject $middleware;
-    private MockInvokable $next;
+    private TransformingMiddleware&MockInterface $middleware;
+    private Invokable&MockInterface $next;
 
     protected function setUp(): void
     {
-        $this->middleware = $this->createPartialMock(TransformingMiddleware::class, [
-            'transformValue',
-        ]);
-        $this->next = $this->createInvokableMock();
+        $this->middleware = $this->mockery(TransformingMiddleware::class)
+            ->makePartial();
+        $this->next = $this->createMockInvokable();
     }
 
     public function testCallsTransformValueForAttributes(): void
     {
         $this->middleware
-            ->expects($this->once())
-            ->method('transformValue')
+            ->shouldReceive('transformValue')
+            ->once()
             ->with('bar')
-            ->willReturn('baz');
+            ->andReturn('baz');
 
         $this->next
-            ->expects($this->once())
-            ->with($this->anything())
-            ->willReturnArgument(1);
+            ->shouldReceive('__invoke')
+            ->withAnyArgs()
+            ->once()
+            ->andReturnArg(0);
 
-        $this->middleware->processAttributeValue(
+        $ret = $this->middleware->processAttributeValue(
             name: 'foo',
             value: 'bar',
-            next: ($this->next)(...),
+            next: $this->next->fn,
         );
+
+        $this->assertSame('baz', $ret);
     }
 
     public function testCallsTransformValueForNode(): void
     {
         $this->middleware
-            ->expects($this->once())
-            ->method('transformValue')
+            ->shouldReceive('transformValue')
+            ->once()
             ->with('foo')
-            ->willReturn('bar');
+            ->andReturn('bar');
 
         $this->next
-            ->expects($this->once())
-            ->with($this->anything())
-            ->willReturnArgument(1);
+            ->shouldReceive('__invoke')
+            ->withAnyArgs()
+            ->andReturnArg(0);
 
-        $this->middleware->processNodeValue(
+        $ret = $this->middleware->processNodeValue(
             value: 'foo',
-            next: ($this->next)(...),
+            next: $this->next->fn,
         );
+
+        $this->assertSame('bar', $ret);
     }
 }

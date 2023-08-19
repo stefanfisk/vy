@@ -50,10 +50,10 @@ class HookTest extends TestCase
         };
 
         $this->hookHandler
-            ->expects($this->once())
-            ->method('useHook')
+            ->shouldReceive('useHook')
+            ->once()
             ->with($hook::class, $arg0, $arg1)
-            ->willReturn($ret);
+            ->andReturn($ret);
 
         $this->assertSame(
             $ret,

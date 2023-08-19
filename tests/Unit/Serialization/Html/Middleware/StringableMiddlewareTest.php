@@ -32,11 +32,12 @@ class StringableMiddlewareTest extends TestCase
 
     public function testCallsToStringOnStringables(): void
     {
-        $value = $this->createMock(Stringable::class);
-        $value->expects($this->once())
-            ->method('__toString')
+        $value = $this->mockery(Stringable::class);
+        $value
+            ->shouldReceive('__toString')
             ->with()
-            ->willReturn('foo');
+            ->once()
+            ->andReturn('foo');
 
         $this->assertSame(
             'foo',

@@ -24,10 +24,10 @@ class ContextTest extends TestCase
         $context = new FooContext();
 
         $this->hookHandler
-            ->expects($this->once())
-            ->method('useHook')
-            ->with($this->anything())
-            ->willReturn(null);
+            ->shouldReceive('useHook')
+            ->withAnyArgs()
+            ->once()
+            ->andReturn(null);
 
         $children = [
             'foo' => 'bar',
@@ -45,10 +45,10 @@ class ContextTest extends TestCase
         $context = new FooContext();
 
         $this->hookHandler
-            ->expects($this->once())
-            ->method('useHook')
-            ->with($this->anything())
-            ->willReturn(null);
+            ->shouldReceive('useHook')
+            ->withAnyArgs()
+            ->once()
+            ->andReturn(null);
 
         $this->assertNull($context->render());
     }
@@ -67,10 +67,10 @@ class ContextTest extends TestCase
         $value = new stdClass();
 
         $this->hookHandler
-            ->expects($this->once())
-            ->method('useHook')
+            ->shouldReceive('useHook')
             ->with(ContextProviderHook::class, $value)
-            ->willReturn(null);
+            ->once()
+            ->andReturn(null);
 
         $context = new FooContext();
 
@@ -87,14 +87,14 @@ class ContextTest extends TestCase
 
     public function testUseCallsContextHookUse(): void
     {
-        $this->hookHandler
-            ->expects($this->once())
-            ->method('useHook')
-            ->with(ContextHook::class)
-            ->willReturn(null);
-
         $context = new class extends Context {
         };
+
+        $this->hookHandler
+            ->shouldReceive('useHook')
+            ->with(ContextHook::class, $context::class)
+            ->once()
+            ->andReturn(null);
 
         $context::use();
     }

@@ -533,13 +533,15 @@ class PhpReactTest extends TestCase
 
     public function testEffect(): void
     {
-        $setup = $this->createInvokableMock();
-        $setup->expects($this->once());
+        $setup = $this->createMockInvokable();
+        $setup
+            ->shouldReceive('__invoke')
+            ->once();
 
         $c = function (mixed ...$props) use ($setup): mixed {
             [$val, $setVal] = StateHook::use('foo');
             EffectHook::use(fn () => $setVal('bar'), []);
-            EffectHook::use($setup(...), []);
+            EffectHook::use($setup->fn, []);
 
             return $val;
         };
@@ -552,25 +554,27 @@ class PhpReactTest extends TestCase
 
     public function testEffectCleanup(): void
     {
-        $cleanup = $this->createInvokableMock();
+        $cleanup = $this->createMockInvokable();
         $cleanup
-            ->expects($this->once())
-            ->with()
-            ->willReturn(null);
+            ->shouldReceive('__invoke')
+            ->once()
+            ->andReturn(null);
 
-        $setup = $this->createInvokableMock();
+        $setup = $this->createMockInvokable();
         $setup
-            ->expects($this->once())
-            ->with()
-            ->willReturn($cleanup(...));
+            ->shouldReceive('__invoke')
+            ->once()
+            ->andReturn($cleanup->fn);
 
         $inner = $this->createComponentMock(function (Closure $setVal) use ($setup) {
             EffectHook::use(fn () => $setVal('bar'), []);
-            EffectHook::use($setup(...));
+            EffectHook::use($setup->fn);
 
             return 'inner';
         });
-        $inner->expects($this->exactly(1));
+        $inner
+            ->shouldReceiveRender()
+            ->times(1);
 
         $outer = $this->createComponentMock(function () use ($inner) {
             [$val, $setVal] = StateHook::use('foo');
@@ -581,7 +585,9 @@ class PhpReactTest extends TestCase
 
             return 'outer';
         });
-        $outer->expects($this->exactly(2));
+        $outer
+            ->shouldReceiveRender()
+            ->times(2);
 
         $this->assertRenderMatches(
             'outer',

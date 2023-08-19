@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit;
 
-use Closure;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\PhpReact\Hooks\EffectHook;
 use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MockInvokable;
+use StefanFisk\PhpReact\Tests\Support\Mocks\Invokable;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksHookHandlerTrait;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksRendererTrait;
@@ -24,10 +24,8 @@ class EffectHookTest extends TestCase
 
     private Node $node;
 
-    private MockInvokable $setupMock;
-    private Closure $setup;
-    private MockInvokable $cleanupMock;
-    private Closure $cleanup;
+    private Invokable&MockInterface $setup;
+    private Invokable&MockInterface $cleanup;
 
     /** @var array<mixed> */
     private array $deps;
@@ -44,17 +42,15 @@ class EffectHookTest extends TestCase
             component: null,
         );
 
-        $this->setupMock = $this->createInvokableMock();
-        $this->setup = ($this->setupMock)(...);
-        $this->cleanupMock = $this->createInvokableMock();
-        $this->cleanup = ($this->cleanupMock)(...);
+        $this->setup = $this->createMockInvokable();
+        $this->cleanup = $this->createMockInvokable();
 
         $this->deps = ['foo', new stdClass()];
 
         $this->hook = new EffectHook(
             renderer: $this->renderer,
             node :$this->node,
-            setup: $this->setup(...), // @phpstan-ignore-line
+            setup: $this->setup->fn,
             deps: $this->deps,
         );
     }
@@ -62,24 +58,27 @@ class EffectHookTest extends TestCase
     public function testUseCallsCurrentHandlerUseHook(): void
     {
         $this->hookHandler
-            ->expects($this->once())
-            ->method('useHook')
-            ->with(EffectHook::class, $this->setup, $this->deps);
+            ->shouldReceive('useHook')
+            ->once()
+            ->with(EffectHook::class, $this->setup->fn, $this->deps);
 
-        EffectHook::use($this->setup, $this->deps);
+        EffectHook::use($this->setup->fn, $this->deps);
     }
 
     public function testRerenderWithSameSetupAndDeps(): void
     {
-        $this->setupMock
-            ->expects($this->once())
-            ->willReturn($this->cleanup);
+        $this->setup
+            ->shouldReceive('__invoke')
+            ->once()
+            ->andReturn($this->cleanup->fn);
 
-        $this->cleanupMock->expects($this->once());
+        $this->cleanup
+            ->shouldReceive('__invoke')
+            ->once();
 
-        $this->assertNull($this->hook->initialRender(($this->setup)(...), $this->deps));
+        $this->assertNull($this->hook->initialRender($this->setup->fn, $this->deps));
 
-        $this->assertNull($this->hook->rerender($this->setup, $this->deps));
+        $this->assertNull($this->hook->rerender($this->setup->fn, $this->deps));
 
         $this->hook->afterRender();
 
@@ -88,21 +87,23 @@ class EffectHookTest extends TestCase
 
     public function testRerenderWithNewSetupAndSameDeps(): void
     {
-        $this->assertNull($this->hook->initialRender($this->setup, $this->deps));
+        $this->assertNull($this->hook->initialRender($this->setup->fn, $this->deps));
 
-        $this->assertNull($this->hook->rerender($this->setup, $this->deps));
+        $this->assertNull($this->hook->rerender($this->setup->fn, $this->deps));
 
-        $this->setupMock
-            ->expects($this->once())
-            ->willReturn($this->cleanup);
-        $this->cleanupMock->expects($this->once());
+        $this->setup
+            ->shouldReceive('__invoke')
+            ->once()
+            ->andReturn($this->cleanup->fn);
+        $this->cleanup
+            ->shouldReceive('__invoke')
+            ->once();
 
         $this->hook->afterRender();
 
-        $this->setupMock = $this->createInvokableMock();
-        $this->setup = ($this->setupMock)(...);
+        $this->setup = $this->createMockInvokable();
 
-        $this->assertNull($this->hook->rerender($this->setup, $this->deps));
+        $this->assertNull($this->hook->rerender($this->setup->fn, $this->deps));
 
         $this->hook->afterRender();
 
@@ -111,30 +112,34 @@ class EffectHookTest extends TestCase
 
     public function testRerenderWithNewSetupAndNewDeps(): void
     {
-        $this->assertNull($this->hook->initialRender($this->setup, $this->deps));
+        $this->assertNull($this->hook->initialRender($this->setup->fn, $this->deps));
 
-        $this->assertNull($this->hook->rerender($this->setup, $this->deps));
+        $this->assertNull($this->hook->rerender($this->setup->fn, $this->deps));
 
-        $this->setupMock
-            ->expects($this->once())
-            ->willReturn($this->cleanup);
-        $this->cleanupMock->expects($this->once());
+        $this->setup
+            ->shouldReceive('__invoke')
+            ->once()
+            ->andReturn($this->cleanup->fn);
+        $this->cleanup
+            ->shouldReceive('__invoke')
+            ->once();
 
         $this->hook->afterRender();
 
-        $this->setupMock = $this->createInvokableMock();
-        $this->setup = ($this->setupMock)(...);
-        $this->cleanupMock = $this->createInvokableMock();
-        $this->cleanup = ($this->cleanupMock)(...);
+        $this->setup = $this->createMockInvokable();
+        $this->cleanup = $this->createMockInvokable();
 
         $this->deps = ['bar', new stdClass()];
 
-        $this->setupMock
-            ->expects($this->once())
-            ->willReturn($this->cleanup);
-        $this->cleanupMock->expects($this->once());
+        $this->setup
+            ->shouldReceive('__invoke')
+            ->once()
+            ->andReturn($this->cleanup->fn);
+        $this->cleanup
+            ->shouldReceive('__invoke')
+            ->once();
 
-        $this->assertNull($this->hook->rerender($this->setup, $this->deps));
+        $this->assertNull($this->hook->rerender($this->setup->fn, $this->deps));
 
         $this->hook->afterRender();
 

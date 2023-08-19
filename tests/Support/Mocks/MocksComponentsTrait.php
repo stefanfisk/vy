@@ -5,28 +5,17 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Tests\Support\Mocks;
 
 use Closure;
-use PHPUnit\Framework\MockObject\MockBuilder;
 
 trait MocksComponentsTrait
 {
-    /**
-     * Returns a builder object to create mock objects using a fluent interface.
-     *
-     * @psalm-template RealInstanceType of object
-     * @psalm-param class-string<RealInstanceType> $className
-     * @psalm-return MockBuilder<RealInstanceType>
-     */
-    abstract public function getMockBuilder(string $className): MockBuilder;
+    use MockeryTrait;
+    use MocksInvokablesTrait;
 
-    protected function createComponentMock(Closure $returnCallback): MockRenderable
+    protected function createComponentMock(Closure $returnCallback): MockComponent
     {
-        $mockInvokable = $this->getMockBuilder(Invokable::class)
-            ->disableAutoReturnValueGeneration()
-            ->getMock();
-
-        return new MockRenderable(
+        return new MockComponent(
+            mockInvokable: $this->createMockInvokable(),
             returnCallback: $returnCallback,
-            mockInvokable: $mockInvokable,
         );
     }
 }

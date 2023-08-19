@@ -4,27 +4,36 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Support\Mocks;
 
+use Closure;
 use RuntimeException;
 
 /**
- * Helper class for mocking closures.
+ * Helper interface for mocking closures.
  *
  * <code>
  * <?php
  *
- * $fn = $this->createMock(Invokable::class);
+ * $myClosure = $this->mockery(Invokable::class, []);
  *
- * $fn->expects($this->once())
- *     ->method('__invoke')
+ * $myClosure
+ *     ->shouldRecieve('__invoke')
  *     ->with('foo')
- *     ->willReturn('bar');
+ *     ->once()
+ *     ->andReturn('bar');
  *
- * $this->sut->doThing($fn(...));
+ * $this->sut->doThing($myClosure->fn);
  * </code>
  */
 class Invokable
 {
-    public function __invoke(): mixed
+    public Closure $fn;
+
+    public function __construct()
+    {
+        $this->fn = $this->__invoke(...);
+    }
+
+    public function __invoke(mixed ...$args): mixed
     {
         throw new RuntimeException(__FUNCTION__ . ' must be mocked.');
     }

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
 
 use InvalidArgumentException;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\ClassAttributeMiddleware;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MockInvokable;
+use StefanFisk\PhpReact\Tests\Support\Mocks\Invokable;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
 use StefanFisk\PhpReact\Tests\TestCase;
 use stdClass;
@@ -18,27 +19,28 @@ class ClassAttributeMiddlewareTest extends TestCase
     use MocksInvokablesTrait;
 
     private ClassAttributeMiddleware $middleware;
-    private MockInvokable $next;
+    private Invokable&MockInterface $next;
 
     protected function setUp(): void
     {
         $this->middleware = new ClassAttributeMiddleware();
-        $this->next = $this->createInvokableMock();
+        $this->next = $this->createMockInvokable();
     }
 
     private function assertClassEquals(string $expected, mixed $value): void
     {
         $this->next
-            ->expects($this->once())
+            ->shouldReceive('__invoke')
+            ->once()
             ->with($expected)
-            ->willReturn($expected);
+            ->andReturn($expected);
 
         $this->assertSame(
             $expected,
             $this->middleware->processAttributeValue(
                 name: 'class',
                 value: $value,
-                next: ($this->next)(...),
+                next: $this->next->fn,
             ),
         );
     }
@@ -48,16 +50,17 @@ class ClassAttributeMiddlewareTest extends TestCase
         $value = new stdClass();
 
         $this->next
-            ->expects($this->once())
+            ->shouldReceive('__invoke')
+            ->once()
             ->with($value)
-            ->willReturn($value);
+            ->andReturn($value);
 
         $this->assertSame(
             $value,
             $this->middleware->processAttributeValue(
                 name: 'foo',
                 value: $value,
-                next: ($this->next)(...),
+                next: $this->next->fn,
             ),
         );
     }
@@ -69,7 +72,7 @@ class ClassAttributeMiddlewareTest extends TestCase
         $this->middleware->processAttributeValue(
             name: 'class',
             value: new stdClass(),
-            next: ($this->next)(...),
+            next: $this->next->fn,
         );
     }
 
@@ -80,7 +83,7 @@ class ClassAttributeMiddlewareTest extends TestCase
         $this->middleware->processAttributeValue(
             name: 'class',
             value: [new stdClass()],
-            next: ($this->next)(...),
+            next: $this->next->fn,
         );
     }
 

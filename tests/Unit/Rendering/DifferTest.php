@@ -108,14 +108,14 @@ class DifferTest extends TestCase
         $node = $this->createStubNode();
 
         $this->renderer
-            ->expects($this->once())
-            ->method('createNode')
+            ->shouldReceive('createNode')
+            ->once()
             ->with($this->parent, $el)
-            ->willReturn($node);
+            ->andReturn($node);
 
         $this->renderer
-            ->expects($this->once())
-            ->method('giveNodeNextProps')
+            ->shouldReceive('giveNodeNextProps')
+            ->once()
             ->with($node, $props);
 
         $this->assertDiffMatches(
@@ -135,8 +135,8 @@ class DifferTest extends TestCase
         );
 
         $this->renderer
-            ->expects($this->once())
-            ->method('giveNodeNextProps')
+            ->shouldReceive('giveNodeNextProps')
+            ->once()
             ->with($node, $props);
 
         $this->assertDiffMatches(
@@ -161,19 +161,19 @@ class DifferTest extends TestCase
         );
 
         $this->renderer
-            ->expects($this->once())
-            ->method('createNode')
+            ->shouldReceive('createNode')
+            ->once()
             ->with($this->parent, $el2)
-            ->willReturn($node2);
+            ->andReturn($node2);
 
         $this->renderer
-            ->expects($this->once())
-            ->method('giveNodeNextProps')
+            ->shouldReceive('giveNodeNextProps')
+            ->once()
             ->with($node2, $props);
 
         $this->renderer
-            ->expects($this->once())
-            ->method('unmount')
+            ->shouldReceive('unmount')
+            ->once()
             ->with($node1);
 
         $this->assertDiffMatches(
@@ -185,8 +185,6 @@ class DifferTest extends TestCase
 
     public function testReusesNodesForElementsWithSameTypeWhenSomeAreKeyed(): void
     {
-        $this->markTestIncomplete();
-
         $node1 = $this->createStubNode(key: null, type: 'type1');
         $node2 = $this->createStubNode(key: '2', type: 'type2');
         $node3 = $this->createStubNode(key: null, type: 'type3');
@@ -197,27 +195,24 @@ class DifferTest extends TestCase
         $el3 = new Element(key: null, type: 'type3', props: $props);
 
         $this->renderer
-            ->expects($this->once())
-            ->method('giveNodeNextProps')
-            ->with($node1, $props);
-        $this->renderer
-            ->expects($this->once())
-            ->method('giveNodeNextProps')
-            ->with($node3, $props);
-        $this->renderer
-            ->expects($this->once())
-            ->method('giveNodeNextProps')
+            ->shouldReceive('giveNodeNextProps')
+            ->once()
             ->with($node2, $props);
 
         $this->renderer
-            ->expects($this->once())
-            ->method('unmount')
-            ->with($node2);
+            ->shouldReceive('giveNodeNextProps')
+            ->once()
+            ->with($node1, $props);
+
+        $this->renderer
+            ->shouldReceive('giveNodeNextProps')
+            ->once()
+            ->with($node3, $props);
 
         $this->assertDiffMatches(
-            newChildren: ['foo', $node1, $node3, $node2, 'bar'],
+            newChildren: ['foo', $node2, $node1, $node3, 'bar'],
             oldChildren: ['foo', $node1, $node2, $node3, 'bar'],
-            renderChildren:['foo', $el1, $el3, $el2, 'bar'],
+            renderChildren:['foo', $el2, $el1, $el3, 'bar'],
         );
     }
 
