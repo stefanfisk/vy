@@ -6,7 +6,9 @@ namespace StefanFisk\PhpReact\Tests\Unit;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use StefanFisk\PhpReact\Components\Fragment;
 use StefanFisk\PhpReact\Element;
+use stdClass;
 
 /**
  * @covers StefanFisk\PhpReact\Element
@@ -26,7 +28,7 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testTakesStringKeyFromProps(): void
+    public function testCreateTakesStringKeyFromProps(): void
     {
         $this->assertElementEquals(
             [
@@ -38,7 +40,7 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testTakesIntKeyFromProps(): void
+    public function testCreateTakesIntKeyFromProps(): void
     {
         $this->assertElementEquals(
             [
@@ -50,7 +52,7 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testRemovesKeyFromProps(): void
+    public function testCreateRemovesKeyFromProps(): void
     {
         $this->assertElementEquals(
             [
@@ -65,21 +67,21 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testThrowsIfKeyIsWrongType(): void
+    public function testCreateThrowsIfKeyIsWrongType(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         Element::create('div', ['key' => ['foo' => 'bar']]);
     }
 
-    public function testThrowsIfKeyIsEmptyString(): void
+    public function testCreateThrowsIfKeyIsEmptyString(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         Element::create('div', ['key' => '']);
     }
 
-    public function testMergesChildrenIntoProps(): void
+    public function testCreateMergesChildrenIntoProps(): void
     {
         $this->assertElementEquals(
             [
@@ -94,7 +96,7 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testDoesNotMergeEmptyChildrenIntoProps(): void
+    public function testCreateDoesNotMergeEmptyChildrenIntoProps(): void
     {
         $this->assertElementEquals(
             [
@@ -106,7 +108,7 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testPassesChildrenPropAsIs(): void
+    public function testCreatePassesChildrenPropAsIs(): void
     {
         $this->assertElementEquals(
             [
@@ -118,10 +120,77 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testThrowsIfBothChildrenPropAndChildren(): void
+    public function testCreateThrowsIfBothChildrenPropAndChildren(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         Element::create('div', ['foo' => 'bar', 'children' => 'baz'], ['quz']);
+    }
+
+    public function testCreateConvertsEmptyStringTypeToFragments(): void
+    {
+        $this->assertElementEquals(
+            [
+                'key' => null,
+                'type' => Fragment::class,
+                'props' => ['foo' => 'bar', 'children' => 'baz'],
+            ],
+            Element::create('', ['foo' => 'bar', 'children' => 'baz']),
+        );
+    }
+
+    public function testToChildArrayWrapsSingleItemInArray(): void
+    {
+        $value = new stdClass();
+
+        $this->assertSame(
+            [$value],
+            Element::toChildArray($value),
+        );
+    }
+
+    public function testToChildArrayFlattensArrays(): void
+    {
+        $value1 = new stdClass();
+        $value2 = new stdClass();
+        $value3 = new stdClass();
+
+        $this->assertSame(
+            [$value1, $value2, $value3],
+            Element::toChildArray([[[$value1, $value2]], $value3]),
+        );
+    }
+
+    public function testToChildArrayFiltersNullValues(): void
+    {
+        $value1 = new stdClass();
+        $value2 = new stdClass();
+
+        $this->assertSame(
+            [$value1, $value2],
+            Element::toChildArray([$value1, null, $value2]),
+        );
+    }
+
+    public function testToChildArrayFiltersBoolValues(): void
+    {
+        $value1 = new stdClass();
+        $value2 = new stdClass();
+
+        $this->assertSame(
+            [$value1, $value2],
+            Element::toChildArray([$value1, true, false, $value2]),
+        );
+    }
+
+    public function testToChildArrayFiltersEmptyStrings(): void
+    {
+        $value1 = new stdClass();
+        $value2 = new stdClass();
+
+        $this->assertSame(
+            [$value1, $value2],
+            Element::toChildArray([$value1, '', $value2]),
+        );
     }
 }
