@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Rendering;
 
 use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Errors\RenderException;
+use StefanFisk\PhpReact\Errors\DuplicateKeyException;
 
 use function assert;
 use function count;
 use function in_array;
-use function sprintf;
 
 class Differ
 {
@@ -51,10 +50,11 @@ class Differ
 
             if ($renderChild instanceof Element && $renderChild->key) {
                 if (isset($keyToRenderChild[$renderChild->key])) {
-                    throw new RenderException(
-                        message: sprintf('Duplicate key "%s".', $renderChild->key),
-                        node: $parent,
-                        el: $renderChild,
+                    throw new DuplicateKeyException(
+                        message: $renderChild->key,
+                        el1: $keyToRenderChild[$renderChild->key],
+                        el2: $renderChild,
+                        parentNode: $parent,
                     );
                 }
 

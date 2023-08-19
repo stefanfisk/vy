@@ -6,6 +6,7 @@ namespace StefanFisk\PhpReact\Tests\Unit\Rendering;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\PhpReact\Element;
+use StefanFisk\PhpReact\Errors\DuplicateKeyException;
 use StefanFisk\PhpReact\Rendering\Differ;
 use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
@@ -223,6 +224,16 @@ class DifferTest extends TestCase
 
     public function testThrowsForDuplicateKeys(): void
     {
-        $this->markTestIncomplete();
+        $el1 = new Element(key: 'key', type: null, props: []);
+        $el2 = new Element(key: 'key', type: null, props: []);
+
+        $this->expectException(DuplicateKeyException::class);
+
+        $this->differ->diffChildren(
+            renderer: $this->renderer,
+            parent: $this->parent,
+            oldChildren: [],
+            renderChildren: [$el1, $el2],
+        );
     }
 }
