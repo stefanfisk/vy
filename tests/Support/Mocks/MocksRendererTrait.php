@@ -23,7 +23,7 @@ trait MocksRendererTrait
     abstract public function getMockBuilder(string $className): MockBuilder;
 
     #[Before]
-    protected function setMocksRendererTrait(): void
+    protected function setUpMocksRendererTrait(): void
     {
         $this->renderer = $this->getMockBuilder(Renderer::class)
             ->disableAutoReturnValueGeneration()

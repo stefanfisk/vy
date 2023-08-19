@@ -12,128 +12,25 @@ use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
 use StefanFisk\PhpReact\Errors\InvalidNodeValueException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
-use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Support\Htmlable;
+use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
 use StefanFisk\PhpReact\Tests\TestCase;
 use Throwable;
 use stdClass;
 
 use function StefanFisk\PhpReact\el;
-use function array_walk_recursive;
-use function assert;
-use function class_exists;
-use function is_array;
-use function is_object;
-use function is_string;
 
 #[CoversClass(HtmlSerializer::class)]
 class HtmlSerializerTest extends TestCase
 {
-    private int $nextNodeId = 0;
-
-     /**
-      * @param T $el
-      *
-      * @template T of mixed
-      * @psalm-return (
-      *     T is Element
-      *     ? Node
-      *     : mixed
-      * )
-      */
-    private function elToNode(mixed $el, Node | null $parent = null): mixed
-    {
-        if ($el instanceof Element) {
-            $type = $el->type;
-
-            if (is_object($type) || is_string($type) && class_exists($type)) {
-                return $this->elToComponentNode($el, $parent);
-            }
-
-            return $this->elToTagNode($el, $parent);
-        } else {
-            return $el;
-        }
-    }
-
-    /** @return list<mixed> */
-    private function elChildrenToNodes(mixed $elChildren, Node | null $parent): array
-    {
-        if (!is_array($elChildren)) {
-            $elChildren = [$elChildren];
-        }
-
-        $children = [];
-
-        array_walk_recursive(
-            $elChildren,
-            function ($child) use (&$children, $parent) {
-                $children[] = $this->elToNode($child, $parent);
-            },
-        );
-
-        return $children;
-    }
-
-    private function elToTagNode(Element $el, Node | null $parent): Node
-    {
-        $key = $el->key;
-        $type = $el->type;
-        $props = $el->props;
-
-        assert(is_string($type));
-
-        $node = new Node(
-            id: $this->nextNodeId++,
-            parent: $parent,
-            key: $key,
-            type: $type,
-            component: null,
-        );
-
-        $node->state = Node::STATE_NONE;
-
-        $children = $this->elChildrenToNodes($props['children'] ?? [], $node);
-
-        unset($props['children']);
-        $node->props = $props;
-
-        $node->children = $children;
-
-        return $node;
-    }
-
-    private function elToComponentNode(Element $el, Node | null $parent): Node
-    {
-        $key = $el->key;
-        $type = $el->type;
-        $props = $el->props;
-
-        $node = new Node(
-            id: $this->nextNodeId++,
-            parent: $parent,
-            key: $key,
-            type: $type,
-            component: function (mixed ...$props) {
-                throw new RuntimeException('Mock component.');
-            },
-        );
-
-        $node->state = Node::STATE_NONE;
-
-        $node->props = $props;
-
-        $node->children = $this->elChildrenToNodes($props['children'] ?? [], $node);
-
-        return $node;
-    }
+    use CreatesStubNodesTrait;
 
     private function assertRenderMatches(string $expected, Element $el): void
     {
-        $node = $this->elToNode($el);
+        $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
             middlewares: [],
@@ -147,7 +44,7 @@ class HtmlSerializerTest extends TestCase
     /** @psalm-param class-string<Throwable> $exception */
     private function assertRenderThrows(string $exception, Element $el): void
     {
-        $node = $this->elToNode($el);
+        $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
             middlewares: [],
@@ -387,7 +284,7 @@ class HtmlSerializerTest extends TestCase
     {
         $el = el('div', ['foo' => new stdClass()]);
 
-        $node = $this->elToNode($el);
+        $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
             middlewares: [
@@ -470,7 +367,7 @@ class HtmlSerializerTest extends TestCase
     {
         $el = el('div', [], new stdClass());
 
-        $node = $this->elToNode($el);
+        $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
             middlewares: [

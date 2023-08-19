@@ -8,41 +8,21 @@ use AssertionError;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Rendering\Queue;
+use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
 use StefanFisk\PhpReact\Tests\TestCase;
 
 #[CoversClass(Queue::class)]
 class QueueTest extends TestCase
 {
-    private Queue $queue;
+    use CreatesStubNodesTrait;
 
-    private int $nextNodeId = 0;
+    private Queue $queue;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->queue = new Queue();
-    }
-
-    private function createNode(int $depth): Node
-    {
-        $parent = null;
-
-        if ($depth > 0) {
-            $parent = $this->createNode(depth: $depth - 1);
-        }
-
-        $node = new Node(
-            id: $this->nextNodeId++,
-            parent: $parent,
-            key: null,
-            type: null,
-            component: null,
-        );
-
-        $node->state = Node::STATE_NONE;
-
-        return $node;
     }
 
     public function testNewQueuePollReturnsNull(): void
@@ -52,7 +32,7 @@ class QueueTest extends TestCase
 
     public function testInsertAssertsThatNodeIsMounted(): void
     {
-        $node = $this->createNode(depth: 0);
+        $node = $this->createStubNode(depth: 0);
         $node->state = Node::STATE_UNMOUNTED;
 
         $this->expectException(AssertionError::class);
@@ -62,7 +42,7 @@ class QueueTest extends TestCase
 
     public function testInsertSetsStateEnqueued(): void
     {
-        $node = $this->createNode(depth: 0);
+        $node = $this->createStubNode(depth: 0);
 
         $this->queue->insert($node);
 
@@ -71,9 +51,9 @@ class QueueTest extends TestCase
 
     public function testPollReturnsNodesOfSameDepthInInsertionOrder(): void
     {
-        $node1 = $this->createNode(depth: 0);
-        $node2 = $this->createNode(depth: 0);
-        $node3 = $this->createNode(depth: 0);
+        $node1 = $this->createStubNode(depth: 0);
+        $node2 = $this->createStubNode(depth: 0);
+        $node3 = $this->createStubNode(depth: 0);
 
         $this->queue->insert($node1);
         $this->queue->insert($node2);
@@ -87,11 +67,11 @@ class QueueTest extends TestCase
 
     public function testPollReturnsNodesOfLowerDepthFirst(): void
     {
-        $node1 = $this->createNode(depth: 0);
-        $node2 = $this->createNode(depth: 1);
-        $node3 = $this->createNode(depth: 2);
-        $node4 = $this->createNode(depth: 1);
-        $node5 = $this->createNode(depth: 0);
+        $node1 = $this->createStubNode(depth: 0);
+        $node2 = $this->createStubNode(depth: 1);
+        $node3 = $this->createStubNode(depth: 2);
+        $node4 = $this->createStubNode(depth: 1);
+        $node5 = $this->createStubNode(depth: 0);
 
         $this->queue->insert($node1);
         $this->queue->insert($node2);
@@ -109,8 +89,8 @@ class QueueTest extends TestCase
 
     public function testInsertingNodeAlreadyEnqueuedNodeDoesNothing(): void
     {
-        $node1 = $this->createNode(depth: 0);
-        $node2 = $this->createNode(depth: 0);
+        $node1 = $this->createStubNode(depth: 0);
+        $node2 = $this->createStubNode(depth: 0);
 
         $this->queue->insert($node1);
         $this->queue->insert($node2);
@@ -124,9 +104,9 @@ class QueueTest extends TestCase
 
     public function testReinsertingPolledNode(): void
     {
-        $node1 = $this->createNode(depth: 1);
-        $node2 = $this->createNode(depth: 2);
-        $node3 = $this->createNode(depth: 3);
+        $node1 = $this->createStubNode(depth: 1);
+        $node2 = $this->createStubNode(depth: 2);
+        $node3 = $this->createStubNode(depth: 3);
 
         $this->queue->insert($node1);
         $this->queue->insert($node2);
@@ -142,9 +122,9 @@ class QueueTest extends TestCase
 
     public function testPollDoesNotReturnRemovedNodes(): void
     {
-        $node1 = $this->createNode(depth: 0);
-        $node2 = $this->createNode(depth: 0);
-        $node3 = $this->createNode(depth: 0);
+        $node1 = $this->createStubNode(depth: 0);
+        $node2 = $this->createStubNode(depth: 0);
+        $node3 = $this->createStubNode(depth: 0);
 
         $this->queue->insert($node1);
         $this->queue->insert($node2);
@@ -159,7 +139,7 @@ class QueueTest extends TestCase
 
     public function testRemoveAssertsThatNodeIsMounted(): void
     {
-        $node = $this->createNode(depth: 0);
+        $node = $this->createStubNode(depth: 0);
 
         $node->state = Node::STATE_UNMOUNTED;
 
@@ -170,7 +150,7 @@ class QueueTest extends TestCase
 
     public function testRemoveAssertsThatNodeWithStateEnqueuedIsInQueue(): void
     {
-        $node = $this->createNode(depth: 0);
+        $node = $this->createStubNode(depth: 0);
         $node->state = Node::STATE_ENQUEUED;
 
         $this->expectException(AssertionError::class);
@@ -180,7 +160,7 @@ class QueueTest extends TestCase
 
     public function testRemoveDoesNothingIfNodeIsNotEnqueued(): void
     {
-        $node = $this->createNode(depth: 0);
+        $node = $this->createStubNode(depth: 0);
 
         $this->queue->remove($node);
 
@@ -189,7 +169,7 @@ class QueueTest extends TestCase
 
     public function testPollAssertsThatNodeIsEnqueued(): void
     {
-        $node = $this->createNode(depth: 0);
+        $node = $this->createStubNode(depth: 0);
 
         $this->queue->insert($node);
 
@@ -202,7 +182,7 @@ class QueueTest extends TestCase
 
     public function testRemoveUnsetsStateEnqueued(): void
     {
-        $node = $this->createNode(depth: 0);
+        $node = $this->createStubNode(depth: 0);
 
         $this->queue->insert($node);
 
@@ -213,7 +193,7 @@ class QueueTest extends TestCase
 
     public function testPollAssertsThatNodeIsMounted(): void
     {
-        $node = $this->createNode(depth: 0);
+        $node = $this->createStubNode(depth: 0);
 
         $this->queue->insert($node);
 
@@ -226,7 +206,7 @@ class QueueTest extends TestCase
 
     public function testPollUnsetsStateEnqueued(): void
     {
-        $node = $this->createNode(depth: 0);
+        $node = $this->createStubNode(depth: 0);
 
         $this->queue->insert($node);
 
