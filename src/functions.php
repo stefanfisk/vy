@@ -11,6 +11,7 @@ use Closure;
  * @param array<mixed> $props
  *
  * @psalm-api
+ * @codeCoverageIgnore
  */
 // phpcs:ignore Squiz.Functions.GlobalFunction.Found
 function el(mixed $type, array $props = [], mixed ...$children): Element
