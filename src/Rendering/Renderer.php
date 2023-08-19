@@ -159,6 +159,8 @@ class Renderer implements HookHandlerInterface
             assert($poppedHandler === $this);
         }
 
+        $renderChildren = Element::toChildArray($renderChildren);
+
         $newChildren = $this->differ->diffChildren(
             renderer: $this,
             parent: $node,

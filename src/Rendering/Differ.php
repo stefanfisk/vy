@@ -7,6 +7,7 @@ namespace StefanFisk\PhpReact\Rendering;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\RenderException;
 
+use function assert;
 use function count;
 use function in_array;
 use function sprintf;
@@ -15,10 +16,11 @@ class Differ
 {
     /**
      * @param list<mixed> $oldChildren
+     * @param list<mixed> $renderChildren
      *
      * @return list<mixed>
      */
-    public function diffChildren(Renderer $renderer, Node $parent, array $oldChildren, mixed $renderChildren): array
+    public function diffChildren(Renderer $renderer, Node $parent, array $oldChildren, array $renderChildren): array
     {
         // Index the old children
 
@@ -29,15 +31,13 @@ class Differ
 
         foreach ($oldChildren as $child) {
             if ($child instanceof Node && $child->key) {
+                assert(!isset($oldKeyToChild[$child->key]));
+
                 $oldKeyToChild[$child->key] = $child;
             } else {
                 $oldIToChild[] = $child;
             }
         }
-
-        // Flatten the render children and remove empty items
-
-        $renderChildren = Element::toChildArray($renderChildren);
 
         // Index the render children
 
