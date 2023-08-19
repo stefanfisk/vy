@@ -49,9 +49,7 @@ class Queue
 
         $i = array_search($node, $this->queue, true);
 
-        if ($i === false) {
-            return;
-        }
+        assert($i !== false);
 
         array_splice($this->queue, $i, 1);
 

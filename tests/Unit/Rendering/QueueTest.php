@@ -168,6 +168,16 @@ class QueueTest extends TestCase
         $this->queue->remove($node);
     }
 
+    public function testRemoveAssertsThatNodeWithStateEnqueuedIsInQueue(): void
+    {
+        $node = $this->createNode(depth: 0);
+        $node->state = Node::STATE_ENQUEUED;
+
+        $this->expectException(AssertionError::class);
+
+        $this->queue->remove($node);
+    }
+
     public function testRemoveDoesNothingIfNodeIsNotEnqueued(): void
     {
         $node = $this->createNode(depth: 0);
