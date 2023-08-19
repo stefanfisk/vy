@@ -6,10 +6,10 @@ namespace StefanFisk\PhpReact\Tests\Unit;
 
 use ArgumentCountError;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Container;
 use StefanFisk\PhpReact\Errors\ContainerException;
 use StefanFisk\PhpReact\Errors\EntryNotFoundException;
+use StefanFisk\PhpReact\Tests\TestCase;
 
 #[CoversClass(Container::class)]
 class ContainerTest extends TestCase

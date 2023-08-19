@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Tests\Unit\Rendering;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Rendering\Node;
+use StefanFisk\PhpReact\Tests\TestCase;
 
 #[CoversClass(Node::class)]
 class NodeTest extends TestCase

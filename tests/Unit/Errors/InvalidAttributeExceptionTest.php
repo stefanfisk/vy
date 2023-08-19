@@ -6,9 +6,9 @@ namespace StefanFisk\PhpReact\Tests\Unit\Errors;
 
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
 use StefanFisk\PhpReact\Rendering\Node;
+use StefanFisk\PhpReact\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(InvalidAttributeException::class)]

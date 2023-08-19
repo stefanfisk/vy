@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\StringableMiddleware;
+use StefanFisk\PhpReact\Tests\TestCase;
 use Stringable;
 use stdClass;
 

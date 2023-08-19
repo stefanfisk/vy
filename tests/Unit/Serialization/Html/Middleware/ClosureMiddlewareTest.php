@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\ClosureMiddleware;
+use StefanFisk\PhpReact\Tests\TestCase;
 use Throwable;
 use UnexpectedValueException;
 use stdClass;

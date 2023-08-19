@@ -6,7 +6,6 @@ namespace StefanFisk\PhpReact\Tests\Integration;
 
 use Closure;
 use PHPUnit\Framework\Attributes\CoversNothing;
-use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Components\Context;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
@@ -20,6 +19,7 @@ use StefanFisk\PhpReact\Tests\Support\FooComponent;
 use StefanFisk\PhpReact\Tests\Support\FooContext;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksComponentsTrait;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
+use StefanFisk\PhpReact\Tests\TestCase;
 use Throwable;
 
 use function StefanFisk\PhpReact\el;

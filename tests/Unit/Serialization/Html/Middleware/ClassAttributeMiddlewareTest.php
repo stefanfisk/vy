@@ -6,10 +6,10 @@ namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\ClassAttributeMiddleware;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MockInvokable;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
+use StefanFisk\PhpReact\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(ClassAttributeMiddleware::class)]

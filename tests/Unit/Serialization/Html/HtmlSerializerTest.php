@@ -7,7 +7,6 @@ namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html;
 use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
@@ -18,6 +17,7 @@ use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
 use StefanFisk\PhpReact\Support\Htmlable;
+use StefanFisk\PhpReact\Tests\TestCase;
 use Throwable;
 use stdClass;
 
@@ -378,7 +378,7 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
-    public function testAppliesAttributeMiddlewaresInOrder(): void
+    public function testChainsAttributeMiddlewares(): void
     {
         $this->markTestIncomplete();
     }

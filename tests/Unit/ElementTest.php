@@ -6,9 +6,9 @@ namespace StefanFisk\PhpReact\Tests\Unit;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Components\Fragment;
 use StefanFisk\PhpReact\Element;
+use StefanFisk\PhpReact\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(Element::class)]

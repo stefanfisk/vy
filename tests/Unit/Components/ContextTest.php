@@ -6,12 +6,12 @@ namespace StefanFisk\PhpReact\Unit\Components;
 
 use Error;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Components\Context;
 use StefanFisk\PhpReact\Hooks\ContextHook;
 use StefanFisk\PhpReact\Hooks\ContextProviderHook;
 use StefanFisk\PhpReact\Tests\Support\FooContext;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksHookHandlerTrait;
+use StefanFisk\PhpReact\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(Context::class)]

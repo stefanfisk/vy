@@ -6,9 +6,9 @@ namespace StefanFisk\PhpReact\Tests\Unit;
 
 use AssertionError;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Rendering\Queue;
+use StefanFisk\PhpReact\Tests\TestCase;
 
 #[CoversClass(Queue::class)]
 class QueueTest extends TestCase

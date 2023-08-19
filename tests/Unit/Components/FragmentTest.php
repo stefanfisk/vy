@@ -6,8 +6,8 @@ namespace StefanFisk\PhpReact\Unit\Components;
 
 use Error;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 use StefanFisk\PhpReact\Components\Fragment;
+use StefanFisk\PhpReact\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(Fragment::class)]
