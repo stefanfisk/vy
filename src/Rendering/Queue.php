@@ -5,24 +5,19 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Rendering;
 
 use function array_search;
-use function array_shift;
 use function array_splice;
 use function assert;
-use function usort;
+use function count;
 
 /**
  * A simple priority queue.
  *
  * Nodes with lower depth are returned first. Nodes of equal depth are returned in insertion order.
- *
- * Since insertions and removals are assumed to happen in bulk sorting is deferred until the next poll.
  */
 class Queue
 {
     /** @var list<Node> */
     private array $queue = [];
-
-    private bool $isSorted = false;
 
     public function insert(Node $node): void
     {
@@ -35,8 +30,6 @@ class Queue
         $this->queue[] = $node;
 
         $node->state |= Node::STATE_ENQUEUED;
-
-        $this->isSorted = false;
     }
 
     public function remove(Node $node): void
@@ -62,19 +55,30 @@ class Queue
             return null;
         }
 
-        if (!$this->isSorted) {
-            usort($this->queue, fn (Node $a, Node $b): int => $a->depth <=> $b->depth);
+        // Find the first node with the lowest depth and render it
 
-            $this->isSorted = true;
+        $count = count($this->queue);
+        $i = 0;
+        $a = $this->queue[$i];
+
+        for ($j = 1; $j < $count; $j++) {
+            $b = $this->queue[$j];
+
+            if ($a->depth <= $b->depth) {
+                continue;
+            }
+
+            $i = $j;
+            $a = $b;
         }
 
-        $node = array_shift($this->queue);
+        array_splice($this->queue, $i, 1);
 
-        assert((bool) ($node->state & Node::STATE_ENQUEUED));
-        assert(!($node->state & Node::STATE_UNMOUNTED));
+        assert((bool) ($a->state & Node::STATE_ENQUEUED));
+        assert(!($a->state & Node::STATE_UNMOUNTED));
 
-        $node->state &= ~Node::STATE_ENQUEUED;
+        $a->state &= ~Node::STATE_ENQUEUED;
 
-        return $node;
+        return $a;
     }
 }
