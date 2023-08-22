@@ -92,6 +92,18 @@ class Renderer implements HookHandlerInterface
     {
         assert(!($node->state & Node::STATE_UNMOUNTED));
 
+        if ($node->component) {
+            $this->renderComponent($node);
+        } else {
+            $this->renderTag($node);
+        }
+    }
+
+    private function renderComponent(Node $node): void
+    {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+        assert($node->component !== null);
+
         if (!$this->needsRender($node)) {
             return;
         }
@@ -103,8 +115,6 @@ class Renderer implements HookHandlerInterface
         assert($node->props !== null);
 
         $renderChildren = null;
-
-        $component = $node->component ?: fn (mixed ...$props): mixed => $props['children'] ?? null;
 
         try {
             Hook::pushHandler($this);
@@ -124,7 +134,7 @@ class Renderer implements HookHandlerInterface
 
                 reset($node->hooks);
 
-                $renderChildren = $component(...$node->props);
+                $renderChildren = ($node->component)(...$node->props);
 
                 $node->state &= ~Node::STATE_INITIAL;
 
@@ -209,6 +219,38 @@ class Renderer implements HookHandlerInterface
         foreach ($diff->nodesToUnmount as $oldNode) {
             $this->unmount($oldNode);
         }
+    }
+
+    private function renderTag(Node $node): void
+    {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+        assert($node->component === null);
+
+        if (!$this->needsRender($node)) {
+            return;
+        }
+
+        if ($node->nextProps !== null) {
+            $node->props = $node->nextProps;
+            $node->nextProps = null;
+        }
+        assert($node->props !== null);
+
+        $node->state &= ~Node::STATE_INITIAL;
+
+        $oldChildren = $node->children;
+
+        $renderChildren = $node->props['children'] ?? null;
+        $renderChildren = Element::toChildArray($renderChildren);
+
+        $newChildren = $this->differ->diffChildren(
+            renderer: $this,
+            parent: $node,
+            oldChildren: $oldChildren,
+            renderChildren: $renderChildren,
+        );
+
+        $node->children = $newChildren;
     }
 
     /** @param class-string<Hook> $class */
