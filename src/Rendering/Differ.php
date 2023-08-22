@@ -19,6 +19,13 @@ class Differ
      */
     public function diffChildren(Node $parent, array $oldChildren, array $renderChildren): Diff
     {
+        if (!$oldChildren) {
+            return $this->createInitialChildren(
+                parent: $parent,
+                renderChildren: $renderChildren,
+            );
+        }
+
         // Index the old children
 
         /** @var list<Node> $oldChildNodes */
@@ -122,6 +129,42 @@ class Differ
         return new Diff(
             newChildren: $newChildren,
             nodesToUnmount: $nodesToUnmount,
+        );
+    }
+
+    /**
+     * @param list<mixed> $renderChildren
+     */
+    private function createInitialChildren(Node $parent, array $renderChildren): Diff
+    {
+        /** array<string,Element> $keyToRenderChild */
+        $keyToRenderChild = [];
+
+        $newChildren = [];
+
+        foreach ($renderChildren as $renderChild) {
+            if ($renderChild instanceof Element && $renderChild->key) {
+                if (isset($keyToRenderChild[$renderChild->key])) {
+                    throw new DuplicateKeyException(
+                        message: $renderChild->key,
+                        el1: $keyToRenderChild[$renderChild->key],
+                        el2: $renderChild,
+                        parentNode: $parent,
+                    );
+                }
+
+                $keyToRenderChild[$renderChild->key] = $renderChild;
+            }
+
+            $newChildren[] = new DiffChild(
+                oldChild: null,
+                renderChild: $renderChild,
+            );
+        }
+
+        return new Diff(
+            newChildren: $newChildren,
+            nodesToUnmount: [],
         );
     }
 }
