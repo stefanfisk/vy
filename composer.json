@@ -20,6 +20,7 @@
         "psr/container": "^2.0"
     },
     "require-dev": {
+        "masterminds/html5": "^2.8",
         "ramsey/devtools": "^2.0"
     },
     "minimum-stability": "dev",
