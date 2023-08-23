@@ -43,7 +43,7 @@ class PhpReact
     {
         $node = $this->renderer->createNode(parent: null, el: $el);
 
-        $this->renderer->giveNodeNextProps(node: $node, nextProps: $el->props);
+        $this->renderer->enqueueRender($node);
 
         $this->renderer->processRenderQueue();
 
