@@ -7,19 +7,19 @@ namespace StefanFisk\PhpReact\Tests\Unit\Rendering;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\DuplicateKeyException;
+use StefanFisk\PhpReact\Rendering\DiffChild;
 use StefanFisk\PhpReact\Rendering\Differ;
 use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MocksRendererTrait;
+use StefanFisk\PhpReact\Tests\Support\DebugObject;
 use StefanFisk\PhpReact\Tests\TestCase;
-use stdClass;
 
 use function StefanFisk\PhpReact\el;
+use function array_map;
 
 #[CoversClass(Differ::class)]
 class DifferTest extends TestCase
 {
-    use MocksRendererTrait;
     use CreatesStubNodesTrait;
 
     private Node $parent;
@@ -38,182 +38,184 @@ class DifferTest extends TestCase
     }
 
     /**
-     * @param list<mixed> $newChildren
+     * @param list<array{mixed,mixed}> $newChildren
+     * @param list<Node> $nodesToUnmount
      * @param list<mixed> $oldChildren
      * @param list<mixed> $renderChildren
      */
-    private function assertDiffMatches(array $newChildren, array $oldChildren, array $renderChildren): void
-    {
-        $this->assertSame(
-            $newChildren,
-            $this->differ->diffChildren(
-                renderer: $this->renderer,
-                parent: $this->parent,
-                oldChildren: $oldChildren,
-                renderChildren: $renderChildren,
+    private function assertDiffMatches(
+        array $oldChildren,
+        array $renderChildren,
+        array $newChildren,
+        array $nodesToUnmount,
+    ): void {
+        $expected = [
+            'newChildren' => array_map(
+                fn ($child) => [
+                    'oldChild' => $child[0],
+                    'renderChild' => $child[1],
+                ],
+                $newChildren,
             ),
+            'nodesToUnmount' => $nodesToUnmount,
+        ];
+
+        $result = $this->differ->diffChildren(
+            parent: $this->parent,
+            oldChildren: $oldChildren,
+            renderChildren: $renderChildren,
         );
+        $actual = [
+            'newChildren' => array_map(
+                fn (DiffChild $child) => [
+                    'oldChild' => $child->oldChild,
+                    'renderChild' => $child->renderChild,
+                ],
+                $result->newChildren,
+            ),
+            'nodesToUnmount' => $result->nodesToUnmount,
+        ];
+
+        $this->assertSame($expected, $actual);
     }
 
-    public function testDoesWhenBothOldAndRenderChildrenAreEmpty(): void
+    public function testEmptyInputs(): void
     {
         $this->assertDiffMatches(
-            newChildren: [],
             oldChildren: [],
             renderChildren: [],
+            newChildren: [],
+            nodesToUnmount: [],
         );
     }
 
     public function testReturnsNonNodeItems(): void
     {
-        $value1 = new stdClass();
-        $value2 = new stdClass();
+        $value1 = new DebugObject('1');
+        $value2 = new DebugObject('2');
 
         $this->assertDiffMatches(
-            newChildren: [$value1, $value2],
             oldChildren: [],
             renderChildren: [$value1, $value2],
+            newChildren: [
+                [null, $value1],
+                [null, $value2],
+            ],
+            nodesToUnmount: [],
         );
     }
 
     public function testRemovesOldNonNodeValues(): void
     {
-        $value1 = new stdClass();
-        $value2 = new stdClass();
-        $value3 = new stdClass();
+        $value1 = new DebugObject('1');
+        $value2 = new DebugObject('2');
+        $value3 = new DebugObject('3');
 
         $this->assertDiffMatches(
-            newChildren: [$value1, $value3],
             oldChildren: [$value1, $value2, $value3],
             renderChildren: [$value1, $value3],
+            newChildren: [
+                [null, $value1],
+                [null, $value3],
+            ],
+            nodesToUnmount: [],
         );
     }
 
     public function testRemovesInsertNewNonNodeValues(): void
     {
-        $value1 = new stdClass();
-        $value2 = new stdClass();
-        $value3 = new stdClass();
+        $value1 = new DebugObject('1');
+        $value2 = new DebugObject('2');
+        $value3 = new DebugObject('3');
 
         $this->assertDiffMatches(
-            newChildren: [$value1, $value2, $value3],
             oldChildren: [$value1, $value3],
             renderChildren: [$value1, $value2, $value3],
+            newChildren: [
+                [null, $value1],
+                [null, $value2],
+                [null, $value3],
+            ],
+            nodesToUnmount: [],
         );
     }
 
-    public function testCreatesNodesForNewElements(): void
+    public function testReturnsNullForNewElements(): void
     {
-        $props = ['foo' => 'bar', new stdClass(), 'children' => 'baz'];
-        $el = el('div', $props);
-        $node = $this->createStubNode();
-
-        $this->renderer
-            ->shouldReceive('createNode')
-            ->once()
-            ->with($this->parent, $el)
-            ->andReturn($node);
-
-        $this->renderer
-            ->shouldReceive('giveNodeNextProps')
-            ->once()
-            ->with($node, $props);
+        $el = el('div');
 
         $this->assertDiffMatches(
-            newChildren: ['foo', $node, 'bar'],
             oldChildren: ['foo', 'bar'],
             renderChildren: ['foo', $el, 'bar'],
+            newChildren: [
+                [null, 'foo'],
+                [null, $el],
+                [null, 'bar'],
+            ],
+            nodesToUnmount: [],
         );
     }
 
     public function testReusesNodesForElementsWithSameTypeAndIndexWhenAllAreIndexed(): void
     {
-        $type = new stdClass();
-        $props = ['foo' => 'bar', new stdClass(), 'children' => 'baz'];
-        $el = el($type, $props);
+        $el = el('div');
         $node = $this->createStubNode(
-            type: $type,
+            type: 'div',
         );
 
-        $this->renderer
-            ->shouldReceive('giveNodeNextProps')
-            ->once()
-            ->with($node, $props);
-
         $this->assertDiffMatches(
-            newChildren: ['foo', $node, 'bar'],
             oldChildren: ['foo', $node, 'bar'],
             renderChildren: ['foo', $el, 'bar'],
+            newChildren: [
+                [null, 'foo'],
+                [$node, $el],
+                [null, 'bar'],
+            ],
+            nodesToUnmount: [],
         );
     }
 
     public function testDoesNotReuseNodesForElementsWithDifferentType(): void
     {
-        $type1 = new stdClass();
         $node1 = $this->createStubNode(
-            type: $type1,
+            type: '1',
         );
 
-        $type2 = new stdClass();
-        $props = ['foo' => 'bar', new stdClass(), 'children' => 'baz'];
-        $el2 = el($type2, $props);
-        $node2 = $this->createStubNode(
-            type: $type2,
-        );
-
-        $this->renderer
-            ->shouldReceive('createNode')
-            ->once()
-            ->with($this->parent, $el2)
-            ->andReturn($node2);
-
-        $this->renderer
-            ->shouldReceive('giveNodeNextProps')
-            ->once()
-            ->with($node2, $props);
-
-        $this->renderer
-            ->shouldReceive('unmount')
-            ->once()
-            ->with($node1);
+        $el2 = new Element(key: null, type: '2', props: []);
 
         $this->assertDiffMatches(
-            newChildren: ['foo', $node2, 'bar'],
             oldChildren: ['foo', $node1, 'bar'],
             renderChildren: ['foo', $el2, 'bar'],
+            newChildren: [
+                [null, 'foo'],
+                [null, $el2],
+                [null, 'bar'],
+            ],
+            nodesToUnmount: [$node1],
         );
     }
 
     public function testReusesNodesForElementsWithSameTypeWhenSomeAreKeyed(): void
     {
-        $node1 = $this->createStubNode(key: null, type: 'type1');
-        $node2 = $this->createStubNode(key: '2', type: 'type2');
-        $node3 = $this->createStubNode(key: null, type: 'type3');
+        $node1 = $this->createStubNode(key: null, type: '1');
+        $node2 = $this->createStubNode(key: '2', type: '2');
+        $node3 = $this->createStubNode(key: null, type: '3');
 
-        $props = ['foo' => 'bar', new stdClass(), 'children' => 'baz'];
-        $el1 = new Element(key: null, type: 'type1', props: $props);
-        $el2 = new Element(key: '2', type: 'type2', props: $props);
-        $el3 = new Element(key: null, type: 'type3', props: $props);
-
-        $this->renderer
-            ->shouldReceive('giveNodeNextProps')
-            ->once()
-            ->with($node2, $props);
-
-        $this->renderer
-            ->shouldReceive('giveNodeNextProps')
-            ->once()
-            ->with($node1, $props);
-
-        $this->renderer
-            ->shouldReceive('giveNodeNextProps')
-            ->once()
-            ->with($node3, $props);
+        $el1 = new Element(key: null, type: '1', props: []);
+        $el2 = new Element(key: '2', type: '2', props: []);
+        $el3 = new Element(key: null, type: '3', props: []);
 
         $this->assertDiffMatches(
-            newChildren: ['foo', $node2, $node1, $node3, 'bar'],
             oldChildren: ['foo', $node1, $node2, $node3, 'bar'],
             renderChildren:['foo', $el2, $el1, $el3, 'bar'],
+            newChildren: [
+                [null, 'foo'],
+                [$node2, $el2],
+                [$node1, $el1],
+                [$node3, $el3],
+                [null, 'bar'],
+            ],
+            nodesToUnmount: [],
         );
     }
 
@@ -230,7 +232,6 @@ class DifferTest extends TestCase
         $this->expectException(DuplicateKeyException::class);
 
         $this->differ->diffChildren(
-            renderer: $this->renderer,
             parent: $this->parent,
             oldChildren: [],
             renderChildren: [$el1, $el2],

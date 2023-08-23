@@ -102,7 +102,6 @@ class Renderer implements HookHandlerInterface
         }
         assert($node->props !== null);
 
-        $oldChildren = $node->children;
         $renderChildren = null;
 
         $component = $node->component ?: fn (mixed ...$props): mixed => $props['children'] ?? null;
@@ -160,14 +159,56 @@ class Renderer implements HookHandlerInterface
 
         $renderChildren = Element::toChildArray($renderChildren);
 
-        $newChildren = $this->differ->diffChildren(
-            renderer: $this,
+        $this->diffChildren($node, $renderChildren);
+    }
+
+    private function diffChildren(Node $node, mixed $renderChildren): void
+    {
+        $renderChildren = Element::toChildArray($renderChildren);
+
+        $diff = $this->differ->diffChildren(
             parent: $node,
-            oldChildren: $oldChildren,
+            oldChildren: $node->children,
             renderChildren: $renderChildren,
         );
 
+        $newChildren = [];
+
+        foreach ($diff->newChildren as $diffChild) {
+            $renderChild = $diffChild->renderChild;
+            $newChild = $diffChild->oldChild;
+
+            if (!$newChild) {
+                if ($renderChild instanceof Element) {
+                    $newChild = $this->createNode(
+                        parent: $node,
+                        el: $renderChild,
+                    );
+
+                    $this->giveNodeNextProps(
+                        node: $newChild,
+                        nextProps: $renderChild->props,
+                    );
+                } else {
+                    $newChild = $renderChild;
+                }
+            } else {
+                assert($renderChild instanceof Element);
+
+                $this->giveNodeNextProps(
+                    node: $newChild,
+                    nextProps: $renderChild->props,
+                );
+            }
+
+            $newChildren[] = $newChild;
+        }
+
         $node->children = $newChildren;
+
+        foreach ($diff->nodesToUnmount as $oldNode) {
+            $this->unmount($oldNode);
+        }
     }
 
     /** @param class-string<Hook> $class */

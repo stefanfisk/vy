@@ -16,23 +16,28 @@ class Differ
     /**
      * @param list<mixed> $oldChildren
      * @param list<mixed> $renderChildren
-     *
-     * @return list<mixed>
      */
-    public function diffChildren(Renderer $renderer, Node $parent, array $oldChildren, array $renderChildren): array
+    public function diffChildren(Node $parent, array $oldChildren, array $renderChildren): Diff
     {
         // Index the old children
 
+        /** @var list<Node> $oldChildNodes */
+        $oldChildNodes = [];
         /** @var array<string,Node> $oldKeyToChild */
         $oldKeyToChild = [];
         /** @var list<mixed> $oldIToChild */
         $oldIToChild = [];
 
         foreach ($oldChildren as $child) {
-            if ($child instanceof Node && $child->key) {
-                assert(!isset($oldKeyToChild[$child->key]));
+            if ($child instanceof Node) {
+                $oldChildNodes[] = $child;
+                if ($child->key) {
+                    assert(!isset($oldKeyToChild[$child->key]));
 
-                $oldKeyToChild[$child->key] = $child;
+                    $oldKeyToChild[$child->key] = $child;
+                } else {
+                    $oldIToChild[] = $child;
+                }
             } else {
                 $oldIToChild[] = $child;
             }
@@ -66,21 +71,33 @@ class Differ
 
         // Diff the children
 
-        /** @var list<mixed> $newChildren */
+        /** @var list<Node> $newChildNodes */
+        $newChildNodes = [];
+        /** @var list<DiffChild> $newChildren */
         $newChildren = [];
 
         foreach ($renderChildren as $i => $renderChild) {
-            $oldChild = null;
+            $oldChildCandidate = null;
 
             if ($renderChild instanceof Element && $renderChild->key) {
-                $oldChild = $oldKeyToChild[$renderChild->key] ?? null;
+                $oldChildCandidate = $oldKeyToChild[$renderChild->key] ?? null;
             } else {
-                $oldChild = $oldIToChild[$renderChildIToChildI[$i]] ?? null;
+                $oldChildCandidate = $oldIToChild[$renderChildIToChildI[$i]] ?? null;
             }
 
-            $newChild = $this->diffChild(
-                renderer: $renderer,
-                parent: $parent,
+            $oldChild = null;
+
+            if (
+                $renderChild instanceof Element
+                && $oldChildCandidate instanceof Node
+                && $oldChildCandidate->type === $renderChild->type
+            ) {
+                $oldChild = $oldChildCandidate;
+
+                $newChildNodes[] = $oldChild;
+            }
+
+            $newChild = new DiffChild(
                 oldChild: $oldChild,
                 renderChild: $renderChild,
             );
@@ -88,48 +105,23 @@ class Differ
             $newChildren[] = $newChild;
         }
 
-        // Unmount new orphans
+        // Nodes to unmount
 
-        foreach ($oldChildren as $oldChild) {
-            if (!$oldChild instanceof Node || in_array($oldChild, $newChildren)) {
+        $nodesToUnmount = [];
+
+        foreach ($oldChildNodes as $oldChild) {
+            if (in_array($oldChild, $newChildNodes)) {
                 continue;
             }
 
-            $renderer->unmount($oldChild);
+            $nodesToUnmount[] = $oldChild;
         }
 
         // Done
 
-        return $newChildren;
-    }
-
-    private function diffChild(Renderer $renderer, Node $parent, mixed $oldChild, mixed $renderChild): mixed
-    {
-        $newChild = null;
-
-        if (
-            $oldChild instanceof Node
-            && $renderChild instanceof Element
-            && $oldChild->type === $renderChild->type
-        ) {
-            $newChild = $oldChild;
-
-            $renderer->giveNodeNextProps($newChild, $renderChild->props);
-        }
-
-        if (! $newChild) {
-            if ($renderChild instanceof Element) {
-                $newChild = $renderer->createNode(
-                    el: $renderChild,
-                    parent: $parent,
-                );
-
-                $renderer->giveNodeNextProps($newChild, $renderChild->props);
-            } else {
-                $newChild = $renderChild;
-            }
-        }
-
-        return $newChild;
+        return new Diff(
+            newChildren: $newChildren,
+            nodesToUnmount: $nodesToUnmount,
+        );
     }
 }
