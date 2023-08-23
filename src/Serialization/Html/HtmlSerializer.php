@@ -80,7 +80,7 @@ class HtmlSerializer implements SerializerInterface
     {
         $this->output = '';
 
-        $this->serializeNode($node);
+        $this->serializeNode($node, false);
 
         $output = $this->output;
 
@@ -89,27 +89,27 @@ class HtmlSerializer implements SerializerInterface
         return $output;
     }
 
-    private function serializeChild(mixed $child, Node $parent): void
+    private function serializeChild(mixed $child, Node $parent, bool $isSvgMode): void
     {
         if ($child instanceof Node) {
-            $this->serializeNode($child);
+            $this->serializeNode($child, $isSvgMode);
         } else {
-            $this->serializeValue($child, $parent);
+            $this->serializeValue($child, $parent, $isSvgMode);
         }
     }
 
-    private function serializeNode(Node $node): void
+    private function serializeNode(Node $node, bool $isSvgMode): void
     {
         assert($node->state === Node::STATE_NONE);
 
         if (is_string($node->type) && !$node->component) {
-            $this->serializeTagNode($node);
+            $this->serializeTagNode($node, $isSvgMode);
         } else {
-            $this->serializeChildren($node->children, $node);
+            $this->serializeChildren($node->children, $node, $isSvgMode);
         }
     }
 
-    private function serializeTagNode(Node $node): void
+    private function serializeTagNode(Node $node, bool $isSvgMode): void
     {
         assert(is_string($node->type));
 
@@ -209,9 +209,17 @@ class HtmlSerializer implements SerializerInterface
             $this->output .= '"';
         }
 
+        if ($isSvgMode && !$node->children) {
+            $this->output .= ' />';
+
+            return;
+        }
+
         $this->output .= '>';
 
-        $this->serializeChildren($node->children, $node);
+        $childSvgMode = $name === 'svg' || ($name !== 'foreignObject' && $isSvgMode);
+
+        $this->serializeChildren($node->children, $node, $childSvgMode);
 
         if ($isVoid) {
             return;
@@ -222,7 +230,7 @@ class HtmlSerializer implements SerializerInterface
         $this->output .= '>';
     }
 
-    private function serializeValue(mixed $inValue, Node $parent): void
+    private function serializeValue(mixed $inValue, Node $parent, bool $isSvgMode): void
     {
         try {
             $value = $this->applyNodeValueMiddleware($inValue);
@@ -270,10 +278,10 @@ class HtmlSerializer implements SerializerInterface
     }
 
     /** @param list<mixed> $children */
-    private function serializeChildren(array $children, Node $parent): void
+    private function serializeChildren(array $children, Node $parent, bool $isSvgMode): void
     {
         foreach ($children as $child) {
-             $this->serializeChild($child, $parent);
+             $this->serializeChild($child, $parent, $isSvgMode);
         }
     }
 

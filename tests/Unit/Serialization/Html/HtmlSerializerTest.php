@@ -358,6 +358,36 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
+    public function testSelfClosesSvgChildren(): void
+    {
+        $this->assertRenderMatches(
+            '<svg width="190" height="160" xmlns="http://www.w3.org/2000/svg"><path d="M 130 60 C 120 80, 180 80, 170 60" stroke="black" fill="transparent" /></svg>', // phpcs:ignore Generic.Files.LineLength.TooLong
+            el('svg', [
+                'width' => 190,
+                'height' => 160,
+                'xmlns' => 'http://www.w3.org/2000/svg',
+            ], [
+                el('path', [
+                    'd' => 'M 130 60 C 120 80, 180 80, 170 60',
+                    'stroke' => 'black',
+                    'fill' => 'transparent',
+                ]),
+            ]),
+        );
+    }
+
+    public function testDoesNotSelfCloseSvgForeignObjectChildren(): void
+    {
+        $this->assertRenderMatches(
+            '<svg><foreignObject><div>Foo</div></foreignObject></svg>',
+            el('svg', [], [
+                el('foreignObject', [], [
+                    el('div', [], 'Foo'),
+                ]),
+            ]),
+        );
+    }
+
     public function testAppliesValueMiddlewaresInOrder(): void
     {
         $this->markTestIncomplete();
