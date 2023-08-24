@@ -5,59 +5,83 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use RuntimeException;
+use StefanFisk\PhpReact\Errors\RenderException;
 use StefanFisk\PhpReact\Hooks\Hook;
-use StefanFisk\PhpReact\Rendering\Node;
+use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksHookHandlerTrait;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksRendererTrait;
+use StefanFisk\PhpReact\Tests\Support\TestHook;
 use StefanFisk\PhpReact\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(Hook::class)]
 class HookTest extends TestCase
 {
+    use CreatesStubNodesTrait;
     use MocksHookHandlerTrait;
     use MocksRendererTrait;
 
     public function testUseWithCallsCurrentRendererUseHook(): void
     {
-        $node = new Node(
-            id: -1,
-            parent: null,
-            key: null,
-            type: null,
-            component: null,
-        );
         $arg0 = 'foo';
         $arg1 = new stdClass();
-        $ret = new stdClass();
-
-        $hook = new class (renderer: $this->renderer, node: $node) extends Hook {
-            public static function use(string $str, object $obj): object
-            {
-                return (object) static::useWith($str, $obj);
-            }
-
-            public function initialRender(mixed ...$args): mixed
-            {
-                throw new RuntimeException(__FUNCTION__ . ' must be mocked.');
-            }
-
-            public function rerender(mixed ...$args): mixed
-            {
-                throw new RuntimeException(__FUNCTION__ . ' must be mocked.');
-            }
-        };
 
         $this->hookHandler
             ->shouldReceive('useHook')
             ->once()
-            ->with($hook::class, $arg0, $arg1)
-            ->andReturn($ret);
+            ->with(TestHook::class, $arg0, $arg1)
+            ->andReturn($arg1);
 
         $this->assertSame(
-            $ret,
-            $hook::use($arg0, $arg1),
+            $arg1,
+            TestHook::use($arg0, $arg1),
         );
+    }
+
+    public function testUseWithThrowsWhenThereIsNoCurrentHandler(): void
+    {
+        Hook::popHandler();
+
+        $this->expectException(RenderException::class);
+
+        try {
+            TestHook::use();
+        } finally {
+            Hook::pushHandler($this->hookHandler);
+        }
+    }
+
+    public function testNeedsRenderReturnsFalse(): void
+    {
+        $hook = new TestHook(
+            renderer: $this->renderer,
+            node: $this->createStubNode(),
+        );
+
+        $this->assertFalse($hook->needsRender());
+    }
+
+    public function testAfterRenderDoesNothing(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        $hook = new TestHook(
+            renderer: $this->renderer,
+            node: $this->createStubNode(),
+        );
+
+        $hook->afterRender();
+    }
+
+    public function testUnmountDoesNothing(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        $hook = new TestHook(
+            renderer: $this->renderer,
+            node: $this->createStubNode(),
+        );
+
+        $hook->unmount();
     }
 }

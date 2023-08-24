@@ -26,9 +26,10 @@ trait MocksHookHandlerTrait
     #[After]
     protected function tearDownMocksHookHandlerTrait(): void
     {
-        $this->assertSame(
-            $this->hookHandler,
-            Hook::popHandler(),
-        );
+        if (Hook::getHandler() !== $this->hookHandler) {
+            $this->assertSame($this->hookHandler, Hook::getHandler());
+        }
+
+        Hook::popHandler();
     }
 }
