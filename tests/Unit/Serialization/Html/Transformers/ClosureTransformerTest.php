@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
+namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Transformers;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use RuntimeException;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\ClosureMiddleware;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\ClosureTransformer;
 use StefanFisk\PhpReact\Tests\TestCase;
 use Throwable;
 use UnexpectedValueException;
@@ -15,14 +15,14 @@ use stdClass;
 use function ob_get_level;
 use function ob_start;
 
-#[CoversClass(ClosureMiddleware::class)]
-class ClosureMiddlewareTest extends TestCase
+#[CoversClass(ClosureTransformer::class)]
+class ClosureTransformerTest extends TestCase
 {
-    private ClosureMiddleware $middleware;
+    private ClosureTransformer $transformer;
 
     protected function setUp(): void
     {
-        $this->middleware = new ClosureMiddleware();
+        $this->transformer = new ClosureTransformer();
     }
 
     public function testIgnoresNonClosures(): void
@@ -31,7 +31,7 @@ class ClosureMiddlewareTest extends TestCase
 
         $this->assertSame(
             $value,
-            $this->middleware->transformValue($value),
+            $this->transformer->transformValue($value),
         );
     }
 
@@ -45,7 +45,7 @@ class ClosureMiddlewareTest extends TestCase
 
         $this->expectException(UnexpectedValueException::class);
 
-        $this->middleware->transformValue($value);
+        $this->transformer->transformValue($value);
     }
 
     public function testReturnsOutput(): void
@@ -56,7 +56,7 @@ class ClosureMiddlewareTest extends TestCase
 
         $this->assertSame(
             'foo',
-            $this->middleware->transformValue($value),
+            $this->transformer->transformValue($value),
         );
     }
 
@@ -66,7 +66,7 @@ class ClosureMiddlewareTest extends TestCase
 
         $this->assertSame(
             'foo',
-            $this->middleware->transformValue($value),
+            $this->transformer->transformValue($value),
         );
     }
 
@@ -81,7 +81,7 @@ class ClosureMiddlewareTest extends TestCase
         $obLevel = ob_get_level();
 
         try {
-            $this->middleware->transformValue($value);
+            $this->transformer->transformValue($value);
         } catch (Throwable $e) {
         }
 

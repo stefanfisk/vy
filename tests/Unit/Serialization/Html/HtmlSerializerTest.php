@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html;
 
-use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
-use StefanFisk\PhpReact\Errors\InvalidNodeValueException;
+use StefanFisk\PhpReact\Errors\InvalidChildValueException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\AttributeValueTransformerInterface;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\ChildValueTransformerInterface;
 use StefanFisk\PhpReact\Serialization\Html\UnsafeHtml;
 use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
 use StefanFisk\PhpReact\Tests\TestCase;
@@ -33,7 +32,7 @@ class HtmlSerializerTest extends TestCase
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            middlewares: [],
+            transformers: [],
         );
 
         $actual = $serializer->serialize($node);
@@ -47,7 +46,7 @@ class HtmlSerializerTest extends TestCase
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            middlewares: [],
+            transformers: [],
         );
 
         $this->expectException($exception);
@@ -182,7 +181,7 @@ class HtmlSerializerTest extends TestCase
     public function testThrowsForUnknownChildType(): void
     {
         $this->assertRenderThrows(
-            InvalidNodeValueException::class,
+            InvalidChildValueException::class,
             el('div', [], new stdClass()),
         );
     }
@@ -275,23 +274,23 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
-    public function testChainsAttributeMiddlewares(): void
+    public function testChainsAttributeTransformers(): void
     {
         $this->markTestIncomplete();
     }
 
-    public function testThrowsWhenAttributeMiddlewareThrows(): void
+    public function testThrowsWhenAttributeTransformerThrows(): void
     {
         $el = el('div', ['foo' => new stdClass()]);
 
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            middlewares: [
-                new class implements HtmlAttributeValueMiddlewareInterface {
-                    public function processAttributeValue(string $name, mixed $value, Closure $next): mixed
+            transformers: [
+                new class implements AttributeValueTransformerInterface {
+                    public function processAttributeValue(string $name, mixed $value): mixed
                     {
-                        throw new RuntimeException('Middleware failed.');
+                        throw new RuntimeException('Transformer failed.');
                     }
                 },
             ],
@@ -332,7 +331,7 @@ class HtmlSerializerTest extends TestCase
     public function testDoesThrowsIfRawTextElementsHasScalarChildren(string $tagName): void
     {
         $this->assertRenderThrows(
-            InvalidNodeValueException::class,
+            InvalidChildValueException::class,
             el($tagName, [], 'foo'),
         );
     }
@@ -388,29 +387,29 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
-    public function testAppliesValueMiddlewaresInOrder(): void
+    public function testAppliesValueTransformersInOrder(): void
     {
         $this->markTestIncomplete();
     }
 
-    public function testThrowsWhenValueMiddlewareThrows(): void
+    public function testThrowsWhenValueTransformerThrows(): void
     {
         $el = el('div', [], new stdClass());
 
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            middlewares: [
-                new class implements HtmlNodeValueMiddlewareInterface {
-                    public function processNodeValue(mixed $value, Closure $next): mixed
+            transformers: [
+                new class implements ChildValueTransformerInterface {
+                    public function processChildValue(mixed $value): mixed
                     {
-                        throw new RuntimeException('Middleware failed.');
+                        throw new RuntimeException('Transformer failed.');
                     }
                 },
             ],
         );
 
-        $this->expectException(InvalidNodeValueException::class);
+        $this->expectException(InvalidChildValueException::class);
 
         $serializer->serialize($node);
     }

@@ -11,10 +11,10 @@ use StefanFisk\PhpReact\Parsing\HtmlParser;
 use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Rendering\Renderer;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\ClassAttributeMiddleware;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\ClosureMiddleware;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\StringableMiddleware;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\StyleAttributeMiddleware;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\ClassAttributeTransformer;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\ClosureTransformer;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\StringableTransformer;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\StyleAttributeTransformer;
 
 use function array_sum;
 use function assert;
@@ -28,7 +28,7 @@ use function microtime;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-$testIds = explode(',', $argv[1] ?? 'parse,render,serialize-no-middleware,serialize');
+$testIds = explode(',', $argv[1] ?? 'parse,render,serialize-no-transformer,serialize');
 $iterations = $argv[2] ?? 100;
 
 echo "$iterations iterations...\n";
@@ -78,7 +78,7 @@ $tests = [
             $html5->saveHTML($doc);
         },
     ],
-    'serialize-no-middleware' => [
+    'serialize-no-transformer' => [
         function () use ($exampleHtml) {
             $parser = new HtmlParser();
             $el = $parser->parseDocument($exampleHtml);
@@ -92,7 +92,7 @@ $tests = [
 
             $renderer->processRenderQueue();
 
-            $serializer = new HtmlSerializer(middlewares: []);
+            $serializer = new HtmlSerializer(transformers: []);
 
             return [$serializer, $node];
         },
@@ -114,11 +114,11 @@ $tests = [
 
             $renderer->processRenderQueue();
 
-            $serializer = new HtmlSerializer(middlewares: [
-                new ClosureMiddleware(),
-                new StringableMiddleware(),
-                new ClassAttributeMiddleware(),
-                new StyleAttributeMiddleware(),
+            $serializer = new HtmlSerializer(transformers: [
+                new ClosureTransformer(),
+                new StringableTransformer(),
+                new ClassAttributeTransformer(),
+                new StyleAttributeTransformer(),
             ]);
 
             return [$serializer, $node];

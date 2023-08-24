@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Serialization\Html\Middleware;
+namespace StefanFisk\PhpReact\Serialization\Html\Transformers;
 
-use Closure;
 use InvalidArgumentException;
 
 use function array_filter;
@@ -21,18 +20,16 @@ use function is_string;
 use function sort;
 use function sprintf;
 
-class ClassAttributeMiddleware implements HtmlAttributeValueMiddlewareInterface
+class ClassAttributeTransformer implements AttributeValueTransformerInterface
 {
     /** {@inheritDoc} */
-    public function processAttributeValue(string $name, mixed $value, Closure $next): mixed
+    public function processAttributeValue(string $name, mixed $value): mixed
     {
         if ($name !== 'class') {
-            return $next($value);
+            return $value;
         }
 
-        $value = $this->apply($value);
-
-        return $next($value);
+        return $this->apply($value);
     }
 
     private function apply(mixed $classes): string | null

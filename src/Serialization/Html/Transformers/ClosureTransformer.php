@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Serialization\Html\Middleware;
+namespace StefanFisk\PhpReact\Serialization\Html\Transformers;
 
 use Closure;
 use Throwable;
@@ -13,7 +13,7 @@ use function ob_get_clean;
 use function ob_get_level;
 use function ob_start;
 
-class ClosureMiddleware extends TransformingMiddleware
+class ClosureTransformer extends ValueTransformer
 {
     public function transformValue(mixed $value): mixed
     {

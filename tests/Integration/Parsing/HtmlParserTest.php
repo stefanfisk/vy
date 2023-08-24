@@ -28,7 +28,7 @@ class HtmlParserTest extends TestCase
         /** @var Element $el */
         $el = $parser->parseDocument($exampleHtml);
 
-        $phpReact = new PhpReact(middlewares: []);
+        $phpReact = new PhpReact(transformers: []);
         $actual = $phpReact->render($el);
 
         $this->assertSame($expected, $actual);

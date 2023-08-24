@@ -105,7 +105,7 @@ class DifferTest extends TestCase
         );
     }
 
-    public function testRemovesOldNonNodeValues(): void
+    public function testRemovesOldNonChildValues(): void
     {
         $value1 = new DebugObject('1');
         $value2 = new DebugObject('2');
@@ -122,7 +122,7 @@ class DifferTest extends TestCase
         );
     }
 
-    public function testRemovesInsertNewNonNodeValues(): void
+    public function testRemovesInsertNewNonChildValues(): void
     {
         $value1 = new DebugObject('1');
         $value2 = new DebugObject('2');

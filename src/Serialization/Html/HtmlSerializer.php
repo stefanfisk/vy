@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace StefanFisk\PhpReact\Serialization\Html;
 
 use StefanFisk\PhpReact\Errors\InvalidAttributeException;
-use StefanFisk\PhpReact\Errors\InvalidNodeValueException;
+use StefanFisk\PhpReact\Errors\InvalidChildValueException;
 use StefanFisk\PhpReact\Errors\InvalidTagException;
 use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\AttributeValueTransformerInterface;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\ChildValueTransformerInterface;
 use StefanFisk\PhpReact\Serialization\SerializerInterface;
 use Throwable;
 
 use function array_filter;
-use function array_reverse;
 use function assert;
 use function gettype;
 use function is_float;
@@ -55,24 +54,24 @@ class HtmlSerializer implements SerializerInterface
         'xmp' => true,
     ];
 
-    /** @var array<HtmlAttributeValueMiddlewareInterface> */
-    private readonly array $attributeValueMiddleware;
-    /** @var array<HtmlNodeValueMiddlewareInterface> */
-    private readonly array $nodeValueMiddleware;
+    /** @var array<AttributeValueTransformerInterface> */
+    private readonly array $attributeValueTransformers;
+    /** @var array<ChildValueTransformerInterface> */
+    private readonly array $nodeValueTransformers;
 
     private string $output = '';
 
-    /** @param array<HtmlAttributeValueMiddlewareInterface|HtmlNodeValueMiddlewareInterface> $middlewares */
+    /** @param array<AttributeValueTransformerInterface|ChildValueTransformerInterface> $transformers */
     public function __construct(
-        array $middlewares,
+        array $transformers,
     ) {
-        $this->attributeValueMiddleware = array_filter(
-            $middlewares,
-            fn ($m) => $m instanceof HtmlAttributeValueMiddlewareInterface,
+        $this->attributeValueTransformers = array_filter(
+            $transformers,
+            fn ($m) => $m instanceof AttributeValueTransformerInterface,
         );
-        $this->nodeValueMiddleware = array_filter(
-            $middlewares,
-            fn ($m) => $m instanceof HtmlNodeValueMiddlewareInterface,
+        $this->nodeValueTransformers = array_filter(
+            $transformers,
+            fn ($m) => $m instanceof ChildValueTransformerInterface,
         );
     }
 
@@ -170,10 +169,10 @@ class HtmlSerializer implements SerializerInterface
             }
 
             try {
-                $attValue = $this->applyAttributeValueMiddleware($attName, $attValue);
+                $attValue = $this->applyAttributeValueTransformers($attName, $attValue);
             } catch (Throwable $e) {
                 throw new InvalidAttributeException(
-                    message: 'Failed to apply attribute middleware.',
+                    message: 'Failed to apply attribute transformer.',
                     node: $node,
                     name: $attName,
                     value: $attValue,
@@ -233,10 +232,10 @@ class HtmlSerializer implements SerializerInterface
     private function serializeValue(mixed $inValue, Node $parent, bool $isSvgMode): void
     {
         try {
-            $value = $this->applyNodeValueMiddleware($inValue);
+            $value = $this->applyChildValueTransformers($inValue);
         } catch (Throwable $e) {
-            throw new InvalidNodeValueException(
-                message: 'Failed to apply node value middleware.',
+            throw new InvalidChildValueException(
+                message: 'Failed to apply child value transformer.',
                 node: $parent,
                 inValue: $inValue,
                 value: null,
@@ -250,7 +249,7 @@ class HtmlSerializer implements SerializerInterface
 
         if (is_string($value) || is_int($value) || is_float($value)) {
             if (is_string($parent->type) && (self::RAW_TEXT_ELEMENTS[$parent->type] ?? false)) {
-                throw new InvalidNodeValueException(
+                throw new InvalidChildValueException(
                     message: sprintf(
                         '<%s> must only have HtmlableInterface children.',
                         $parent->type,
@@ -265,7 +264,7 @@ class HtmlSerializer implements SerializerInterface
         } elseif ($value instanceof HtmlableInterface) {
             $this->output .= $value->toHtml();
         } else {
-            throw new InvalidNodeValueException(
+            throw new InvalidChildValueException(
                 message: sprintf(
                     'Node value is of type `%s`, expected (string|int|float|HtmlableInterface|null).',
                     is_object($value) ? $value::class : gettype($value),
@@ -290,26 +289,22 @@ class HtmlSerializer implements SerializerInterface
         return preg_match('/[\s\n\\/=\'"\0<>]/', $name) === 1;
     }
 
-    private function applyAttributeValueMiddleware(string $name, mixed $value): mixed
+    private function applyAttributeValueTransformers(string $name, mixed $value): mixed
     {
-        $next = fn (mixed $value): mixed => $value;
-
-        foreach (array_reverse($this->attributeValueMiddleware) as $middleware) {
-            $next = fn (mixed $value): mixed => $middleware->processAttributeValue($name, $value, $next);
+        foreach ($this->attributeValueTransformers as $transformer) {
+            $value = $transformer->processAttributeValue($name, $value);
         }
 
-        return $next($value);
+        return $value;
     }
 
-    private function applyNodeValueMiddleware(mixed $value): mixed
+    private function applyChildValueTransformers(mixed $value): mixed
     {
-        $next = fn (mixed $value): mixed => $value;
-
-        foreach (array_reverse($this->nodeValueMiddleware) as $middleware) {
-            $next = fn (mixed $value): mixed => $middleware->processNodeValue($value, $next);
+        foreach ($this->nodeValueTransformers as $transformer) {
+            $value = $transformer->processChildValue($value);
         }
 
-        return $next($value);
+        return $value;
     }
 
     /**

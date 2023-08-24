@@ -6,13 +6,13 @@ namespace StefanFisk\PhpReact\Tests\Unit\Errors;
 
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Errors\InvalidNodeValueException;
+use StefanFisk\PhpReact\Errors\InvalidChildValueException;
 use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Tests\TestCase;
 use stdClass;
 
-#[CoversClass(InvalidNodeValueException::class)]
-class InvalidNodeValueExceptionTest extends TestCase
+#[CoversClass(InvalidChildValueException::class)]
+class InvalidChildValueExceptionTest extends TestCase
 {
     public function testConstructorsSetsProperties(): void
     {
@@ -29,7 +29,7 @@ class InvalidNodeValueExceptionTest extends TestCase
 
         $previous = new Exception();
 
-        $e = new InvalidNodeValueException(
+        $e = new InvalidChildValueException(
             message: 'Message.',
             node: $node,
             inValue: $inValue,

@@ -8,7 +8,7 @@ use StefanFisk\PhpReact\Rendering\Node;
 use Throwable;
 
 /** @psalm-api */
-class InvalidNodeValueException extends RenderException
+class InvalidChildValueException extends RenderException
 {
     public function __construct(
         string $message,

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Serialization\Html\Middleware;
+namespace StefanFisk\PhpReact\Serialization\Html\Transformers;
 
 use Stringable;
 
-class StringableMiddleware extends TransformingMiddleware
+class StringableTransformer extends ValueTransformer
 {
     public function transformValue(mixed $value): mixed
     {

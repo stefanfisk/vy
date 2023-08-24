@@ -9,34 +9,34 @@ use StefanFisk\PhpReact\Rendering\Comparator;
 use StefanFisk\PhpReact\Rendering\NodeFactory;
 use StefanFisk\PhpReact\Rendering\Renderer;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\ClassAttributeMiddleware;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\ClosureMiddleware;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlAttributeValueMiddlewareInterface;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\HtmlNodeValueMiddlewareInterface;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\StringableMiddleware;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\StyleAttributeMiddleware;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\AttributeValueTransformerInterface;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\ChildValueTransformerInterface;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\ClassAttributeTransformer;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\ClosureTransformer;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\StringableTransformer;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\StyleAttributeTransformer;
 
 class PhpReact
 {
     private readonly HtmlSerializer $serializer;
     private readonly Renderer $renderer;
 
-    /** @param array<HtmlAttributeValueMiddlewareInterface|HtmlNodeValueMiddlewareInterface> $middlewares */
+    /** @param array<AttributeValueTransformerInterface|ChildValueTransformerInterface> $transformers */
     public function __construct(
         ContainerInterface $container = new Container(),
         Comparator $comparator = new Comparator(),
-        array $middlewares = [
-            new ClosureMiddleware(),
-            new StringableMiddleware(),
-            new ClassAttributeMiddleware(),
-            new StyleAttributeMiddleware(),
+        array $transformers = [
+            new ClosureTransformer(),
+            new StringableTransformer(),
+            new ClassAttributeTransformer(),
+            new StyleAttributeTransformer(),
         ],
     ) {
         $this->renderer = new Renderer(
             nodeFactory: new NodeFactory(container: $container),
             comparator: $comparator,
         );
-        $this->serializer = new HtmlSerializer(middlewares: $middlewares);
+        $this->serializer = new HtmlSerializer(transformers: $transformers);
     }
 
     public function render(Element $el): string

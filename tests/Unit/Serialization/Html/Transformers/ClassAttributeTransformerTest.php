@@ -2,45 +2,34 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Middleware;
+namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Transformers;
 
 use InvalidArgumentException;
-use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Serialization\Html\Middleware\ClassAttributeMiddleware;
-use StefanFisk\PhpReact\Tests\Support\Mocks\Invokable;
+use StefanFisk\PhpReact\Serialization\Html\Transformers\ClassAttributeTransformer;
 use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
 use StefanFisk\PhpReact\Tests\TestCase;
 use stdClass;
 
-#[CoversClass(ClassAttributeMiddleware::class)]
-class ClassAttributeMiddlewareTest extends TestCase
+#[CoversClass(ClassAttributeTransformer::class)]
+class ClassAttributeTransformerTest extends TestCase
 {
     use MocksInvokablesTrait;
 
-    private ClassAttributeMiddleware $middleware;
-    private Invokable&MockInterface $next;
+    private ClassAttributeTransformer $transformer;
 
     protected function setUp(): void
     {
-        $this->middleware = new ClassAttributeMiddleware();
-        $this->next = $this->createMockInvokable();
+        $this->transformer = new ClassAttributeTransformer();
     }
 
-    private function assertClassEquals(string $expected, mixed $value): void
+    private function assertClassEquals(string | null $expected, mixed $value): void
     {
-        $this->next
-            ->shouldReceive('__invoke')
-            ->once()
-            ->with($expected)
-            ->andReturn($expected);
-
         $this->assertSame(
             $expected,
-            $this->middleware->processAttributeValue(
+            $this->transformer->processAttributeValue(
                 name: 'class',
                 value: $value,
-                next: $this->next->fn,
             ),
         );
     }
@@ -49,18 +38,11 @@ class ClassAttributeMiddlewareTest extends TestCase
     {
         $value = new stdClass();
 
-        $this->next
-            ->shouldReceive('__invoke')
-            ->once()
-            ->with($value)
-            ->andReturn($value);
-
         $this->assertSame(
             $value,
-            $this->middleware->processAttributeValue(
+            $this->transformer->processAttributeValue(
                 name: 'foo',
                 value: $value,
-                next: $this->next->fn,
             ),
         );
     }
@@ -69,10 +51,9 @@ class ClassAttributeMiddlewareTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->middleware->processAttributeValue(
+        $this->transformer->processAttributeValue(
             name: 'class',
             value: new stdClass(),
-            next: $this->next->fn,
         );
     }
 
@@ -80,21 +61,20 @@ class ClassAttributeMiddlewareTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->middleware->processAttributeValue(
+        $this->transformer->processAttributeValue(
             name: 'class',
             value: [new stdClass()],
-            next: $this->next->fn,
         );
     }
 
     public function testNull(): void
     {
-        $this->assertClassEquals('', null);
+        $this->assertClassEquals(null, null);
     }
 
     public function testEmptyString(): void
     {
-        $this->assertClassEquals('', '');
+        $this->assertClassEquals(null, '');
     }
 
     public function testSortsString(): void
