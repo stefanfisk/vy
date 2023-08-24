@@ -7,7 +7,6 @@ namespace StefanFisk\PhpReact\Errors;
 use StefanFisk\PhpReact\Rendering\Node;
 use Throwable;
 
-/** @psalm-api */
 class InvalidChildValueException extends RenderException
 {
     public function __construct(

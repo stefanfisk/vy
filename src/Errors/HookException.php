@@ -8,7 +8,6 @@ use StefanFisk\PhpReact\Hooks\Hook;
 use StefanFisk\PhpReact\Rendering\Node;
 use Throwable;
 
-/** @psalm-api */
 class HookException extends RenderException
 {
     /** @param class-string<Hook> $hook */

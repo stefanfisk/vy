@@ -7,7 +7,6 @@ namespace StefanFisk\PhpReact\Components;
 use StefanFisk\PhpReact\Hooks\ContextHook;
 use StefanFisk\PhpReact\Hooks\ContextProviderHook;
 
-/** @psalm-api */
 abstract class Context
 {
     public static function getDefaultValue(): mixed

@@ -10,8 +10,7 @@ use StefanFisk\PhpReact\Rendering\Node;
 
 /**
  * Thrown when render returns multiple children with the same key.
- *
- * @psalm-api */
+ */
 class DuplicateKeyException extends Exception
 {
     public function __construct(

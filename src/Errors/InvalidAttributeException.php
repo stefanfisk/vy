@@ -7,7 +7,6 @@ namespace StefanFisk\PhpReact\Errors;
 use StefanFisk\PhpReact\Rendering\Node;
 use Throwable;
 
-/** @psalm-api */
 class InvalidAttributeException extends RenderException
 {
     public function __construct(

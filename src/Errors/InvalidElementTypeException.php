@@ -11,8 +11,7 @@ use Throwable;
 
 /**
  * Thrown when encountering elements with an invalid type.
- *
- * @psalm-api */
+ */
 class InvalidElementTypeException extends Exception
 {
     public function __construct(

@@ -10,7 +10,6 @@ use Closure;
  * @param string|Closure|object|class-string $type
  * @param array<mixed> $props
  *
- * @psalm-api
  * @codeCoverageIgnore
  */
 // phpcs:ignore Squiz.Functions.GlobalFunction.Found

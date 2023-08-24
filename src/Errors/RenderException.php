@@ -8,7 +8,6 @@ use Exception;
 use StefanFisk\PhpReact\Rendering\Node;
 use Throwable;
 
-/** @psalm-api */
 class RenderException extends Exception
 {
     public function __construct(
