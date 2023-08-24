@@ -3,6 +3,13 @@
 set -e
 
 TAG=stefanfisk/php-spx:latest
+NAME=stefanfisk-php-spx
+ARGS="$@"
+
+if [[ $# -ne 0 ]] ; then
+    NAME="$NAME-$(date +%s)"
+    ARGS="php $ARGS"
+fi
 
 docker build \
     --quiet \
@@ -60,5 +67,6 @@ docker run \
     --env SPX_TRACE_SAFE=${SPX_TRACE_SAFE} \
     --env SPX_TRACE_FILE=${SPX_TRACE_FILE} \
     --volume "$(pwd)":/var/php \
+    --name $NAME \
     $TAG \
-    "$@"
+    $ARGS
