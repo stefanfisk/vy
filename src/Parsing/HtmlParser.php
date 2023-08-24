@@ -21,6 +21,7 @@ use StefanFisk\PhpReact\Serialization\Html\UnsafeHtml;
 
 use function assert;
 use function in_array;
+use function is_string;
 
 class HtmlParser
 {
@@ -197,6 +198,8 @@ class HtmlParser
 
         assert($this->xpath !== null);
         foreach ($this->xpath->query('namespace::*[not(.=../../namespace::*)]', $node) ?: [] as $nsNode) {
+            assert(is_string($nsNode->nodeName));
+
             if (!in_array($nsNode->nodeValue, $this->implicitNamespaces)) {
                 $props[$nsNode->nodeName] = $nsNode->nodeValue;
             }
@@ -238,10 +241,9 @@ class HtmlParser
 
     private function mapTextNode(DOMText $node): mixed
     {
-        if (
-            $node->parentNode?->localName
-            && Elements::isA($node->parentNode->localName, Elements::TEXT_RAW)
-        ) {
+        $parentLocalName = $node->parentNode?->localName;
+
+        if (is_string($parentLocalName) && Elements::isA($parentLocalName, Elements::TEXT_RAW)) {
             return UnsafeHtml::from($node->data);
         } else {
             return $node->data;

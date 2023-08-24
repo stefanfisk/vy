@@ -142,6 +142,7 @@ foreach ($tests as $testId => [$setup, $execute]) {
 
     if (function_exists('spx_profiler_start')) {
         spx_profiler_start();
+        // @phpstan-ignore-next-line
         spx_profiler_full_report_set_custom_metadata_str("Benchmark: $testId, $iterations iterations.");
     }
 
