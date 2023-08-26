@@ -17,6 +17,7 @@ use function gettype;
 use function is_object;
 use function is_string;
 use function sprintf;
+use function str_contains;
 
 class NodeFactory
 {
@@ -57,7 +58,7 @@ class NodeFactory
 
         if (!$nodeType) {
             if (is_string($type)) {
-                if (class_exists($type)) {
+                if (str_contains($type, '\\') && class_exists($type)) {
                     if ($this->classIsRenderable($type)) {
                         $nodeType = self::NODE_TYPE_COMPONENT_CLASS;
                     } else {
