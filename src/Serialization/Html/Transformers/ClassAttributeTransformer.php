@@ -7,9 +7,7 @@ namespace StefanFisk\PhpReact\Serialization\Html\Transformers;
 use InvalidArgumentException;
 
 use function array_filter;
-use function array_map;
-use function array_push;
-use function array_walk_recursive;
+use function array_keys;
 use function explode;
 use function gettype;
 use function implode;
@@ -32,32 +30,37 @@ class ClassAttributeTransformer implements AttributeValueTransformerInterface
         return $this->apply($value);
     }
 
-    private function apply(mixed $classes): string | null
+    private function apply(mixed $class): string | null
     {
-        if (! $classes) {
+        /** @var array<string,true> $effectiveClasses */
+        $effectiveClasses = [];
+
+        $this->walk($class, $effectiveClasses);
+
+        if (!$effectiveClasses) {
             return null;
         }
 
-        if (is_string($classes)) {
-            $classes = array_filter(explode(' ', $classes));
-        }
+        $classes = array_keys($effectiveClasses);
 
-        if (! is_array($classes)) {
-            throw new InvalidArgumentException(sprintf(
-                'Unsupported type `%s`.',
-                is_object($classes) ? $classes::class : gettype($classes),
-            ));
-        }
+        sort($classes);
 
-        // We wrap $effectiveClasses to make psalm happy.
-        $wrapper = new class {
-            /** @var array<string> */
-            public array $effectiveClasses = [];
-        };
+        return implode(' ', $classes);
+    }
 
-        array_walk_recursive(
-            $classes,
-            static function (mixed $value, int | string $key) use ($wrapper): void {
+    /** @param array<string,true> &$effectiveClasses */
+    private function walk(mixed $class, array &$effectiveClasses): void
+    {
+        if (!$class) {
+            return;
+        } elseif (is_string($class)) {
+            $classes = array_filter(explode(' ', $class));
+
+            foreach ($classes as $class) {
+                $effectiveClasses[$class] = true;
+            }
+        } elseif (is_array($class)) {
+            foreach ($class as $key => $value) {
                 if (is_int($key)) {
                     $conditional = true;
                     $class = $value;
@@ -70,24 +73,13 @@ class ClassAttributeTransformer implements AttributeValueTransformerInterface
                     return;
                 }
 
-                if (!is_string($class)) {
-                    throw new InvalidArgumentException(sprintf(
-                        'Unsupported type `%s`.',
-                        is_object($class) ? $class::class : gettype($class),
-                    ));
-                }
-
-                $class = explode(' ', $class);
-
-                array_push($wrapper->effectiveClasses, ...$class);
-            },
-        );
-
-        $effectiveClasses = array_map('trim', $wrapper->effectiveClasses);
-        $effectiveClasses = array_filter($effectiveClasses);
-
-        sort($effectiveClasses);
-
-        return implode(' ', $effectiveClasses) ?: null;
+                $this->walk($class, $effectiveClasses);
+            }
+        } else {
+            throw new InvalidArgumentException(sprintf(
+                'Unsupported type `%s`.',
+                is_object($class) ? $class::class : gettype($class),
+            ));
+        }
     }
 }
