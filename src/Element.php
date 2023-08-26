@@ -8,7 +8,8 @@ use Closure;
 use InvalidArgumentException;
 use StefanFisk\PhpReact\Components\Fragment;
 
-use function array_walk_recursive;
+use function array_merge;
+use function array_reduce;
 use function is_array;
 use function is_bool;
 use function is_int;
@@ -69,21 +70,24 @@ class Element
             $renderChildren = [$renderChildren];
         }
 
-        // Wrap the array to make psalm happy
-        $wrapper = new class {
-            /** @var list<mixed> */
-            public array $flatRenderChildren = [];
-        };
+        return array_reduce(
+            $renderChildren,
+            /** @param list<mixed> $carry */
+            function (array $carry, mixed $el) {
+                if (is_array($el)) {
+                    return array_merge($carry, self::toChildArray($el));
+                }
 
-        array_walk_recursive($renderChildren, static function (mixed $el) use ($wrapper): void {
-            if ($el === null || is_bool($el) || $el === '') {
-                return;
-            }
+                if ($el === null || is_bool($el) || $el === '') {
+                    return $carry;
+                }
 
-            $wrapper->flatRenderChildren[] = $el;
-        });
+                $carry[] = $el;
 
-        return $wrapper->flatRenderChildren;
+                return $carry;
+            },
+            [],
+        );
     }
 
     /** @param array<mixed> $props */
