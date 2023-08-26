@@ -11,6 +11,7 @@ use DOMXPath;
 use Masterminds\HTML5;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Parsing\HtmlParser;
+use StefanFisk\PhpReact\PhpReact;
 use StefanFisk\PhpReact\Rendering\Node;
 use StefanFisk\PhpReact\Rendering\Renderer;
 use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
@@ -128,6 +129,20 @@ $tests = [
         },
         function (HtmlSerializer $serializer, Node $node) {
             $serializer->serialize($node);
+        },
+    ],
+    'render-and-serialize' => [
+        function () use ($exampleHtml) {
+            $parser = new HtmlParser();
+            $el = $parser->parseDocument($exampleHtml);
+            assert($el instanceof Element);
+
+            $phpReact = new PhpReact();
+
+            return [$phpReact, $el];
+        },
+        function (PhpReact $phpReact, Element $el) {
+            $phpReact->render($el);
         },
     ],
     'class-attribute-transformer' => [
