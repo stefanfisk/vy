@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Benchmark;
+namespace StefanFisk\Vy\Tests\Benchmark;
 
 use DOMAttr;
 use DOMDocument;
 use DOMNodeList;
 use DOMXPath;
 use Masterminds\HTML5;
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Parsing\HtmlParser;
-use StefanFisk\PhpReact\PhpReact;
-use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Rendering\Renderer;
-use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\ClassAttributeTransformer;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\ClosureTransformer;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\StringableTransformer;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\StyleAttributeTransformer;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Parsing\HtmlParser;
+use StefanFisk\Vy\Rendering\Node;
+use StefanFisk\Vy\Rendering\Renderer;
+use StefanFisk\Vy\Serialization\Html\HtmlSerializer;
+use StefanFisk\Vy\Serialization\Html\Transformers\ClassAttributeTransformer;
+use StefanFisk\Vy\Serialization\Html\Transformers\ClosureTransformer;
+use StefanFisk\Vy\Serialization\Html\Transformers\StringableTransformer;
+use StefanFisk\Vy\Serialization\Html\Transformers\StyleAttributeTransformer;
+use StefanFisk\Vy\Vy;
 
 use function array_sum;
 use function assert;
@@ -137,12 +137,12 @@ $tests = [
             $el = $parser->parseDocument($exampleHtml);
             assert($el instanceof Element);
 
-            $phpReact = new PhpReact();
+            $vy = new Vy();
 
-            return [$phpReact, $el];
+            return [$vy, $el];
         },
-        function (PhpReact $phpReact, Element $el) {
-            $phpReact->render($el);
+        function (Vy $vy, Element $el) {
+            $vy->render($el);
         },
     ],
     'class-attribute-transformer' => [

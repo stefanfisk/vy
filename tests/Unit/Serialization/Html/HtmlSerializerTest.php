@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html;
+namespace StefanFisk\Vy\Tests\Unit\Serialization\Html;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Errors\InvalidAttributeException;
-use StefanFisk\PhpReact\Errors\InvalidChildValueException;
-use StefanFisk\PhpReact\Errors\InvalidTagException;
-use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\AttributeValueTransformerInterface;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\ChildValueTransformerInterface;
-use StefanFisk\PhpReact\Serialization\Html\UnsafeHtml;
-use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Errors\InvalidAttributeException;
+use StefanFisk\Vy\Errors\InvalidChildValueException;
+use StefanFisk\Vy\Errors\InvalidTagException;
+use StefanFisk\Vy\Serialization\Html\HtmlSerializer;
+use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInterface;
+use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
+use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
+use StefanFisk\Vy\Tests\Support\CreatesStubNodesTrait;
+use StefanFisk\Vy\Tests\TestCase;
 use Throwable;
 use stdClass;
 
-use function StefanFisk\PhpReact\el;
+use function StefanFisk\Vy\el;
 
 #[CoversClass(HtmlSerializer::class)]
 class HtmlSerializerTest extends TestCase

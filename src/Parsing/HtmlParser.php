@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Parsing;
+namespace StefanFisk\Vy\Parsing;
 
 use DOMAttr;
 use DOMComment;
@@ -15,9 +15,9 @@ use DOMText;
 use DOMXPath;
 use Masterminds\HTML5;
 use Masterminds\HTML5\Elements;
-use StefanFisk\PhpReact\Components\Fragment;
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Serialization\Html\UnsafeHtml;
+use StefanFisk\Vy\Components\Fragment;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
 
 use function assert;
 use function in_array;

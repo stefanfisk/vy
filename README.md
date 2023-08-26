@@ -1,17 +1,17 @@
-<h1 align="center">stefanfisk/phpreact</h1>
+<h1 align="center">stefanfisk/vy</h1>
 
 <p align="center">
     <strong>A simple view library inspired by React.</strong>
 </p>
 
 <p align="center">
-    <a href="https://github.com/stefanfisk/phpreact"><img src="https://img.shields.io/badge/source-stefanfisk/phpreact-blue.svg?style=flat-square" alt="Source Code"></a>
-    <a href="https://packagist.org/packages/stefanfisk/phpreact"><img src="https://img.shields.io/packagist/v/stefanfisk/phpreact.svg?style=flat-square&label=release" alt="Download Package"></a>
-    <a href="https://php.net"><img src="https://img.shields.io/packagist/php-v/stefanfisk/phpreact.svg?style=flat-square&colorB=%238892BF" alt="PHP Programming Language"></a>
-    <a href="https://github.com/stefanfisk/phpreact/blob/main/LICENSE"><img src="https://img.shields.io/packagist/l/stefanfisk/phpreact.svg?style=flat-square&colorB=darkcyan" alt="Read License"></a>
-    <a href="https://github.com/stefanfisk/phpreact/actions/workflows/continuous-integration.yml"><img src="https://img.shields.io/github/actions/workflow/status/stefanfisk/phpreact/continuous-integration.yml?branch=main&style=flat-square&logo=github" alt="Build Status"></a>
-    <a href="https://codecov.io/gh/stefanfisk/phpreact"><img src="https://img.shields.io/codecov/c/gh/stefanfisk/phpreact?label=codecov&logo=codecov&style=flat-square" alt="Codecov Code Coverage"></a>
-    <a href="https://shepherd.dev/github/stefanfisk/phpreact"><img src="https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fshepherd.dev%2Fgithub%2Fstefanfisk%2Fphpreact%2Fcoverage" alt="Psalm Type Coverage"></a>
+    <a href="https://github.com/stefanfisk/vy"><img src="https://img.shields.io/badge/source-stefanfisk/vy-blue.svg?style=flat-square" alt="Source Code"></a>
+    <a href="https://packagist.org/packages/stefanfisk/vy"><img src="https://img.shields.io/packagist/v/stefanfisk/vy.svg?style=flat-square&label=release" alt="Download Package"></a>
+    <a href="https://php.net"><img src="https://img.shields.io/packagist/php-v/stefanfisk/vy.svg?style=flat-square&colorB=%238892BF" alt="PHP Programming Language"></a>
+    <a href="https://github.com/stefanfisk/vy/blob/main/LICENSE"><img src="https://img.shields.io/packagist/l/stefanfisk/vy.svg?style=flat-square&colorB=darkcyan" alt="Read License"></a>
+    <a href="https://github.com/stefanfisk/vy/actions/workflows/continuous-integration.yml"><img src="https://img.shields.io/github/actions/workflow/status/stefanfisk/vy/continuous-integration.yml?branch=main&style=flat-square&logo=github" alt="Build Status"></a>
+    <a href="https://codecov.io/gh/stefanfisk/vy"><img src="https://img.shields.io/codecov/c/gh/stefanfisk/vy?label=codecov&logo=codecov&style=flat-square" alt="Codecov Code Coverage"></a>
+    <a href="https://shepherd.dev/github/stefanfisk/vy"><img src="https://img.shields.io/endpoint?style=flat-square&url=https%3A%2F%2Fshepherd.dev%2Fgithub%2Fstefanfisk%2Fvy%2Fcoverage" alt="Psalm Type Coverage"></a>
 </p>
 
 ## About
@@ -30,7 +30,7 @@ TODO: Use this space to provide more details about your package. Try to be
 Install this package as a dependency using [Composer](https://getcomposer.org).
 
 ``` bash
-composer require stefanfisk/phpreact
+composer require stefanfisk/vy
 ```
 
 <!--
@@ -41,7 +41,7 @@ If you need to provide more detailed examples, use the `docs/` directory
 and provide a link here to the documentation.
 
 ``` php
-use StefanFisk\PhpReact\Example;
+use StefanFisk\Vy\Example;
 
 $example = new Example();
 echo $example->greet('fellow human');
@@ -68,7 +68,7 @@ security issue in software that is maintained in this repository, please read
 
 ## Copyright and License
 
-stefanfisk/phpreact is copyright © [Stefan Fisk](https://stefanfisk.com)
+stefanfisk/vy is copyright © [Stefan Fisk](https://stefanfisk.com)
 and licensed for use under the terms of the
 MIT License (MIT). Please see [LICENSE](LICENSE) for more information.
 

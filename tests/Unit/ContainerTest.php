@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit;
+namespace StefanFisk\Vy\Tests\Unit;
 
 use ArgumentCountError;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Container;
-use StefanFisk\PhpReact\Errors\ContainerException;
-use StefanFisk\PhpReact\Errors\EntryNotFoundException;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Container;
+use StefanFisk\Vy\Errors\ContainerException;
+use StefanFisk\Vy\Errors\EntryNotFoundException;
+use StefanFisk\Vy\Tests\TestCase;
 
 #[CoversClass(Container::class)]
 class ContainerTest extends TestCase

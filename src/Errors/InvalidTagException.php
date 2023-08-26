@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Errors;
+namespace StefanFisk\Vy\Errors;
 
-use StefanFisk\PhpReact\Rendering\Node;
+use StefanFisk\Vy\Rendering\Node;
 use Throwable;
 
 class InvalidTagException extends RenderException

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Rendering;
+namespace StefanFisk\Vy\Rendering;
 
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Errors\DuplicateKeyException;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Errors\DuplicateKeyException;
 
 use function assert;
 use function count;

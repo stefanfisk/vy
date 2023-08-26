@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Components;
+namespace StefanFisk\Vy\Components;
 
-use StefanFisk\PhpReact\Hooks\ContextHook;
-use StefanFisk\PhpReact\Hooks\ContextProviderHook;
+use StefanFisk\Vy\Hooks\ContextHook;
+use StefanFisk\Vy\Hooks\ContextProviderHook;
 
 abstract class Context
 {

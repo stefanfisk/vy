@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Hooks;
+namespace StefanFisk\Vy\Hooks;
 
-use StefanFisk\PhpReact\Errors\RenderException;
-use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Rendering\Renderer;
+use StefanFisk\Vy\Errors\RenderException;
+use StefanFisk\Vy\Rendering\Node;
+use StefanFisk\Vy\Rendering\Renderer;
 
 use function array_pop;
 use function assert;

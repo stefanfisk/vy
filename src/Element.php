@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact;
+namespace StefanFisk\Vy;
 
 use Closure;
 use InvalidArgumentException;
-use StefanFisk\PhpReact\Components\Fragment;
+use StefanFisk\Vy\Components\Fragment;
 
 use function array_merge;
 use function array_reduce;

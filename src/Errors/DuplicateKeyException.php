@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Errors;
+namespace StefanFisk\Vy\Errors;
 
 use Exception;
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Rendering\Node;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Rendering\Node;
 
 /**
  * Thrown when render returns multiple children with the same key.

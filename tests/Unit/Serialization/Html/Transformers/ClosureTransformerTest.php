@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Transformers;
+namespace StefanFisk\Vy\Tests\Unit\Serialization\Html\Transformers;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use RuntimeException;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\ClosureTransformer;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Serialization\Html\Transformers\ClosureTransformer;
+use StefanFisk\Vy\Tests\TestCase;
 use Throwable;
 use UnexpectedValueException;
 use stdClass;

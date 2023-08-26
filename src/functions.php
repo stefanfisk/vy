@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact;
+namespace StefanFisk\Vy;
 
 use Closure;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Serialization\Html\Transformers;
+namespace StefanFisk\Vy\Serialization\Html\Transformers;
 
 use Stringable;
 

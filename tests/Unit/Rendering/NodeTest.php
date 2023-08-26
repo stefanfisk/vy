@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Rendering;
+namespace StefanFisk\Vy\Tests\Unit\Rendering;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Rendering\Node;
+use StefanFisk\Vy\Tests\TestCase;
 
 #[CoversClass(Node::class)]
 class NodeTest extends TestCase

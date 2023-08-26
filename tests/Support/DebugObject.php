@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Support;
+namespace StefanFisk\Vy\Tests\Support;
 
 use function uniqid;
 

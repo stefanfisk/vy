@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact;
+namespace StefanFisk\Vy;
 
 use Psr\Container\ContainerInterface;
-use StefanFisk\PhpReact\Errors\ContainerException;
-use StefanFisk\PhpReact\Errors\EntryNotFoundException;
+use StefanFisk\Vy\Errors\ContainerException;
+use StefanFisk\Vy\Errors\EntryNotFoundException;
 use Throwable;
 
 use function class_exists;

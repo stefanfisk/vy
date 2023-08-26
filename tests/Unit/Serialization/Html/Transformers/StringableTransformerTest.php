@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Transformers;
+namespace StefanFisk\Vy\Tests\Unit\Serialization\Html\Transformers;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\StringableTransformer;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Serialization\Html\Transformers\StringableTransformer;
+use StefanFisk\Vy\Tests\TestCase;
 use Stringable;
 use stdClass;
 

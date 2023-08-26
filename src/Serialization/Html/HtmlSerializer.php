@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Serialization\Html;
+namespace StefanFisk\Vy\Serialization\Html;
 
-use StefanFisk\PhpReact\Errors\InvalidAttributeException;
-use StefanFisk\PhpReact\Errors\InvalidChildValueException;
-use StefanFisk\PhpReact\Errors\InvalidTagException;
-use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\AttributeValueTransformerInterface;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\ChildValueTransformerInterface;
-use StefanFisk\PhpReact\Serialization\SerializerInterface;
+use StefanFisk\Vy\Errors\InvalidAttributeException;
+use StefanFisk\Vy\Errors\InvalidChildValueException;
+use StefanFisk\Vy\Errors\InvalidTagException;
+use StefanFisk\Vy\Rendering\Node;
+use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInterface;
+use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
+use StefanFisk\Vy\Serialization\SerializerInterface;
 use Throwable;
 
 use function array_filter;

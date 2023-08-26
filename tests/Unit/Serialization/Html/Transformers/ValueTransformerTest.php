@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Transformers;
+namespace StefanFisk\Vy\Tests\Unit\Serialization\Html\Transformers;
 
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\ValueTransformer;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Serialization\Html\Transformers\ValueTransformer;
+use StefanFisk\Vy\Tests\Support\Mocks\MocksInvokablesTrait;
+use StefanFisk\Vy\Tests\TestCase;
 
 #[CoversClass(ValueTransformer::class)]
 class ValueTransformerTest extends TestCase

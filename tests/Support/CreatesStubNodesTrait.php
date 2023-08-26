@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Support;
+namespace StefanFisk\Vy\Tests\Support;
 
 use Closure;
 use PHPUnit\Framework\Attributes\Before;
 use RuntimeException;
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Rendering\Node;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Rendering\Node;
 
 use function array_walk_recursive;
 use function assert;

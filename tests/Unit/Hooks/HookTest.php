@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit;
+namespace StefanFisk\Vy\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Errors\RenderException;
-use StefanFisk\PhpReact\Hooks\Hook;
-use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MocksHookHandlerTrait;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MocksRendererTrait;
-use StefanFisk\PhpReact\Tests\Support\TestHook;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Errors\RenderException;
+use StefanFisk\Vy\Hooks\Hook;
+use StefanFisk\Vy\Tests\Support\CreatesStubNodesTrait;
+use StefanFisk\Vy\Tests\Support\Mocks\MocksHookHandlerTrait;
+use StefanFisk\Vy\Tests\Support\Mocks\MocksRendererTrait;
+use StefanFisk\Vy\Tests\Support\TestHook;
+use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(Hook::class)]

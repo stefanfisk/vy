@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Serialization;
+namespace StefanFisk\Vy\Serialization;
 
-use StefanFisk\PhpReact\Rendering\Node;
+use StefanFisk\Vy\Rendering\Node;
 
 /** @template T */
 interface SerializerInterface

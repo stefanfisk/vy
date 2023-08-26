@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Components;
+namespace StefanFisk\Vy\Components;
 
 final class Fragment
 {

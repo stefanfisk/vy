@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Rendering;
+namespace StefanFisk\Vy\Rendering;
 
 /**
  * @codeCoverageIgnore

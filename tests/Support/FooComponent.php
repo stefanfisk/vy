@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Support;
+namespace StefanFisk\Vy\Tests\Support;
 
-use StefanFisk\PhpReact\Element;
+use StefanFisk\Vy\Element;
 
-use function StefanFisk\PhpReact\el;
+use function StefanFisk\Vy\el;
 
 class FooComponent
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Unit\Components;
+namespace StefanFisk\Vy\Unit\Components;
 
 use Error;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Components\Fragment;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Components\Fragment;
+use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(Fragment::class)]

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Errors;
+namespace StefanFisk\Vy\Tests\Unit\Errors;
 
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Errors\HookException;
-use StefanFisk\PhpReact\Hooks\ContextHook;
-use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Errors\HookException;
+use StefanFisk\Vy\Hooks\ContextHook;
+use StefanFisk\Vy\Rendering\Node;
+use StefanFisk\Vy\Tests\TestCase;
 
 #[CoversClass(HookException::class)]
 class HookExceptionTest extends TestCase

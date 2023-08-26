@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html\Transformers;
+namespace StefanFisk\Vy\Tests\Unit\Serialization\Html\Transformers;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\ClassAttributeTransformer;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Serialization\Html\Transformers\ClassAttributeTransformer;
+use StefanFisk\Vy\Tests\Support\Mocks\MocksInvokablesTrait;
+use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(ClassAttributeTransformer::class)]

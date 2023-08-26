@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit;
+namespace StefanFisk\Vy\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Hooks\ContextHook;
-use StefanFisk\PhpReact\Tests\Support\FooContext;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MocksHookHandlerTrait;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Hooks\ContextHook;
+use StefanFisk\Vy\Tests\Support\FooContext;
+use StefanFisk\Vy\Tests\Support\Mocks\MocksHookHandlerTrait;
+use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(ContextHook::class)]

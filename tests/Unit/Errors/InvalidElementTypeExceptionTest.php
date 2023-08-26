@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Errors;
+namespace StefanFisk\Vy\Tests\Unit\Errors;
 
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Errors\InvalidElementTypeException;
-use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Errors\InvalidElementTypeException;
+use StefanFisk\Vy\Rendering\Node;
+use StefanFisk\Vy\Tests\TestCase;
 
 #[CoversClass(InvalidElementTypeException::class)]
 class InvalidElementTypeExceptionTest extends TestCase

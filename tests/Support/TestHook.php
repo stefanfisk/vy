@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Support;
+namespace StefanFisk\Vy\Tests\Support;
 
-use StefanFisk\PhpReact\Hooks\Hook;
+use StefanFisk\Vy\Hooks\Hook;
 
 use function end;
 

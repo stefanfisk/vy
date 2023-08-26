@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Rendering;
+namespace StefanFisk\Vy\Tests\Unit\Rendering;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Errors\DuplicateKeyException;
-use StefanFisk\PhpReact\Rendering\DiffChild;
-use StefanFisk\PhpReact\Rendering\Differ;
-use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
-use StefanFisk\PhpReact\Tests\Support\DebugObject;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Errors\DuplicateKeyException;
+use StefanFisk\Vy\Rendering\DiffChild;
+use StefanFisk\Vy\Rendering\Differ;
+use StefanFisk\Vy\Rendering\Node;
+use StefanFisk\Vy\Tests\Support\CreatesStubNodesTrait;
+use StefanFisk\Vy\Tests\Support\DebugObject;
+use StefanFisk\Vy\Tests\TestCase;
 
-use function StefanFisk\PhpReact\el;
+use function StefanFisk\Vy\el;
 use function array_map;
 
 #[CoversClass(Differ::class)]

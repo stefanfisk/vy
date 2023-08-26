@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Support;
+namespace StefanFisk\Vy\Tests\Support;
 
-use StefanFisk\PhpReact\Components\Context;
+use StefanFisk\Vy\Components\Context;
 
 class FooContext extends Context
 {

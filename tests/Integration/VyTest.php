@@ -2,52 +2,52 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Integration;
+namespace StefanFisk\Vy\Tests\Integration;
 
 use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Components\Context;
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Errors\InvalidAttributeException;
-use StefanFisk\PhpReact\Errors\InvalidTagException;
-use StefanFisk\PhpReact\Errors\RenderException;
-use StefanFisk\PhpReact\Hooks\EffectHook;
-use StefanFisk\PhpReact\Hooks\StateHook;
-use StefanFisk\PhpReact\PhpReact;
-use StefanFisk\PhpReact\Serialization\Html\UnsafeHtml;
-use StefanFisk\PhpReact\Tests\Support\FooComponent;
-use StefanFisk\PhpReact\Tests\Support\FooContext;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MocksComponentsTrait;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MocksInvokablesTrait;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Components\Context;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Errors\InvalidAttributeException;
+use StefanFisk\Vy\Errors\InvalidTagException;
+use StefanFisk\Vy\Errors\RenderException;
+use StefanFisk\Vy\Hooks\EffectHook;
+use StefanFisk\Vy\Hooks\StateHook;
+use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
+use StefanFisk\Vy\Tests\Support\FooComponent;
+use StefanFisk\Vy\Tests\Support\FooContext;
+use StefanFisk\Vy\Tests\Support\Mocks\MocksComponentsTrait;
+use StefanFisk\Vy\Tests\Support\Mocks\MocksInvokablesTrait;
+use StefanFisk\Vy\Tests\TestCase;
+use StefanFisk\Vy\Vy;
 use Throwable;
 
-use function StefanFisk\PhpReact\el;
+use function StefanFisk\Vy\el;
 
-#[CoversClass(PhpReact::class)]
-class PhpReactTest extends TestCase
+#[CoversClass(Vy::class)]
+class VyTest extends TestCase
 {
     use MocksComponentsTrait;
     use MocksInvokablesTrait;
 
     private function assertRenderMatches(string $expected, Element $el): void
     {
-        $phpReact = new PhpReact();
+        $vy = new Vy();
 
         $this->assertEquals(
             $expected,
-            $phpReact->render($el),
+            $vy->render($el),
         );
     }
 
     /** @param class-string<Throwable> $exception */
     private function assertRenderThrows(string $exception, Element $el): void
     {
-        $phpReact = new PhpReact();
+        $vy = new Vy();
 
         $this->expectException($exception);
 
-        $phpReact->render($el);
+        $vy->render($el);
     }
 
     public function testInvalidTagName(): void

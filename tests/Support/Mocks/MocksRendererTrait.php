@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Support\Mocks;
+namespace StefanFisk\Vy\Tests\Support\Mocks;
 
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Before;
-use StefanFisk\PhpReact\Rendering\Renderer;
+use StefanFisk\Vy\Rendering\Renderer;
 
 trait MocksRendererTrait
 {

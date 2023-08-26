@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact;
+namespace StefanFisk\Vy;
 
 use Psr\Container\ContainerInterface;
-use StefanFisk\PhpReact\Rendering\Comparator;
-use StefanFisk\PhpReact\Rendering\NodeFactory;
-use StefanFisk\PhpReact\Rendering\Renderer;
-use StefanFisk\PhpReact\Serialization\Html\HtmlSerializer;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\AttributeValueTransformerInterface;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\ChildValueTransformerInterface;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\ClassAttributeTransformer;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\ClosureTransformer;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\StringableTransformer;
-use StefanFisk\PhpReact\Serialization\Html\Transformers\StyleAttributeTransformer;
+use StefanFisk\Vy\Rendering\Comparator;
+use StefanFisk\Vy\Rendering\NodeFactory;
+use StefanFisk\Vy\Rendering\Renderer;
+use StefanFisk\Vy\Serialization\Html\HtmlSerializer;
+use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInterface;
+use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
+use StefanFisk\Vy\Serialization\Html\Transformers\ClassAttributeTransformer;
+use StefanFisk\Vy\Serialization\Html\Transformers\ClosureTransformer;
+use StefanFisk\Vy\Serialization\Html\Transformers\StringableTransformer;
+use StefanFisk\Vy\Serialization\Html\Transformers\StyleAttributeTransformer;
 
-class PhpReact
+class Vy
 {
     private readonly HtmlSerializer $serializer;
     private readonly Renderer $renderer;

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Support\Mocks;
+namespace StefanFisk\Vy\Tests\Support\Mocks;
 
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\Before;
-use StefanFisk\PhpReact\Hooks\Hook;
-use StefanFisk\PhpReact\Hooks\HookHandlerInterface;
+use StefanFisk\Vy\Hooks\Hook;
+use StefanFisk\Vy\Hooks\HookHandlerInterface;
 
 trait MocksHookHandlerTrait
 {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\rendering;
+namespace StefanFisk\Vy\Tests\Unit\rendering;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Rendering\Comparator;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Rendering\Comparator;
+use StefanFisk\Vy\Tests\TestCase;
 
-use function StefanFisk\PhpReact\el;
+use function StefanFisk\Vy\el;
 
 #[CoversClass(Comparator::class)]
 class ComparatorTest extends TestCase

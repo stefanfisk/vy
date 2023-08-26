@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Rendering;
+namespace StefanFisk\Vy\Rendering;
 
-use StefanFisk\PhpReact\Element;
+use StefanFisk\Vy\Element;
 
 use function count;
 use function current;

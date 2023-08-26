@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Rendering;
+namespace StefanFisk\Vy\Rendering;
 
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Errors\RenderException;
-use StefanFisk\PhpReact\Hooks\Hook;
-use StefanFisk\PhpReact\Hooks\HookHandlerInterface;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Errors\RenderException;
+use StefanFisk\Vy\Hooks\Hook;
+use StefanFisk\Vy\Hooks\HookHandlerInterface;
 use Throwable;
 
 use function assert;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Errors;
+namespace StefanFisk\Vy\Errors;
 
 use Psr\Container\NotFoundExceptionInterface;
 

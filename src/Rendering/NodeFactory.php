@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Rendering;
+namespace StefanFisk\Vy\Rendering;
 
 use Closure;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
-use StefanFisk\PhpReact\Container;
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Errors\ContainerException;
-use StefanFisk\PhpReact\Errors\InvalidElementTypeException;
+use StefanFisk\Vy\Container;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Errors\ContainerException;
+use StefanFisk\Vy\Errors\InvalidElementTypeException;
 
 use function class_exists;
 use function gettype;

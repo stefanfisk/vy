@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit;
+namespace StefanFisk\Vy\Tests\Unit;
 
 use AssertionError;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Rendering\Queue;
-use StefanFisk\PhpReact\Tests\Support\CreatesStubNodesTrait;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Rendering\Node;
+use StefanFisk\Vy\Rendering\Queue;
+use StefanFisk\Vy\Tests\Support\CreatesStubNodesTrait;
+use StefanFisk\Vy\Tests\TestCase;
 
 #[CoversClass(Queue::class)]
 class QueueTest extends TestCase

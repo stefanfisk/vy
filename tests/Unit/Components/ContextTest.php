@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Unit\Components;
+namespace StefanFisk\Vy\Unit\Components;
 
 use Error;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Components\Context;
-use StefanFisk\PhpReact\Hooks\ContextHook;
-use StefanFisk\PhpReact\Hooks\ContextProviderHook;
-use StefanFisk\PhpReact\Tests\Support\FooContext;
-use StefanFisk\PhpReact\Tests\Support\Mocks\MocksHookHandlerTrait;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Components\Context;
+use StefanFisk\Vy\Hooks\ContextHook;
+use StefanFisk\Vy\Hooks\ContextProviderHook;
+use StefanFisk\Vy\Tests\Support\FooContext;
+use StefanFisk\Vy\Tests\Support\Mocks\MocksHookHandlerTrait;
+use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(Context::class)]

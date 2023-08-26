@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Hooks;
+namespace StefanFisk\Vy\Hooks;
 
 use Closure;
-use StefanFisk\PhpReact\Components\Context;
-use StefanFisk\PhpReact\Errors\HookException;
-use StefanFisk\PhpReact\Rendering\Node;
-use StefanFisk\PhpReact\Rendering\Renderer;
+use StefanFisk\Vy\Components\Context;
+use StefanFisk\Vy\Errors\HookException;
+use StefanFisk\Vy\Rendering\Node;
+use StefanFisk\Vy\Rendering\Renderer;
 
 use function assert;
 

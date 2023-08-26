@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Integration;
+namespace StefanFisk\Vy\Tests\Integration;
 
 use Masterminds\HTML5;
 use PHPUnit\Framework\Attributes\CoversNothing;
-use StefanFisk\PhpReact\Element;
-use StefanFisk\PhpReact\Parsing\HtmlParser;
-use StefanFisk\PhpReact\PhpReact;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Parsing\HtmlParser;
+use StefanFisk\Vy\Tests\TestCase;
+use StefanFisk\Vy\Vy;
 
 use function file_get_contents;
 
@@ -28,8 +28,8 @@ class HtmlParserTest extends TestCase
         /** @var Element $el */
         $el = $parser->parseDocument($exampleHtml);
 
-        $phpReact = new PhpReact(transformers: []);
-        $actual = $phpReact->render($el);
+        $vy = new Vy(transformers: []);
+        $actual = $vy->render($el);
 
         $this->assertSame($expected, $actual);
     }

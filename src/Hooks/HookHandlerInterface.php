@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Hooks;
+namespace StefanFisk\Vy\Hooks;
 
 interface HookHandlerInterface
 {

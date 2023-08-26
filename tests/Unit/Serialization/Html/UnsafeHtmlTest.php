@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\PhpReact\Tests\Unit\Serialization\Html;
+namespace StefanFisk\Vy\Tests\Unit\Serialization\Html;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\PhpReact\Serialization\Html\UnsafeHtml;
-use StefanFisk\PhpReact\Tests\TestCase;
+use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
+use StefanFisk\Vy\Tests\TestCase;
 use Stringable;
 use UnexpectedValueException;
 use stdClass;
