@@ -88,15 +88,6 @@ class HtmlSerializer implements SerializerInterface
         return $output;
     }
 
-    private function serializeChild(mixed $child, Node $parent, bool $isSvgMode): void
-    {
-        if ($child instanceof Node) {
-            $this->serializeNode($child, $isSvgMode);
-        } else {
-            $this->serializeValue($child, $parent, $isSvgMode);
-        }
-    }
-
     private function serializeNode(Node $node, bool $isSvgMode): void
     {
         assert($node->state === Node::STATE_NONE);
@@ -104,7 +95,7 @@ class HtmlSerializer implements SerializerInterface
         if (is_string($node->type) && !$node->component) {
             $this->serializeTagNode($node, $isSvgMode);
         } else {
-            $this->serializeChildren($node->children, $node, $isSvgMode);
+            $this->serializeChildren($node, $isSvgMode);
         }
     }
 
@@ -140,73 +131,7 @@ class HtmlSerializer implements SerializerInterface
         $this->output .= '<';
         $this->output .= $name;
 
-        assert($node->props !== null);
-        $atts = $node->props;
-        unset($atts['children']);
-
-        foreach ($atts as $attName => $attValue) {
-            if (is_int($attName)) {
-                if (!is_string($attValue)) {
-                    throw new InvalidAttributeException(
-                        message: sprintf('Indexed attribute `%s` must be a string.', $attName),
-                        node: $node,
-                        name: (string) $attName,
-                        value: $attValue,
-                    );
-                }
-
-                $attName = $attValue;
-                $attValue = true;
-            }
-
-            if ($attName === '' || $this->isUnsafeName($attName)) {
-                throw new InvalidAttributeException(
-                    message: sprintf('`%s` is not a valid attribute name.', $name),
-                    node: $node,
-                    name: $attName,
-                    value: $attValue,
-                );
-            }
-
-            try {
-                $attValue = $this->applyAttributeValueTransformers($attName, $attValue);
-            } catch (Throwable $e) {
-                throw new InvalidAttributeException(
-                    message: 'Failed to apply attribute transformer.',
-                    node: $node,
-                    name: $attName,
-                    value: $attValue,
-                    previous: $e,
-                );
-            }
-
-            if ($attValue !== null && !is_scalar($attValue)) {
-                throw new InvalidAttributeException(
-                    message: sprintf(
-                        'Attribute value is of type `%s`, expected (null|scalar).',
-                        is_object($attValue) ? $attValue::class : gettype($attValue),
-                    ),
-                    node: $node,
-                    name: $attName,
-                    value: $attValue,
-                );
-            }
-
-            if ($attValue === null || $attValue === false) {
-                continue;
-            }
-
-            $this->output .= ' ';
-            $this->output .= $attName;
-
-            if ($attValue === true) {
-                continue;
-            }
-
-            $this->output .= '="';
-            $this->output .= $this->escapeAttribute((string) $attValue);
-            $this->output .= '"';
-        }
+        $this->serializeAttributes($node);
 
         if ($isSvgMode && !$node->children) {
             $this->output .= ' />';
@@ -218,7 +143,7 @@ class HtmlSerializer implements SerializerInterface
 
         $childSvgMode = $name === 'svg' || ($name !== 'foreignObject' && $isSvgMode);
 
-        $this->serializeChildren($node->children, $node, $childSvgMode);
+        $this->serializeChildren($node, $childSvgMode);
 
         if ($isVoid) {
             return;
@@ -227,6 +152,77 @@ class HtmlSerializer implements SerializerInterface
         $this->output .= '</';
         $this->output .= $name;
         $this->output .= '>';
+    }
+
+    private function serializeAttributes(Node $node): void
+    {
+        assert($node->props !== null);
+        $atts = $node->props;
+        unset($atts['children']);
+
+        foreach ($atts as $name => $value) {
+            if (is_int($name)) {
+                if (!is_string($value)) {
+                    throw new InvalidAttributeException(
+                        message: sprintf('Indexed attribute `%s` must be a string.', $name),
+                        node: $node,
+                        name: (string) $name,
+                        value: $value,
+                    );
+                }
+
+                $name = $value;
+                $value = true;
+            }
+
+            if ($name === '' || $this->isUnsafeName($name)) {
+                throw new InvalidAttributeException(
+                    message: sprintf('`%s` is not a valid attribute name.', $name),
+                    node: $node,
+                    name: $name,
+                    value: $value,
+                );
+            }
+
+            try {
+                $value = $this->applyAttributeValueTransformers($name, $value);
+            } catch (Throwable $e) {
+                throw new InvalidAttributeException(
+                    message: 'Failed to apply attribute transformer.',
+                    node: $node,
+                    name: $name,
+                    value: $value,
+                    previous: $e,
+                );
+            }
+
+            if ($value !== null && !is_scalar($value)) {
+                throw new InvalidAttributeException(
+                    message: sprintf(
+                        'Attribute value is of type `%s`, expected (null|scalar).',
+                        is_object($value) ? $value::class : gettype($value),
+                    ),
+                    node: $node,
+                    name: $name,
+                    value: $value,
+                );
+            }
+
+            if ($value === null || $value === false) {
+                continue;
+            }
+
+            $this->output .= ' ';
+            $this->output .= $name;
+
+            if ($value === true) {
+                continue;
+            }
+
+            $this->output .= '="';
+            $this->output .= $this->escapeAttribute((string) $value);
+            $this->output .= '"';
+        }
     }
 
     private function serializeValue(mixed $inValue, Node $parent, bool $isSvgMode): void
@@ -276,11 +272,14 @@ class HtmlSerializer implements SerializerInterface
         }
     }
 
-    /** @param list<mixed> $children */
-    private function serializeChildren(array $children, Node $parent, bool $isSvgMode): void
+    private function serializeChildren(Node $parent, bool $isSvgMode): void
     {
-        foreach ($children as $child) {
-             $this->serializeChild($child, $parent, $isSvgMode);
+        foreach ($parent->children as $child) {
+            if ($child instanceof Node) {
+                $this->serializeNode($child, $isSvgMode);
+            } else {
+                $this->serializeValue($child, $parent, $isSvgMode);
+            }
         }
     }
 
