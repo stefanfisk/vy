@@ -62,7 +62,7 @@ $tests = [
         function (Renderer $renderer, Element $el) {
             $node = $renderer->createNode(parent: null, el: $el);
 
-            $renderer->giveNodeNextProps(node: $node, nextProps: $el->props);
+            $renderer->enqueueRender($node);
 
             $renderer->processRenderQueue();
         },
