@@ -36,11 +36,6 @@ class NodeFactory
     ) {
     }
 
-    public function nodeMatches(Node $node, Element $el): bool
-    {
-        return $node->type === $el->type;
-    }
-
     public function createNode(Element $el, Node | null $parent): Node
     {
         $key = $el->key;
