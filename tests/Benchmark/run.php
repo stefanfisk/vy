@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace StefanFisk\PhpReact\Tests\Benchmark;
 
+use DOMAttr;
 use DOMDocument;
+use DOMNodeList;
+use DOMXPath;
 use Masterminds\HTML5;
 use StefanFisk\PhpReact\Element;
 use StefanFisk\PhpReact\Parsing\HtmlParser;
@@ -125,6 +128,30 @@ $tests = [
         },
         function (HtmlSerializer $serializer, Node $node) {
             $serializer->serialize($node);
+        },
+    ],
+    'class-attribute-transformer' => [
+        function () use ($exampleHtml) {
+            $html5 = new HTML5();
+            $doc = $html5->loadHTML($exampleHtml);
+
+            $xpath = new DOMXPath($doc);
+
+            /** @var DOMNodeList<DOMAttr> $attrNodes */
+            $attrNodes = $xpath->query('//@class');
+
+            $classes = [];
+
+            foreach ($attrNodes as $attrNode) {
+                $classes[] = $attrNode->value;
+            }
+
+            return [new ClassAttributeTransformer(), $classes];
+        },
+        function (ClassAttributeTransformer $transformer, array $classes) {
+            foreach ($classes as $class) {
+                $transformer->processAttributeValue('class', $class);
+            }
         },
     ],
 ];
