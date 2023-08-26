@@ -104,10 +104,17 @@ class Renderer implements HookHandlerInterface
             $renderChildren = $this->renderTag($node);
         }
 
-        $this->diffChildren(
-            node: $node,
-            renderChildren: $renderChildren,
-        );
+        if (!$node->children) {
+            $this->createInitialChildren(
+                node: $node,
+                renderChildren: $renderChildren,
+            );
+        } else {
+            $this->diffChildren(
+                node: $node,
+                renderChildren: $renderChildren,
+            );
+        }
 
         foreach ($node->children as $child) {
             if (!$child instanceof Node) {
@@ -199,6 +206,28 @@ class Renderer implements HookHandlerInterface
         $node->state &= ~Node::STATE_INITIAL;
 
         return $node->props['children'] ?? null;
+    }
+
+    private function createInitialChildren(Node $node, mixed $renderChildren): void
+    {
+        $renderChildren = Element::toChildArray($renderChildren);
+
+        $newChildren = [];
+
+        foreach ($renderChildren as $renderChild) {
+            if ($renderChild instanceof Element) {
+                $newChild = $this->createNode(
+                    parent: $node,
+                    el: $renderChild,
+                );
+            } else {
+                $newChild = $renderChild;
+            }
+
+            $newChildren[] = $newChild;
+        }
+
+        $node->children = $newChildren;
     }
 
     private function diffChildren(Node $node, mixed $renderChildren): void
