@@ -33,21 +33,225 @@ Install this package as a dependency using [Composer](https://getcomposer.org).
 composer require stefanfisk/vy
 ```
 
-<!--
 ## Usage
 
-Provide a brief description or short example of how to use this library.
-If you need to provide more detailed examples, use the `docs/` directory
-and provide a link here to the documentation.
-
 ``` php
-use StefanFisk\Vy\Example;
 
-$example = new Example();
-echo $example->greet('fellow human');
+namespace Example;
+
+use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
+use StefanFisk\Vy\Vy;
+
+use function StefanFisk\Vy\el;
+
+class Layout
+{
+    public function render(mixed $title, mixed $children): mixed
+    {
+        return el('', [], [
+            UnsafeHtml::from('<!DOCTYPE html>'),
+            el('html', [
+                'lang'  => 'en',
+                'class' => [
+                    'h-full',
+                ],
+            ], [
+                el('head', [], [
+                    el('meta', ['charset' => 'UTF-8']),
+                    el('meta', ['name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0']),
+                    el('script', ['src' => 'https://cdn.tailwindcss.com']),
+                    el('title', [], $title),
+                ]),
+                el('body', [
+                    'class' => [
+                        'max-w-screen-xl',
+                        'mx-auto',
+                        'p-8',
+                        'bg-gray-100',
+                    ],
+                ], $children),
+            ]),
+        ]);
+    }
+}
+
+class ArticleCard {
+    private array $articles = [
+        1 => [
+            'href'        => '#',
+            'imageId'     => 1,
+            'title'       => 'Labradors',
+            'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
+            'tags'        => [
+                'photography',
+                'labradors',
+                'puppies',
+            ],
+        ],
+        2 => [
+            'href'        => '#',
+            'imageId'     => 2,
+            'title'       => 'Walruses',
+            'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
+            'tags'        => [
+                'photography',
+                'walruses',
+                'ocean',
+            ],
+        ],
+        3 => [
+            'href'        => '#',
+            'imageId'     => 3,
+            'title'       => 'Long Haired Cows',
+            'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
+            'tags'        => [
+                'photography',
+                'cows',
+                'plains',
+            ],
+        ],
+    ];
+
+    public function render(
+        int $articleId,
+    ): mixed {
+        $article = $this->articles[$articleId] ?? null;
+
+        if (!$article) {
+            return null;
+        }
+
+        return el('a', [
+            'class' => [
+                'rounded',
+                'bg-white',
+                'overflow-hidden',
+                'shadow-lg',
+            ],
+            'href' => $article['href'],
+        ], [
+            el(Img::class, [
+                'class' => 'w-full',
+                'imageId' => $article['imageId'],
+            ]),
+            el('div', [
+                'class' => [
+                    'px-6',
+                    'py-4',
+                ],
+            ], [
+                el('div', [
+                    'class' => [
+                        'font-bold',
+                        'text-xl',
+                        'mb-2',
+                    ],
+                ], $article['title']),
+                el('p', [
+                    'class' => [
+                        'text-gray-700',
+                        'text-base',
+                    ],
+                ], $article['description']),
+            ]),
+            el(Tags::class, [
+                'tags' => $article['tags'],
+            ]),
+        ]);
+    }
+}
+
+class Img {
+    private array $images = [
+        1 => [
+            'src' => 'https://picsum.photos/id/237/600/400',
+            'alt' => 'Black labrador puppy',
+        ],
+        2 => [
+            'src' => 'https://picsum.photos/id/1084/600/400',
+            'alt' => 'A Huddle of Walruses',
+        ],
+        3 => [
+            'src' => 'https://picsum.photos/id/200/600/400',
+            'alt' => 'A long haired cow',
+        ],
+    ];
+
+    public function render(int $imageId, mixed $class): mixed
+    {
+        $image = $this->images[$imageId] ?? null;
+
+        if (!$image) {
+            return null;
+        }
+
+        return el('img', [
+            'class' => $class,
+            'src' => $image['src'],
+            'alt' => $image['alt'],
+        ]);
+    }
+}
+
+class Tags {
+    public function render(array $tags): mixed
+    {
+        if (!$tags) {
+            return null;
+        }
+
+        return el('div', [
+            'class' => [
+                'px-6',
+                'pt-4',
+                'pb-2',
+            ],
+        ], array_map(
+            fn($tag) => el('span', [
+                'class' => [
+                    'inline-block',
+                    'bg-gray-200',
+                    'rounded-full',
+                    'px-3',
+                    'py-1',
+                    'text-sm',
+                    'font-semibold',
+                    'text-gray-700',
+                    'mr-2',
+                    'mb-2',
+                ],
+            ], "#$tag"),
+            $tags,
+        ));
+    }
+}
+
+$el = el(Layout::class, [
+    'title' => 'Vy Example',
+], [
+    el('div', [
+        'class' => [
+            'grid',
+            'gap-8',
+            'md:grid-cols-3',
+        ],
+    ], [
+        el(ArticleCard::class, [
+            'articleId' => 1,
+        ]),
+        el(ArticleCard::class, [
+            'articleId' => 2,
+        ]),
+        el(ArticleCard::class, [
+            'articleId' => 3,
+        ]),
+    ]),
+]);
+
+$vy = new Vy();
+
+echo $vy->render($el);
 ```
--->
-
 
 ## Contributing
 
