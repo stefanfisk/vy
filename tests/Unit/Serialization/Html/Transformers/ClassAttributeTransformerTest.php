@@ -85,11 +85,11 @@ class ClassAttributeTransformerTest extends TestCase
     public function testConditional(): void
     {
         $this->assertClassEquals(
-            'bar foo',
+            'baz foo',
             [
                 'foo',
-                'bar' => true,
-                'baz' => false,
+                'bar' => false,
+                'baz' => true,
             ],
         );
     }

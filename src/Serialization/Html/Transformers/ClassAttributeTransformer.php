@@ -70,7 +70,7 @@ class ClassAttributeTransformer implements AttributeValueTransformerInterface
                 }
 
                 if (! $conditional || ! $class) {
-                    return;
+                    continue;
                 }
 
                 $this->walk($class, $effectiveClasses);
