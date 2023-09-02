@@ -37,6 +37,11 @@ class Renderer implements HookHandlerInterface
         return $node;
     }
 
+    public function valuesAreEqual(mixed $a, mixed $b): bool
+    {
+        return $this->comparator->valuesAreEqual($a, $b);
+    }
+
     /** @param array<mixed> $nextProps */
     public function giveNodeNextProps(Node $node, array $nextProps): void
     {

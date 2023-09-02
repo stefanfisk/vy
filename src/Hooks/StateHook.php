@@ -24,9 +24,10 @@ class StateHook extends Hook
         return static::useWith($initialValue);
     }
 
-    private Closure $setValue;
-    private mixed $nextValue;
     private mixed $value;
+    private Closure $setValue;
+    private bool $hasNextValue;
+    private mixed $nextValue;
 
     public function __construct(
         Renderer $renderer,
@@ -38,14 +39,15 @@ class StateHook extends Hook
             node: $node,
         );
 
-        $this->setValue = $this->setValue(...);
-        $this->nextValue = $initialValue;
         $this->value = $initialValue;
+        $this->setValue = $this->setValue(...);
+        $this->hasNextValue = false;
+        $this->nextValue = null;
     }
 
     public function needsRender(): bool
     {
-        return $this->value !== $this->nextValue;
+        return $this->hasNextValue;
     }
 
     public function initialRender(mixed ...$args): mixed
@@ -55,18 +57,26 @@ class StateHook extends Hook
 
     public function rerender(mixed ...$args): mixed
     {
-        $this->value = $this->nextValue;
+        if ($this->hasNextValue) {
+            $this->value = $this->nextValue;
+            $this->nextValue = null;
+            $this->hasNextValue = false;
+        }
 
         return [$this->value, $this->setValue];
     }
 
     private function setValue(mixed $newValue): void
     {
-        $this->nextValue = $newValue;
+        if ($this->renderer->valuesAreEqual($this->value, $newValue)) {
+            $this->nextValue = null;
+            $this->hasNextValue = false;
 
-        if ($this->nextValue === $this->value) {
             return;
         }
+
+        $this->nextValue = $newValue;
+        $this->hasNextValue = true;
 
         $this->renderer->enqueueRender($this->node);
     }
