@@ -11,8 +11,13 @@ use StefanFisk\Vy\Rendering\Renderer;
 class MemoHook extends Hook
 {
     /**
-     * @param Closure():mixed $calculateValue
+     * @param Closure():T $calculateValue
      * @param array<mixed> $deps
+     *
+     * @return T
+     *
+     * @template T
+     * @psalm-suppress MixedInferredReturnType,MixedReturnStatement
      */
     public static function use(Closure $calculateValue, array $deps): mixed
     {

@@ -11,16 +11,16 @@ use StefanFisk\Vy\Rendering\Renderer;
 class StateHook extends Hook
 {
     /**
-     * @return array{mixed,Closure(mixed):void}
+     * @param T $initialValue
      *
-     * @psalm-suppress MixedInferredReturnType
+     * @return array{T,(Closure(T):void)}
+     *
+     * @template T
+     * @psalm-suppress MixedInferredReturnType,MixedReturnStatement
      */
     public static function use(mixed $initialValue): array
     {
-        /**
-         * @phpstan-ignore-next-line
-         * @psalm-suppress MixedInferredReturnType,MixedReturnStatement
-         */
+        // @phpstan-ignore-next-line
         return static::useWith($initialValue);
     }
 
