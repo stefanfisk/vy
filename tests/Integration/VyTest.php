@@ -291,7 +291,7 @@ class VyTest extends TestCase
         );
     }
 
-    public function testRootComponent(): void
+    public function testParentComponent(): void
     {
         $c = fn (mixed ...$props): mixed => el(
             'div',
@@ -592,6 +592,20 @@ class VyTest extends TestCase
         $this->assertRenderMatches(
             'outer',
             el($outer),
+        );
+    }
+
+    public function testRootComponent(): void
+    {
+        $root = fn (mixed $children): mixed => el('html', [], $children);
+
+        $vy = new Vy(
+            rootComponent: $root,
+        );
+
+        $this->assertEquals(
+            '<html><div>child</div></html>',
+            $vy->render(el('div', [], 'child')),
         );
     }
 }
