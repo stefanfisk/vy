@@ -35,6 +35,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "StefanFisk\\Vy\\Examples\\": "examples/",
             "StefanFisk\\Vy\\Tests\\": "tests/"
         }
     },

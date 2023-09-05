@@ -5,6 +5,7 @@
     <arg name="colors"/>
     <arg value="sp"/>
 
+    <file>./examples</file>
     <file>./src</file>
     <file>./tests</file>
 
