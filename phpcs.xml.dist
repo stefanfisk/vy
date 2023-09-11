@@ -14,4 +14,8 @@
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousTraitNaming"/>
     </rule>
 
+    <rule ref="Squiz.Classes.ValidClassName.NotCamelCaps">
+        <exclude-pattern>./src/Elements/*</exclude-pattern>
+    </rule>
+
 </ruleset>
