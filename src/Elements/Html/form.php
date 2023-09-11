@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StefanFisk\Vy\Html\Elements\Html;
+namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Elements\Utils;
