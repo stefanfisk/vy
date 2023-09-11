@@ -192,4 +192,26 @@ class ElementTest extends TestCase
             Element::toChildArray([$value1, '', $value2]),
         );
     }
+
+    public function testInvokeMergesChildrenIntoProps(): void
+    {
+        $this->assertElementEquals(
+            [
+                'key' => null,
+                'type' => 'div',
+                'props' => [
+                    'foo' => 'bar',
+                    'children' => [['baz', 'qux'], 'quux'],
+                ],
+            ],
+            Element::create('div', ['foo' => 'bar'])(['baz', 'qux'], 'quux'),
+        );
+    }
+
+    public function testInvokeThrowsIfBothChildrenPropAndChildren(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        Element::create('div', ['foo' => 'bar', 'children' => 'baz'])('quz');
+    }
 }

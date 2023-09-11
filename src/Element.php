@@ -97,4 +97,21 @@ class Element
         public readonly array $props,
     ) {
     }
+
+    public function __invoke(mixed ...$children): Element
+    {
+        $props = $this->props;
+
+        if ($props['children'] ?? false) {
+            throw new InvalidArgumentException('Element already has children.');
+        }
+
+        $props['children'] = $children;
+
+        return new Element(
+            key: $this->key,
+            type: $this->type,
+            props: $props,
+        );
+    }
 }
