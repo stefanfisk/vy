@@ -13,9 +13,11 @@ use function array_filter;
 class script
 {
     public static function el(
+        mixed $class = null,
         mixed ...$props,
     ): Element {
         return el('script', array_filter([
+            'class' => $class,
             ...Utils::mapKeysToKebab($props),
         ]));
     }

@@ -13,9 +13,11 @@ use function array_filter;
 class h5
 {
     public static function el(
+        mixed $class = null,
         mixed ...$props,
     ): Element {
         return el('h5', array_filter([
+            'class' => $class,
             ...Utils::mapKeysToKebab($props),
         ]));
     }

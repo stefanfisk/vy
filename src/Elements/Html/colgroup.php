@@ -13,9 +13,11 @@ use function array_filter;
 class colgroup
 {
     public static function el(
+        mixed $class = null,
         mixed ...$props,
     ): Element {
         return el('colgroup', array_filter([
+            'class' => $class,
             ...Utils::mapKeysToKebab($props),
         ]));
     }

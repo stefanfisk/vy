@@ -13,10 +13,12 @@ use function array_filter;
 class svg
 {
     public static function el(
+        mixed $class = null,
         mixed $viewBox = null,
         mixed ...$props,
     ): Element {
         return el('svg', array_filter([
+            'class' => $class,
             'viewBox' => $viewBox,
             ...Utils::mapKeysToKebab($props),
         ]));
