@@ -16,9 +16,12 @@ class tr
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('tr', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('tr', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

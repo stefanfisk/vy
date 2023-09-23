@@ -16,9 +16,12 @@ class header
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('header', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('header', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

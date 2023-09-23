@@ -16,9 +16,12 @@ class video
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('video', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('video', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

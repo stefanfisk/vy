@@ -16,9 +16,12 @@ class noembed
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('noembed', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('noembed', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

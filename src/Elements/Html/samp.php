@@ -16,9 +16,12 @@ class samp
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('samp', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('samp', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

@@ -16,9 +16,12 @@ class legend
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('legend', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('legend', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

@@ -16,9 +16,12 @@ class menu
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('menu', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('menu', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

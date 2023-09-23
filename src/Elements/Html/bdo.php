@@ -16,9 +16,12 @@ class bdo
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('bdo', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('bdo', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

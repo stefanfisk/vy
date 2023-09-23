@@ -16,9 +16,12 @@ class acronym
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('acronym', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('acronym', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

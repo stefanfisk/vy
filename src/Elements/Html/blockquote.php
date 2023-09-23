@@ -16,9 +16,12 @@ class blockquote
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('blockquote', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('blockquote', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

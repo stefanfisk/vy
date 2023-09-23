@@ -16,9 +16,12 @@ class xmp
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('xmp', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('xmp', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

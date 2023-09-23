@@ -16,9 +16,12 @@ class rb
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('rb', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('rb', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }

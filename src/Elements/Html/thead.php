@@ -16,9 +16,12 @@ class thead
         mixed $class = null,
         mixed ...$props,
     ): Element {
-        return el('thead', array_filter([
-            'class' => $class,
-            ...Utils::mapKeysToKebab($props),
-        ]));
+        return el('thead', array_filter(
+            [
+                'class' => $class,
+                ...Utils::mapKeysToKebab($props),
+            ],
+            fn ($val) => $val !== null,
+        ));
     }
 }
