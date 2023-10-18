@@ -64,6 +64,7 @@ class HtmlSerializer implements SerializerInterface
     /** @param array<AttributeValueTransformerInterface|ChildValueTransformerInterface> $transformers */
     public function __construct(
         array $transformers,
+        private readonly bool $debugComponents = false,
     ) {
         $this->attributeValueTransformers = array_filter(
             $transformers,
@@ -95,7 +96,7 @@ class HtmlSerializer implements SerializerInterface
         if (is_string($node->type) && !$node->component) {
             $this->serializeTagNode($node, $isSvgMode);
         } else {
-            $this->serializeChildren($node, $isSvgMode);
+            $this->serializeComponent($node, $isSvgMode);
         }
     }
 
@@ -269,6 +270,31 @@ class HtmlSerializer implements SerializerInterface
                 inValue: $inValue,
                 value: $value,
             );
+        }
+    }
+
+    private function serializeComponent(Node $node, bool $isSvgMode): void
+    {
+        $prettyType = null;
+
+        if ($this->debugComponents) {
+            $type = $node->type;
+
+            if (is_string($type)) {
+                $prettyType = $type;
+            } elseif (is_object($type)) {
+                $prettyType = $type::class;
+            }
+
+            if ($prettyType) {
+                $this->output .= "<!-- <$prettyType> -->";
+            }
+        }
+
+        $this->serializeChildren($node, $isSvgMode);
+
+        if ($this->debugComponents && $prettyType) {
+            $this->output .= "<!-- </$prettyType> -->";
         }
     }
 

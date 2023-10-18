@@ -36,12 +36,16 @@ class Vy
             new StyleAttributeTransformer(),
         ],
         private readonly object | string | null $rootComponent = null,
+        bool $debugComponents = false,
     ) {
         $this->renderer = new Renderer(
             nodeFactory: new NodeFactory(container: $container),
             comparator: $comparator,
         );
-        $this->serializer = new HtmlSerializer(transformers: $transformers);
+        $this->serializer = new HtmlSerializer(
+            transformers: $transformers,
+            debugComponents: $debugComponents,
+        );
     }
 
     public function render(Element $el): string
