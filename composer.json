@@ -21,7 +21,8 @@
     },
     "require-dev": {
         "masterminds/html5": "^2.8",
-        "ramsey/devtools": "^2.0"
+        "ramsey/devtools": "^2.0",
+        "rector/rector": "^0.18.2"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

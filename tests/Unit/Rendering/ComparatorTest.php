@@ -112,24 +112,24 @@ class ComparatorTest extends TestCase
     public function testIdenticalElementsAreEqual(): void
     {
         $this->assertValuesAreEqual(
-            [el('div', ['foo' => 'bar'], 'baz')],
-            [el('div', ['foo' => 'bar'], 'baz')],
+            [el('div', ['foo' => 'bar'])('baz')],
+            [el('div', ['foo' => 'bar'])('baz')],
         );
     }
 
     public function testElementsOfDifferentTypeAreNotEqual(): void
     {
         $this->assertPropsAreNotEqual(
-            [el('div', ['foo' => 'bar'], 'baz')],
-            [el('span', ['foo' => 'bar'], 'baz')],
+            [el('div', ['foo' => 'bar'])('baz')],
+            [el('span', ['foo' => 'bar'])('baz')],
         );
     }
 
     public function testElementsWithDifferentPropsAreNotEqual(): void
     {
         $this->assertPropsAreNotEqual(
-            [el('div', ['foo' => 'bar'], 'baz')],
-            [el('div', ['bar' => 'bar'], 'baz')],
+            [el('div', ['foo' => 'bar'])('baz')],
+            [el('div', ['bar' => 'bar'])('baz')],
         );
     }
 }

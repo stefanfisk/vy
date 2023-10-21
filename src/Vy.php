@@ -47,7 +47,7 @@ class Vy
     public function render(Element $el): string
     {
         if ($this->rootComponent) {
-            $el = el($this->rootComponent, [], $el);
+            $el = el($this->rootComponent)($el);
         }
 
         $node = $this->renderer->createNode(parent: null, el: $el);

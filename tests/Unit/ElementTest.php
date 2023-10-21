@@ -6,10 +6,11 @@ namespace StefanFisk\Vy\Tests\Unit;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\Vy\Components\Fragment;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
+
+use function StefanFisk\Vy\el;
 
 #[CoversClass(Element::class)]
 class ElementTest extends TestCase
@@ -24,117 +25,6 @@ class ElementTest extends TestCase
                 'type' => $actual->type,
                 'props' => $actual->props,
             ],
-        );
-    }
-
-    public function testCreateTakesStringKeyFromProps(): void
-    {
-        $this->assertElementEquals(
-            [
-                'key' => 'baz',
-                'type' => 'div',
-                'props' => [],
-            ],
-            Element::create('div', ['key' => 'baz']),
-        );
-    }
-
-    public function testCreateTakesIntKeyFromProps(): void
-    {
-        $this->assertElementEquals(
-            [
-                'key' => '123',
-                'type' => 'div',
-                'props' => [],
-            ],
-            Element::create('div', ['key' => 123]),
-        );
-    }
-
-    public function testCreateRemovesKeyFromProps(): void
-    {
-        $this->assertElementEquals(
-            [
-                'key' => 'baz',
-                'type' => 'div',
-                'props' => ['foo' => 'bar'],
-            ],
-            Element::create('div', [
-                'key' => 'baz',
-                'foo' => 'bar',
-            ]),
-        );
-    }
-
-    public function testCreateThrowsIfKeyIsWrongType(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        Element::create('div', ['key' => ['foo' => 'bar']]);
-    }
-
-    public function testCreateThrowsIfKeyIsEmptyString(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        Element::create('div', ['key' => '']);
-    }
-
-    public function testCreateMergesChildrenIntoProps(): void
-    {
-        $this->assertElementEquals(
-            [
-                'key' => null,
-                'type' => 'div',
-                'props' => [
-                    'foo' => 'bar',
-                    'children' => [['baz', 'qux'], 'quux'],
-                ],
-            ],
-            Element::create('div', ['foo' => 'bar'], ['baz', 'qux'], 'quux'),
-        );
-    }
-
-    public function testCreateDoesNotMergeEmptyChildrenIntoProps(): void
-    {
-        $this->assertElementEquals(
-            [
-                'key' => null,
-                'type' => 'div',
-                'props' => ['foo' => 'bar'],
-            ],
-            Element::create('div', ['foo' => 'bar']),
-        );
-    }
-
-    public function testCreatePassesChildrenPropAsIs(): void
-    {
-        $this->assertElementEquals(
-            [
-                'key' => null,
-                'type' => 'div',
-                'props' => ['foo' => 'bar', 'children' => 'baz'],
-            ],
-            Element::create('div', ['foo' => 'bar', 'children' => 'baz']),
-        );
-    }
-
-    public function testCreateThrowsIfBothChildrenPropAndChildren(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        Element::create('div', ['foo' => 'bar', 'children' => 'baz'], ['quz']);
-    }
-
-    public function testCreateConvertsEmptyStringTypeToFragments(): void
-    {
-        $this->assertElementEquals(
-            [
-                'key' => null,
-                'type' => Fragment::class,
-                'props' => ['foo' => 'bar', 'children' => 'baz'],
-            ],
-            Element::create('', ['foo' => 'bar', 'children' => 'baz']),
         );
     }
 
@@ -204,7 +94,7 @@ class ElementTest extends TestCase
                     'children' => [['baz', 'qux'], 'quux'],
                 ],
             ],
-            Element::create('div', ['foo' => 'bar'])(['baz', 'qux'], 'quux'),
+            el('div', ['foo' => 'bar'])(['baz', 'qux'], 'quux'),
         );
     }
 
@@ -212,6 +102,6 @@ class ElementTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        Element::create('div', ['foo' => 'bar', 'children' => 'baz'])('quz');
+        el('div', ['foo' => 'bar', 'children' => 'baz'])('quz');
     }
 }

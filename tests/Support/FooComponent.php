@@ -22,12 +22,8 @@ class FooComponent
     {
         return el('div', [
             'data-foo' => $foo,
-        ], [
-            el('div', [
-                'class' => 'children',
-            ], [
-                $children,
-            ]),
-        ]);
+        ])(el('div', [
+            'class' => 'children',
+        ])($children));
     }
 }
