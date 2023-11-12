@@ -9,14 +9,20 @@ use StefanFisk\Vy\Element;
 use function count;
 use function current;
 use function is_array;
+use function is_object;
 use function key;
 use function next;
 use function reset;
+use function spl_object_id;
 
 class Comparator
 {
     public function valuesAreEqual(mixed $a, mixed $b): bool
     {
+        if (is_object($a) && is_object($b) && spl_object_id($a) === spl_object_id($b)) {
+            return true;
+        }
+
         if (is_array($a) && is_array($b)) {
             return $this->arraysAreEqual($a, $b);
         }
