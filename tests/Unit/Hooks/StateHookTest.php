@@ -10,6 +10,7 @@ use StefanFisk\Vy\Hooks\StateHook;
 use StefanFisk\Vy\Rendering\Node;
 use StefanFisk\Vy\Tests\Support\CreatesStubNodesTrait;
 use StefanFisk\Vy\Tests\Support\Mocks\MocksHookHandlerTrait;
+use StefanFisk\Vy\Tests\Support\Mocks\MocksInvokablesTrait;
 use StefanFisk\Vy\Tests\Support\Mocks\MocksRendererTrait;
 use StefanFisk\Vy\Tests\TestCase;
 
@@ -19,6 +20,7 @@ class StateHookTest extends TestCase
     use CreatesStubNodesTrait;
     use MocksHookHandlerTrait;
     use MocksRendererTrait;
+    use MocksInvokablesTrait;
 
     private Node $node;
     private StateHook $hook;
@@ -75,7 +77,7 @@ class StateHookTest extends TestCase
         $this->hook->initialRender('foo');
 
         /** @var string $value */
-        [$value] = $this->hook->rerender('bar'); // @phpstan-ignore-line
+        [$value] = $this->hook->rerender('bar');
 
         $this->assertSame('foo', $value);
     }
@@ -83,7 +85,7 @@ class StateHookTest extends TestCase
     public function testReturnsNewValueOnRerender(): void
     {
         /** @var Closure(string):void $setValue */
-        [, $setValue] = $this->hook->initialRender('foo'); // @phpstan-ignore-line
+        [, $setValue] = $this->hook->initialRender('foo');
 
         $this->renderer
             ->shouldReceive('valuesAreEqual')
@@ -98,7 +100,7 @@ class StateHookTest extends TestCase
 
         $setValue('bar');
 
-        [$value] = $this->hook->rerender('foo'); // @phpstan-ignore-line
+        [$value] = $this->hook->rerender('foo');
 
         $this->assertSame('bar', $value);
     }
@@ -113,7 +115,7 @@ class StateHookTest extends TestCase
     public function testDoesNotNeedRenderAfterSettingEqualValue(): void
     {
         /** @var Closure(string):void $setValue */
-        [, $setValue] = $this->hook->initialRender('foo'); // @phpstan-ignore-line
+        [, $setValue] = $this->hook->initialRender('foo');
 
         $this->renderer
             ->shouldReceive('valuesAreEqual')
@@ -129,7 +131,7 @@ class StateHookTest extends TestCase
     public function testNeedsRenderAfterSettingNonEqualValue(): void
     {
         /** @var Closure(string):void $setValue */
-        [, $setValue] = $this->hook->initialRender('foo'); // @phpstan-ignore-line
+        [, $setValue] = $this->hook->initialRender('foo');
 
         $this->renderer
             ->shouldReceive('valuesAreEqual')
@@ -150,7 +152,7 @@ class StateHookTest extends TestCase
     public function testDoesNotNeedRenderAfterSettingOldValueAfterNewValue(): void
     {
         /** @var Closure(string):void $setValue */
-        [, $setValue] = $this->hook->initialRender('foo'); // @phpstan-ignore-line
+        [, $setValue] = $this->hook->initialRender('foo');
 
         $this->renderer
             ->shouldReceive('valuesAreEqual')
@@ -173,5 +175,45 @@ class StateHookTest extends TestCase
         $setValue('foo');
 
         $this->assertFalse($this->hook->needsRender());
+    }
+
+    public function testAsyncSet(): void
+    {
+        /** @var Closure(Closure):void $setValue */
+        [, $setValue] = $this->hook->initialRender('foo');
+
+        $fn = $this->createMockInvokable();
+
+        $this->renderer
+            ->shouldReceive('enqueueRender')
+            ->times(3)
+            ->with($this->node);
+
+        $setValue($fn(...));
+        $setValue($fn(...));
+        $setValue($fn(...));
+
+        $fn
+            ->expects('__invoke')
+            ->once()
+            ->with('foo')
+            ->andReturn('bar');
+
+        $fn
+            ->expects('__invoke')
+            ->once()
+            ->with('bar')
+            ->andReturn('baz');
+
+        $fn
+            ->expects('__invoke')
+            ->once()
+            ->with('baz')
+            ->andReturn('qux');
+
+        [$newState, $newSetValue] = $this->hook->rerender();
+
+        $this->assertSame('qux', $newState);
+        $this->assertSame($setValue, $newSetValue);
     }
 }
