@@ -72,6 +72,16 @@ class ClassAttributeTransformerTest extends TestCase
         $this->assertClassEquals(null, null);
     }
 
+    public function testTrue(): void
+    {
+        $this->assertClassEquals(null, true);
+    }
+
+    public function testFalse(): void
+    {
+        $this->assertClassEquals(null, false);
+    }
+
     public function testEmptyString(): void
     {
         $this->assertClassEquals(null, '');

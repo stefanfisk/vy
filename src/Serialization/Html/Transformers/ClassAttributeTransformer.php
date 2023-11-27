@@ -51,7 +51,7 @@ class ClassAttributeTransformer implements AttributeValueTransformerInterface
     /** @param array<string,true> &$effectiveClasses */
     private function walk(mixed $class, array &$effectiveClasses): void
     {
-        if (!$class) {
+        if (!$class || $class === true) {
             return;
         } elseif (is_string($class)) {
             $classes = array_filter(explode(' ', $class));
