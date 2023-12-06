@@ -9,7 +9,10 @@ use Psr\Container\ContainerInterface;
 use StefanFisk\Vy\Rendering\Comparator;
 use StefanFisk\Vy\Rendering\NodeFactory;
 use StefanFisk\Vy\Rendering\Renderer;
+use StefanFisk\Vy\Serialization\Html\CachingPropToAttrNameMapper;
+use StefanFisk\Vy\Serialization\Html\DefaultPropToAttrNameMapper;
 use StefanFisk\Vy\Serialization\Html\HtmlSerializer;
+use StefanFisk\Vy\Serialization\Html\PropToAttrNameMapper;
 use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\ClassAttributeTransformer;
@@ -23,12 +26,16 @@ class Vy
     private readonly Renderer $renderer;
 
     /**
+     * @param list<PropToAttrNameMapper> $propToAttrNameMappers
      * @param array<AttributeValueTransformerInterface|ChildValueTransformerInterface> $transformers
      * @param Closure|object|class-string|null $rootComponent
      */
     public function __construct(
         ContainerInterface $container = new Container(),
         Comparator $comparator = new Comparator(),
+        array $propToAttrNameMappers = [
+            new DefaultPropToAttrNameMapper(),
+        ],
         array $transformers = [
             new ClosureTransformer(),
             new StringableTransformer(),
@@ -43,6 +50,7 @@ class Vy
             comparator: $comparator,
         );
         $this->serializer = new HtmlSerializer(
+            propToAttrNameMapper: new CachingPropToAttrNameMapper(mappers: $propToAttrNameMappers),
             transformers: $transformers,
             debugComponents: $debugComponents,
         );

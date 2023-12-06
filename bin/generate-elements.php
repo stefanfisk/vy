@@ -5,10 +5,6 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy;
 
-use StefanFisk\Vy\Elements\Utils;
-
-use function array_unique;
-use function array_unshift;
 use function assert;
 use function file_exists;
 use function file_put_contents;
@@ -215,232 +211,9 @@ $svgTagNames = [
     'view',
 ];
 
-/** @var array<string,list<string>> $svgAttributeNameToTagNames */
-$svgAttributeNameToTagNames = [
-    'baseFrequency' => [
-        'feTurbulence',
-    ],
-    'calcMode' => [
-        'animate',
-        'animateMotion',
-        'animateTransform',
-    ],
-    'clipPathUnits' => [
-        'clipPath',
-    ],
-    'diffuseConstant' => [
-        'feDiffuseLighting',
-    ],
-    'edgeMode' => [
-        'feConvolveMatrix',
-        'feGaussianBlur',
-    ],
-    'filterUnits' => [
-        'filter',
-    ],
-    'kernelMatrix' => [
-        'feConvolveMatrix',
-    ],
-    'keyPoints' => [
-        'animate',
-        'animateMotion',
-        'animateTransform',
-        'set',
-    ],
-    'keySplines' => [
-        'animate',
-        'animateMotion',
-        'animateTransform',
-    ],
-    'keyTimes' => [
-        'animate',
-        'animateMotion',
-        'animateTransform',
-    ],
-    'lengthAdjust' => [
-        'text',
-        'textPath',
-        'tref',
-        'tspan',
-    ],
-    'limitingConeAngle' => [
-        'feSpotLight',
-    ],
-    'markerHeight' => [
-        'marker',
-    ],
-    'markerUnits' => [
-        'marker',
-    ],
-    'markerWidth' => [
-        'marker',
-    ],
-    'maskContentUnits' => [
-        'mask',
-    ],
-    'maskUnits' => [
-        'mask',
-    ],
-    'numOctaves' => [
-        'feTurbulence',
-    ],
-    'pathLength' => [
-        'circle',
-        'ellipse',
-        'line',
-        'path',
-        'polygon',
-        'polyline',
-        'rect',
-    ],
-    'patternContentUnits' => [
-        'pattern',
-    ],
-    'patternTransform' => [
-        'pattern',
-    ],
-    'patternUnits' => [
-        'pattern',
-    ],
-    'pointsAtX' => [
-        'feSpotLight',
-    ],
-    'pointsAtY' => [
-        'feSpotLight',
-    ],
-    'pointsAtZ' => [
-        'feSpotLight',
-    ],
-    'preserveAlpha' => [
-        'feConvolveMatrix',
-    ],
-    'preserveAspectRatio' => [
-        'svg',
-        'symbol',
-        'image',
-        'feImage',
-        'marker',
-        'pattern',
-        'view',
-    ],
-    'primitiveUnits' => [
-        'filter',
-    ],
-    'refX' => [
-        'marker',
-        'symbol',
-    ],
-    'refY' => [
-        'marker',
-        'symbol',
-    ],
-    'repeatCount' => [
-        'animate',
-        'animateMotion',
-        'animateTransform',
-        'set',
-    ],
-    'repeatDur' => [
-        'animate',
-        'animateMotion',
-        'animateTransform',
-        'set',
-    ],
-    'specularConstant' => [
-        'feSpecularLighting',
-    ],
-    'specularExponent' => [
-        'feSpecularLighting',
-        'feSpotLight',
-    ],
-    'spreadMethod' => [
-        'linearGradient',
-        'radialGradient',
-    ],
-    'startOffset' => [
-        'textPath',
-    ],
-    'stdDeviation' => [
-        'feGaussianBlur',
-    ],
-    'stitchTiles' => [
-        'feTurbulence',
-    ],
-    'surfaceScale' => [
-        'feDiffuseLighting',
-        'feSpecularLighting',
-    ],
-    'systemLanguage' => [
-        'a',
-        'animate',
-        'animateMotion',
-        'animateTransform',
-        'circle',
-        'clipPath',
-        'cursor',
-        'defs',
-        'ellipse',
-        'foreignObject',
-        'g',
-        'image',
-        'line',
-        'mask',
-        'path',
-        'pattern',
-        'polygon',
-        'polyline',
-        'rect',
-        'set',
-        'svg',
-        'switch',
-        'text',
-        'textPath',
-        'tref',
-        'tspan',
-        'use',
-    ],
-    'tableValues' => [
-        'feFuncA',
-        'feFuncB',
-        'feFuncG',
-        'feFuncR',
-    ],
-    'targetX' => [
-        'feConvolveMatrix',
-    ],
-    'targetY' => [
-        'feConvolveMatrix',
-    ],
-    'textLength' => [
-        'text',
-        'textPath',
-        'tref',
-        'tspan',
-    ],
-    'viewBox' => [
-        'marker',
-        'pattern',
-        'svg',
-        'symbol',
-        'view',
-    ],
-    'xChannelSelector' => [
-        'feDisplacementMap',
-    ],
-    'yChannelSelector' => [
-        'feDisplacementMap',
-    ],
-];
-
-$namespaceToTagNamesAndAttributes = [
-    'Html' => [
-        'tagNames' => $htmlTagNames,
-        'attributeNameToTagNames' => [],
-    ],
-    'Svg' => [
-        'tagNames' => $svgTagNames,
-        'attributeNameToTagNames' => $svgAttributeNameToTagNames,
-    ],
+$namespaceToTagNames = [
+    'Html' => $htmlTagNames,
+    'Svg' => $svgTagNames,
 ];
 
 // Reserved words
@@ -572,26 +345,8 @@ delete_old_classes($basePath);
 
 // Generate element classes
 
-foreach ($namespaceToTagNamesAndAttributes as $namespace => $tagNamesAndAttributes) {
-    $tagNames = $tagNamesAndAttributes['tagNames'];
-    $attributeNameToTagNames = $tagNamesAndAttributes['attributeNameToTagNames'];
-
+foreach ($namespaceToTagNames as $namespace => $tagNames) {
     foreach ($tagNames as $tagName) {
-        // Gather the attributes that need special handling
-
-        $tagAttributeNames = [];
-
-        foreach ($attributeNameToTagNames as $attributeName => $attributeTagNames) {
-            if (!in_array($tagName, $attributeTagNames)) {
-                continue;
-            }
-
-            $tagAttributeNames[] = $attributeName;
-        }
-
-        array_unshift($tagAttributeNames, 'class');
-        $tagAttributeNames = array_unique($tagAttributeNames);
-
         // Derive the class name
 
         $class = preg_replace_callback(
@@ -614,38 +369,27 @@ foreach ($namespaceToTagNamesAndAttributes as $namespace => $tagNamesAndAttribut
         $src .= "namespace StefanFisk\\Vy\\Elements\\$namespace;\n";
         $src .= "\n";
         $src .= "use StefanFisk\\Vy\\Element;\n";
-        $src .= "use StefanFisk\\Vy\\Elements\\Utils;\n";
-        $src .= "\n";
-        $src .= "use function array_filter;\n";
         $src .= "\n";
         $src .= "class $class\n";
         $src .= "{\n";
         $src .= "    public static function el(\n";
-        foreach ($tagAttributeNames as $tagAttributeName) {
-            $argName = Utils::attToArg($tagAttributeName);
-
-            $src .= "        mixed \$$argName = null,\n";
-        }
+        $src .= "        mixed \$class = null,\n";
         $src .= "        string | null \$_key = null,\n";
         $src .= "        mixed ...\$props,\n";
         $src .= "    ): Element {\n";
+        $src .= "        if (\$class !== null) {\n";
+        $src .= "            \$props['class'] = \$class;\n";
+        $src .= "        }\n";
+        $src .= "\n";
         $src .= "        return new Element(\n";
         $src .= "            key: \$_key,\n";
         $src .= "            type: '$tagName',\n";
-        $src .= "            props: array_filter(\n";
-        $src .= "                [\n";
-        foreach ($tagAttributeNames as $tagAttributeName) {
-            $argName = Utils::attToArg($tagAttributeName);
-
-            $src .= "                    '$tagAttributeName' => \$$argName,\n";
-        }
-        $src .= "                    ...Utils::mapArgsToAtts(\$props),\n";
-        $src .= "                ],\n";
-        $src .= "                fn (\$value) => \$value !== null,\n";
-        $src .= "            ),\n";
+        $src .= "            props: \$props,\n";
         $src .= "        );\n";
         $src .= "    }\n";
         $src .= "}\n";
+
+        // Write the file
 
         if (!file_exists("$basePath/$namespace")) {
             mkdir("$basePath/$namespace", 0777, true);

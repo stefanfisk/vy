@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
-use StefanFisk\Vy\Elements\Utils;
-
-use function array_filter;
 
 class hr
 {
@@ -16,16 +13,14 @@ class hr
         string | null $_key = null,
         mixed ...$props,
     ): Element {
+        if ($class !== null) {
+            $props['class'] = $class;
+        }
+
         return new Element(
             key: $_key,
             type: 'hr',
-            props: array_filter(
-                [
-                    'class' => $class,
-                    ...Utils::mapArgsToAtts($props),
-                ],
-                fn ($value) => $value !== null,
-            ),
+            props: $props,
         );
     }
 }
