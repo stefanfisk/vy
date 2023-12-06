@@ -69,14 +69,24 @@ class StyleAttributeTransformerTest extends TestCase
         $this->assertThrowsForStyle(InvalidArgumentException::class, [new stdClass()]);
     }
 
-    public function testNull(): void
+    public function testNullValue(): void
     {
         $this->assertStyleEquals('', null);
     }
 
-    public function testEmptyString(): void
+    public function testNullSubvalue(): void
+    {
+        $this->assertStyleEquals('', [null]);
+    }
+
+    public function testEmptyStringValue(): void
     {
         $this->assertStyleEquals('', '');
+    }
+
+    public function testEmptyStringSubvalue(): void
+    {
+        $this->assertStyleEquals('', ['']);
     }
 
     public function testString(): void

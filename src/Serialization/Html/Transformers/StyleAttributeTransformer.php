@@ -57,6 +57,10 @@ class StyleAttributeTransformer implements AttributeValueTransformerInterface
         array_walk_recursive(
             $styles,
             function (mixed $value, int | string $key) use ($wrapper): void {
+                if (!$value || $value === true) {
+                    return;
+                }
+
                 if (!is_string($value)) {
                     throw new InvalidArgumentException(sprintf(
                         'Unsupported type `%s`.',
