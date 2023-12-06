@@ -7,6 +7,7 @@ namespace StefanFisk\Vy\Unit\Components;
 use Error;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Components\Context;
+use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Hooks\ContextHook;
 use StefanFisk\Vy\Hooks\ContextProviderHook;
 use StefanFisk\Vy\Tests\Support\FooContext;
@@ -18,6 +19,20 @@ use stdClass;
 class ContextTest extends TestCase
 {
     use MocksHookHandlerTrait;
+
+    public function testElCreatesElement(): void
+    {
+        $this->assertEquals(
+            new Element(
+                type: FooContext::class,
+                key: null,
+                props: [
+                    'value' => 'foo',
+                ],
+            ),
+            FooContext::el('foo'),
+        );
+    }
 
     public function testRenderReturnsChildren(): void
     {
