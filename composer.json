@@ -21,8 +21,7 @@
     },
     "require-dev": {
         "masterminds/html5": "^2.8",
-        "ramsey/devtools": "^2.0",
-        "rector/rector": "^0.18.2"
+        "ramsey/devtools": "^2.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -42,12 +41,12 @@
     },
     "config": {
         "allow-plugins": {
-            "php-http/discovery": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "ramsey/composer-repl": true,
-            "phpstan/extension-installer": true,
-            "ergebnis/composer-normalize": true,
             "captainhook/plugin-composer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "ergebnis/composer-normalize": true,
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true,
+            "ramsey/composer-repl": true,
             "ramsey/devtools": true
         },
         "sort-packages": true
