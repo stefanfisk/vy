@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy;
 
+use Closure;
 use InvalidArgumentException;
 
 use function array_merge;
 use function array_reduce;
+use function array_reverse;
+use function assert;
 use function is_array;
 use function is_bool;
 
@@ -40,6 +43,52 @@ class Element
             },
             [],
         );
+    }
+
+    public static function compose(mixed ...$elements): Element
+    {
+        // Flatten and remove falsy and true values
+
+        /** @var list<Element> $elements */
+        $elements = array_reduce(
+            $elements,
+            function (array $carry, mixed $el) {
+                if (is_array($el)) {
+                    return array_merge($carry, self::toChildArray($el));
+                }
+
+                if (!$el || $el === true) {
+                    return $carry;
+                }
+
+                if ($el instanceof Closure) {
+                    $el = new Element(type: $el);
+                }
+
+                assert($el instanceof Element);
+
+                $carry[] = $el;
+
+                return $carry;
+            },
+            [],
+        );
+
+        // Return a component that applies the elements in reverses order
+
+        $elements = array_reverse($elements);
+
+        $compose = function (mixed $children = null) use ($elements): mixed {
+            $el = $children;
+
+            foreach ($elements as $el2) {
+                $el = $el2($el);
+            }
+
+            return $el;
+        };
+
+        return new Element(type: $compose);
     }
 
     /** @param array<mixed> $props */
