@@ -10,11 +10,7 @@ final class Fragment
 {
     public static function el(): Element
     {
-        return new Element(
-            key: null,
-            type: self::class,
-            props: [],
-        );
+        return new Element(type: self::class);
     }
 
     public function render(mixed $children = null): mixed

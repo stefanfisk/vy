@@ -177,7 +177,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidTagException::class,
-            new Element(null, '', []),
+            new Element(type: ''),
         );
     }
 

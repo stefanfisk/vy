@@ -181,7 +181,7 @@ class DifferTest extends TestCase
             type: '1',
         );
 
-        $el2 = new Element(key: null, type: '2', props: []);
+        $el2 = new Element(type: '2');
 
         $this->assertDiffMatches(
             oldChildren: ['foo', $node1, 'bar'],
@@ -197,13 +197,13 @@ class DifferTest extends TestCase
 
     public function testReusesNodesForElementsWithSameTypeWhenSomeAreKeyed(): void
     {
-        $node1 = $this->createStubNode(key: null, type: '1');
-        $node2 = $this->createStubNode(key: '2', type: '2');
-        $node3 = $this->createStubNode(key: null, type: '3');
+        $node1 = $this->createStubNode(type: '1');
+        $node2 = $this->createStubNode(type: '2', key: '2');
+        $node3 = $this->createStubNode(type: '3');
 
-        $el1 = new Element(key: null, type: '1', props: []);
-        $el2 = new Element(key: '2', type: '2', props: []);
-        $el3 = new Element(key: null, type: '3', props: []);
+        $el1 = new Element(type: '1');
+        $el2 = new Element(type: '2', key: '2');
+        $el3 = new Element(type: '3');
 
         $this->assertDiffMatches(
             oldChildren: ['foo', $node1, $node2, $node3, 'bar'],
@@ -226,8 +226,8 @@ class DifferTest extends TestCase
 
     public function testThrowsForDuplicateKeys(): void
     {
-        $el1 = new Element(key: 'key', type: null, props: []);
-        $el2 = new Element(key: 'key', type: null, props: []);
+        $el1 = new Element(type: null, key: 'key');
+        $el2 = new Element(type: null, key: 'key');
 
         $this->expectException(DuplicateKeyException::class);
 

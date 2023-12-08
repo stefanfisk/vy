@@ -171,7 +171,6 @@ class HtmlParser
     private function mapDocumentNode(DOMDocument $node): mixed
     {
         return new Element(
-            key: null,
             type: Fragment::class,
             props: [
                 'children' => [
@@ -207,7 +206,6 @@ class HtmlParser
         $props['children'] = $this->mapChildNodes($node);
 
         return new Element(
-            key: null,
             type: $node->tagName,
             props: $props,
         );
@@ -253,7 +251,6 @@ class HtmlParser
     private function mapFragmentNode(DOMDocumentFragment $node): Element
     {
         return new Element(
-            key: null,
             type: Fragment::class,
             props: [
                 'children' => $this->mapChildNodes($node),

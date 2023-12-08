@@ -43,5 +43,9 @@ function el(mixed $type, array $props = []): Element
 
     // Create
 
-    return new Element($key, $type, $props);
+    return new Element(
+        type: $type,
+        key: $key,
+        props: $props,
+    );
 }

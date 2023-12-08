@@ -24,7 +24,7 @@ class RenderExceptionTest extends TestCase
             component: null,
         );
 
-        $el = new Element(key: 'key', type: 'type', props: []);
+        $el = new Element(type: 'type', key: 'key');
 
         $previous = new Exception();
 

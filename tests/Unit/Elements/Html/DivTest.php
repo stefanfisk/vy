@@ -16,7 +16,6 @@ class DivTest extends TestCase
     {
         $this->assertEquals(
             new Element(
-                key: null,
                 type: 'div',
                 props: [
                     'name' => 'value',
@@ -32,7 +31,6 @@ class DivTest extends TestCase
     {
         $this->assertEquals(
             new Element(
-                key: null,
                 type: 'div',
                 props: [
                     'name' => 'value',
@@ -49,7 +47,6 @@ class DivTest extends TestCase
     {
         $this->assertEquals(
             new Element(
-                key: null,
                 type: 'div',
                 props: [
                     'class' => 'mx-auto',

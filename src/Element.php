@@ -44,9 +44,9 @@ class Element
 
     /** @param array<mixed> $props */
     public function __construct(
-        public readonly string | null $key,
         public readonly mixed $type,
-        public readonly array $props,
+        public readonly string | null $key = null,
+        public readonly array $props = [],
     ) {
     }
 

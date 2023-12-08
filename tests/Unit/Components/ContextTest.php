@@ -25,7 +25,6 @@ class ContextTest extends TestCase
         $this->assertEquals(
             new Element(
                 type: FooContext::class,
-                key: null,
                 props: [
                     'value' => 'foo',
                 ],
