@@ -68,10 +68,6 @@ class Vy
 
         $this->renderer->processRenderQueue();
 
-        $html = $this->serializer->serialize($node);
-
-        $this->renderer->unmount($node);
-
-        return $html;
+        return $this->serializer->serialize($node);
     }
 }
