@@ -7,12 +7,21 @@ namespace StefanFisk\Vy\Unit\Components;
 use Error;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Components\Fragment;
+use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
 
 #[CoversClass(Fragment::class)]
 class FragmentTest extends TestCase
 {
+    public function testElCreatesElement(): void
+    {
+        $this->assertEquals(
+            new Element(type: Fragment::class),
+            Fragment::el(),
+        );
+    }
+
     public function testRendersChildren(): void
     {
         $fragment = new Fragment();
