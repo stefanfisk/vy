@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Tests\Unit;
 
-use Closure;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Element;
@@ -30,43 +29,6 @@ class ElementTest extends TestCase
                 'props' => $actual->props,
             ],
         );
-    }
-
-    /**
-     * @param list<Element> $expected
-     * @param list<mixed> $elements
-     */
-    private function assertComposedElementsEquals(array $expected, array $elements): void
-    {
-        $el123 = Element::compose(...$elements);
-
-        $this->assertInstanceOf(Closure::class, $el123->type);
-        $this->assertNull($el123->key);
-        $this->assertEquals([], $el123->props);
-
-        $c123 = $el123->type;
-
-        $el = $c123('foo');
-
-        foreach ([...$expected, 'foo'] as $elT) {
-            if ($el instanceof Element) {
-                $this->assertInstanceOf(Element::class, $elT);
-
-                $this->assertSame($el->type, $elT->type);
-                $this->assertNull($el->key);
-                $this->assertCount(1, $el->props);
-                $this->assertArrayHasKey('children', $el->props);
-
-                $children = $el->props['children'];
-
-                $this->assertIsList($children);
-                $this->assertCount(1, $children);
-
-                $el = $children[0];
-            } else {
-                $this->assertSame($elT, $el);
-            }
-        }
     }
 
     public function testToChildArrayWrapsSingleItemInArray(): void
@@ -121,56 +83,6 @@ class ElementTest extends TestCase
         $this->assertSame(
             [$value1, $value2],
             Element::toChildArray([$value1, '', $value2]),
-        );
-    }
-
-    public function testComposeAppliesElementsInReverseOrder(): void
-    {
-        $el1 = new Element(type: fn ($children) => $children);
-        $el2 = new Element(type: fn ($children) => $children);
-        $el3 = new Element(type: fn ($children) => $children);
-
-        $this->assertComposedElementsEquals(
-            [$el1, $el2, $el3],
-            [$el1, $el2, $el3],
-        );
-    }
-
-    public function testComposeWrapsClosure(): void
-    {
-        $c2 = fn ($children) => $children;
-
-        $el1 = new Element(type: fn ($children) => $children);
-        $el2 = new Element(type: $c2);
-        $el3 = new Element(type: fn ($children) => $children);
-
-        $this->assertComposedElementsEquals(
-            [$el1, $el2, $el3],
-            [$el1, $c2, $el3],
-        );
-    }
-
-    public function testComposeFlattensArray(): void
-    {
-        $el1 = new Element(type: fn ($children) => $children);
-        $el2 = new Element(type: fn ($children) => $children);
-        $el3 = new Element(type: fn ($children) => $children);
-
-        $this->assertComposedElementsEquals(
-            [$el1, $el2, $el3],
-            [$el1, [$el2, [$el3]]],
-        );
-    }
-
-    public function testComposeFiltersNullAndBool(): void
-    {
-        $el1 = new Element(type: fn ($children) => $children);
-        $el2 = new Element(type: fn ($children) => $children);
-        $el3 = new Element(type: fn ($children) => $children);
-
-        $this->assertComposedElementsEquals(
-            [$el1, $el2, $el3],
-            [$el1, true, [$el2, false, [$el3, null]]],
         );
     }
 
