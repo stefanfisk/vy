@@ -189,9 +189,13 @@ class StateHookTest extends TestCase
             ->times(3)
             ->with($this->node);
 
+        $this->assertFalse($this->hook->needsRender());
+
         $setValue($fn(...));
         $setValue($fn(...));
         $setValue($fn(...));
+
+        $this->assertTrue($this->hook->needsRender());
 
         $fn
             ->expects('__invoke')
@@ -212,6 +216,8 @@ class StateHookTest extends TestCase
             ->andReturn('qux');
 
         [$newState, $newSetValue] = $this->hook->rerender();
+
+        $this->assertFalse($this->hook->needsRender());
 
         $this->assertSame('qux', $newState);
         $this->assertSame($setValue, $newSetValue);

@@ -50,7 +50,7 @@ class StateHook extends Hook
 
     public function needsRender(): bool
     {
-        return $this->hasNextValue;
+        return $this->hasNextValue || $this->setValueQueue;
     }
 
     /** @return array{mixed,(Closure(mixed):void)} */
