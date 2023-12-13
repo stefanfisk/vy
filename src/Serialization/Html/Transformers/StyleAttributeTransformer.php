@@ -12,6 +12,7 @@ use function array_walk_recursive;
 use function gettype;
 use function implode;
 use function is_array;
+use function is_float;
 use function is_int;
 use function is_object;
 use function is_string;
@@ -59,6 +60,10 @@ class StyleAttributeTransformer implements AttributeValueTransformerInterface
             function (mixed $value, int | string $key) use ($wrapper): void {
                 if (!$value || $value === true) {
                     return;
+                }
+
+                if (is_int($value) || is_float($value)) {
+                    $value = (string) $value;
                 }
 
                 if (!is_string($value)) {

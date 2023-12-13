@@ -79,6 +79,16 @@ class StyleAttributeTransformerTest extends TestCase
         $this->assertStyleEquals('', [null]);
     }
 
+    public function testIntSubvalue(): void
+    {
+        $this->assertStyleEquals('foo:1', ['foo' => 1]);
+    }
+
+    public function testFloatSubvalue(): void
+    {
+        $this->assertStyleEquals('foo:1.234', ['foo' => 1.234]);
+    }
+
     public function testEmptyStringValue(): void
     {
         $this->assertStyleEquals('', '');
