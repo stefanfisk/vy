@@ -24,7 +24,7 @@ class StyleAttributeTransformerTest extends TestCase
         $this->transformer = new StyleAttributeTransformer();
     }
 
-    private function assertStyleEquals(string $expected, mixed $value): void
+    private function assertStyleEquals(?string $expected, mixed $value): void
     {
         $this->assertSame(
             $expected,
@@ -71,12 +71,12 @@ class StyleAttributeTransformerTest extends TestCase
 
     public function testNullValue(): void
     {
-        $this->assertStyleEquals('', null);
+        $this->assertStyleEquals(null, null);
     }
 
     public function testNullSubvalue(): void
     {
-        $this->assertStyleEquals('', [null]);
+        $this->assertStyleEquals(null, [null]);
     }
 
     public function testIntSubvalue(): void
@@ -91,12 +91,12 @@ class StyleAttributeTransformerTest extends TestCase
 
     public function testEmptyStringValue(): void
     {
-        $this->assertStyleEquals('', '');
+        $this->assertStyleEquals(null, '');
     }
 
     public function testEmptyStringSubvalue(): void
     {
-        $this->assertStyleEquals('', ['']);
+        $this->assertStyleEquals(null, ['']);
     }
 
     public function testString(): void

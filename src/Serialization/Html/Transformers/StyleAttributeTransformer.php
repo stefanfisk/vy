@@ -32,10 +32,10 @@ class StyleAttributeTransformer implements AttributeValueTransformerInterface
         return $value;
     }
 
-    private function apply(mixed $styles): string
+    private function apply(mixed $styles): ?string
     {
         if (! $styles) {
-            return '';
+            return null;
         }
 
         if (is_string($styles)) {
@@ -87,6 +87,6 @@ class StyleAttributeTransformer implements AttributeValueTransformerInterface
         $effectiveStyles = array_filter($effectiveStyles);
         $effectiveStyles = implode(';', $effectiveStyles);
 
-        return $effectiveStyles;
+        return $effectiveStyles ?: null;
     }
 }
