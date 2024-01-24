@@ -16,6 +16,7 @@ use Throwable;
 use function array_filter;
 use function assert;
 use function gettype;
+use function htmlentities;
 use function is_float;
 use function is_int;
 use function is_object;
@@ -24,6 +25,10 @@ use function is_string;
 use function preg_match;
 use function sprintf;
 use function strtr;
+
+use const ENT_HTML5;
+use const ENT_QUOTES;
+use const ENT_SUBSTITUTE;
 
 /** @implements SerializerInterface<string> */
 class HtmlSerializer implements SerializerInterface
@@ -65,6 +70,7 @@ class HtmlSerializer implements SerializerInterface
     public function __construct(
         private readonly PropToAttrNameMapper $propToAttrNameMapper,
         array $transformers,
+        private readonly bool $encodeEntities = false,
         private readonly bool $debugComponents = false,
     ) {
         $this->attributeValueTransformers = array_filter(
@@ -358,6 +364,10 @@ class HtmlSerializer implements SerializerInterface
      */
     private function escapeText(string $value): string
     {
+        if ($this->encodeEntities) {
+            return $this->encode($value);
+        }
+
         return strtr($value, [
             '&' => '&amp;',
             "\xc2\xa0" => '&nbsp;',
@@ -371,10 +381,19 @@ class HtmlSerializer implements SerializerInterface
      */
     private function escapeAttribute(string $value): string
     {
+        if ($this->encodeEntities) {
+            return $this->encode($value);
+        }
+
         return strtr($value, [
             '&' => '&amp;',
             "\xc2\xa0" => '&nbsp;',
             '"' => '&quot;',
         ]);
+    }
+
+    private function encode(string $value): string
+    {
+        return htmlentities($value, ENT_HTML5 | ENT_SUBSTITUTE | ENT_QUOTES, 'UTF-8', true);
     }
 }

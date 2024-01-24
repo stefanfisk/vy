@@ -43,6 +43,7 @@ class Vy
             new StyleAttributeTransformer(),
         ],
         private readonly object | string | null $rootComponent = null,
+        bool $encodeEntities = false,
         bool $debugComponents = false,
     ) {
         $this->renderer = new Renderer(
@@ -52,6 +53,7 @@ class Vy
         $this->serializer = new HtmlSerializer(
             propToAttrNameMapper: new CachingPropToAttrNameMapper(mappers: $propToAttrNameMappers),
             transformers: $transformers,
+            encodeEntities: $encodeEntities,
             debugComponents: $debugComponents,
         );
     }

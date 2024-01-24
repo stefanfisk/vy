@@ -28,13 +28,14 @@ class HtmlSerializerTest extends TestCase
 {
     use CreatesStubNodesTrait;
 
-    private function assertRenderMatches(string $expected, Element $el): void
+    private function assertRenderMatches(string $expected, Element $el, bool $encodeEntitites = false): void
     {
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
             propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
             transformers: [],
+            encodeEntities: $encodeEntitites,
         );
 
         $actual = $serializer->serialize($node);
@@ -109,19 +110,37 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
+    public function testEscapesTextChildren(): void
+    {
+        $this->assertRenderMatches(
+            '<div>Foo &lt;&gt; Bar</div>',
+            el('div')('Foo <> Bar'),
+        );
+    }
+
+    public function testDoubleEscapesTextChildren(): void
+    {
+        $this->assertRenderMatches(
+            '<div>Foo &amp;gt; Bar</div>',
+            el('div')('Foo &gt; Bar'),
+        );
+    }
+
     public function testEncodesTextChildren(): void
     {
         $this->assertRenderMatches(
-            '<div>Foo &gt; Bar</div>',
-            el('div')('Foo > Bar'),
+            '<div>Foo &lt;&gt; Bar</div>',
+            el('div')('Foo <> Bar'),
+            encodeEntitites: true,
         );
     }
 
     public function testDoubleEncodesTextChildren(): void
     {
         $this->assertRenderMatches(
-            '<div>Foo &amp;gt; Bar</div>',
+            '<div>Foo &amp;gt&semi; Bar</div>',
             el('div')('Foo &gt; Bar'),
+            encodeEntitites: true,
         );
     }
 
@@ -186,6 +205,39 @@ class HtmlSerializerTest extends TestCase
         $this->assertRenderThrows(
             InvalidChildValueException::class,
             el('div')(new stdClass()),
+        );
+    }
+
+    public function testEscapesTextProps(): void
+    {
+        $this->assertRenderMatches(
+            '<div foo="&amp;> bar"></div>',
+            el('div', ['foo' => '&> bar']),
+        );
+    }
+
+    public function testDoubleEscapesTextProps(): void
+    {
+        $this->assertRenderMatches(
+            '<div foo="&amp;gt; Bar"></div>',
+            el('div', ['foo' => '&gt; Bar']),
+        );
+    }
+
+    public function testEscapesTextPropQuotes(): void
+    {
+        $this->assertRenderMatches(
+            '<div foo="&quot;Bar&quot; \'Baz\'"></div>',
+            el('div', ['foo' => '"Bar" \'Baz\'']),
+        );
+    }
+
+    public function testEscapesEntitites(): void
+    {
+        $this->assertRenderMatches(
+            '<div foo="&amp;&gt; bar"></div>',
+            el('div', ['foo' => '&> bar']),
+            encodeEntitites: true,
         );
     }
 
