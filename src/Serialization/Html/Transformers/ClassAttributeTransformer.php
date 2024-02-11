@@ -69,7 +69,7 @@ class ClassAttributeTransformer implements AttributeValueTransformerInterface
                     $class = $key;
                 }
 
-                if (! $conditional || ! $class) {
+                if (!(bool) $conditional || !(bool) $class) {
                     continue;
                 }
 

@@ -194,7 +194,7 @@ class HtmlSerializer implements SerializerInterface
 
             $attrName = $this->propToAttrNameMapper->propToAttrName($propName);
 
-            if (!$attrName) {
+            if ($attrName === null) {
                 throw new InvalidAttributeException(
                     message: sprintf('Prop name `%s` could not be mapped to an attribute name.', $propName),
                     node: $node,
@@ -307,20 +307,20 @@ class HtmlSerializer implements SerializerInterface
         if ($this->debugComponents) {
             $type = $node->type;
 
-            if (is_string($type)) {
+            if (is_string($type) && $type !== '') {
                 $prettyType = $type;
             } elseif (is_object($type)) {
                 $prettyType = $type::class;
             }
 
-            if ($prettyType) {
+            if ($prettyType !== null) {
                 $this->output .= "<!-- <$prettyType> -->";
             }
         }
 
         $this->serializeChildren($node, $isSvgMode);
 
-        if ($this->debugComponents && $prettyType) {
+        if ($this->debugComponents && $prettyType !== null) {
             $this->output .= "<!-- </$prettyType> -->";
         }
     }

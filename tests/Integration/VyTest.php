@@ -364,7 +364,7 @@ class VyTest extends TestCase
     public function testObjectComponent(): void
     {
         $c = new class {
-            /** {@inheritdoc} */
+            // phpcs:ignore Vy.Components.ElMethods.RenderWithoutEl
             public function render(mixed ...$props): mixed
             {
                 return el(

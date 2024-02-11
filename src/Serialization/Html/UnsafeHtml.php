@@ -41,7 +41,7 @@ final class UnsafeHtml implements HtmlableInterface
         try {
             ob_start();
             $ret = ($this->html)();
-            $output = ob_get_clean() ?: '';
+            $output = (string) ob_get_clean();
         } finally {
             while (ob_get_level() > $obLevel) {
                 ob_end_clean();

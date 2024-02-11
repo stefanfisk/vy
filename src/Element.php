@@ -42,19 +42,28 @@ class Element
         );
     }
 
-    /** @param array<mixed> $props */
+    /**
+     * @param non-empty-string|null $key
+     * @param array<mixed> $props
+     */
     public function __construct(
         public readonly mixed $type,
         public readonly string | null $key = null,
         public readonly array $props = [],
     ) {
+        /** @psalm-suppress TypeDoesNotContainType */
+        if ($key === '') {
+            throw new InvalidArgumentException("$key cannot be empty string.");
+        }
     }
 
     public function __invoke(mixed ...$children): Element
     {
         $props = $this->props;
 
-        if ($props['children'] ?? false) {
+        $oldChildren = $props['children'] ?? null;
+
+        if ($oldChildren !== null) {
             throw new InvalidArgumentException('Element already has children.');
         }
 

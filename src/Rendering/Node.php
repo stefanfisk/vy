@@ -44,6 +44,9 @@ class Node
     /** @var list<mixed> */
     public array $children = [];
 
+    /**
+     * @param non-empty-string|null $key
+     */
     public function __construct(
         public readonly int $id,
         public readonly Node | null $parent,

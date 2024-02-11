@@ -38,7 +38,7 @@ class Differ
         foreach ($oldChildren as $child) {
             if ($child instanceof Node) {
                 $oldChildNodes[] = $child;
-                if ($child->key) {
+                if ($child->key !== null) {
                     assert(!isset($oldKeyToChild[$child->key]));
 
                     $oldKeyToChild[$child->key] = $child;
@@ -60,7 +60,7 @@ class Differ
         for ($i = 0, $j = 0; $i < count($renderChildren); $i++) {
             $renderChild = $renderChildren[$i];
 
-            if ($renderChild instanceof Element && $renderChild->key) {
+            if ($renderChild instanceof Element && $renderChild->key !== null) {
                 if (isset($keyToRenderChild[$renderChild->key])) {
                     throw new DuplicateKeyException(
                         message: $renderChild->key,
@@ -86,7 +86,7 @@ class Differ
         foreach ($renderChildren as $i => $renderChild) {
             $oldChildCandidate = null;
 
-            if ($renderChild instanceof Element && $renderChild->key) {
+            if ($renderChild instanceof Element && $renderChild->key !== null) {
                 $oldChildCandidate = $oldKeyToChild[$renderChild->key] ?? null;
             } else {
                 $oldChildCandidate = $oldIToChild[$renderChildIToChildI[$i]] ?? null;
@@ -143,7 +143,7 @@ class Differ
         $newChildren = [];
 
         foreach ($renderChildren as $renderChild) {
-            if ($renderChild instanceof Element && $renderChild->key) {
+            if ($renderChild instanceof Element && $renderChild->key !== null) {
                 if (isset($keyToRenderChild[$renderChild->key])) {
                     throw new DuplicateKeyException(
                         message: $renderChild->key,

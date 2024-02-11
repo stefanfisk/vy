@@ -26,7 +26,7 @@ class NodeFactory
     private const NODE_TYPE_COMPONENT_CLASS = 'COMPONENT_CLASS';
     private const NODE_TYPE_TAG = 'TAG';
 
-    /** @var array<string,(self::NODE_TYPE_COMPONENT_CLOSURE|self::NODE_TYPE_COMPONENT_OBJECT|self::NODE_TYPE_COMPONENT_CLASS|self::NODE_TYPE_TAG|string)> */
+    /** @var array<string,(self::NODE_TYPE_COMPONENT_CLOSURE|self::NODE_TYPE_COMPONENT_OBJECT|self::NODE_TYPE_COMPONENT_CLASS|self::NODE_TYPE_TAG|non-empty-string)> */
     private array $elementTypeToNodeType = [];
 
     private int $nextNodeId = 0;
@@ -51,7 +51,7 @@ class NodeFactory
 
         // Resolve type
 
-        if (!$nodeType) {
+        if ($nodeType === null) {
             if (is_string($type)) {
                 if (str_contains($type, '\\') && class_exists($type)) {
                     if ($this->classIsRenderable($type)) {

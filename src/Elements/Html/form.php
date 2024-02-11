@@ -8,6 +8,9 @@ use StefanFisk\Vy\Element;
 
 class form
 {
+    /**
+     * @param non-empty-string|null $_key
+     */
     public static function el(
         mixed $class = null,
         string | null $_key = null,

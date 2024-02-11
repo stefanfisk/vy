@@ -8,6 +8,9 @@ use StefanFisk\Vy\Element;
 
 class nav
 {
+    /**
+     * @param non-empty-string|null $_key
+     */
     public static function el(
         mixed $class = null,
         string | null $_key = null,

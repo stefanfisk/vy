@@ -372,6 +372,9 @@ foreach ($namespaceToTagNames as $namespace => $tagNames) {
         $src .= "\n";
         $src .= "class $class\n";
         $src .= "{\n";
+        $src .= "    /**\n";
+        $src .= "     * @param non-empty-string|null \$_key\n";
+        $src .= "     */\n";
         $src .= "    public static function el(\n";
         $src .= "        mixed \$class = null,\n";
         $src .= "        string | null \$_key = null,\n";
