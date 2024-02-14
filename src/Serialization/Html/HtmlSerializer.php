@@ -27,6 +27,7 @@ use function is_string;
 use function lcfirst;
 use function preg_match;
 use function sprintf;
+use function str_repeat;
 use function str_starts_with;
 use function strtr;
 use function substr;
@@ -68,6 +69,8 @@ class HtmlSerializer implements SerializerInterface
     private readonly array $attributeValueTransformers;
     /** @var array<ChildValueTransformerInterface> */
     private readonly array $nodeValueTransformers;
+
+    private int $componentDebugLevel = 0;
 
     private string $output = '';
 
@@ -115,6 +118,8 @@ class HtmlSerializer implements SerializerInterface
     private function serializeTagNode(Node $node, bool $isSvgMode): void
     {
         assert(is_string($node->type));
+
+        $this->componentDebugLevel = 0;
 
         $name = $node->type;
 
@@ -260,6 +265,8 @@ class HtmlSerializer implements SerializerInterface
 
     private function serializeValue(mixed $inValue, Node $parent, bool $isSvgMode): void
     {
+        $this->componentDebugLevel = 0;
+
         try {
             $value = $this->applyChildValueTransformers($inValue);
         } catch (Throwable $e) {
@@ -308,19 +315,27 @@ class HtmlSerializer implements SerializerInterface
     private function serializeComponent(Node $node, bool $isSvgMode): void
     {
         $prettyType = null;
+        $indent = '';
 
         if ($this->debugComponents) {
             $prettyType = $this->getPrettyComponentType($node->type);
 
             if ($prettyType !== null) {
-                $this->output .= "<!-- <$prettyType> -->";
+                $indent = str_repeat('  ', $this->componentDebugLevel);
+
+                $this->output .= "<!--$indent$prettyType-->";
             }
         }
 
+        $componentDebugLevel = $this->componentDebugLevel;
+        $this->componentDebugLevel += 1;
+
         $this->serializeChildren($node, $isSvgMode);
 
+        $this->componentDebugLevel = $componentDebugLevel;
+
         if ($this->debugComponents && $prettyType !== null) {
-            $this->output .= "<!-- </$prettyType> -->";
+            $this->output .= "<!--$indent/$prettyType-->";
         }
     }
 
