@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Serialization\Html;
 
+use Closure;
+use ReflectionFunction;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidChildValueException;
 use StefanFisk\Vy\Errors\InvalidTagException;
@@ -22,9 +24,12 @@ use function is_int;
 use function is_object;
 use function is_scalar;
 use function is_string;
+use function lcfirst;
 use function preg_match;
 use function sprintf;
+use function str_starts_with;
 use function strtr;
+use function substr;
 
 use const ENT_HTML5;
 use const ENT_QUOTES;
@@ -305,13 +310,7 @@ class HtmlSerializer implements SerializerInterface
         $prettyType = null;
 
         if ($this->debugComponents) {
-            $type = $node->type;
-
-            if (is_string($type) && $type !== '') {
-                $prettyType = $type;
-            } elseif (is_object($type)) {
-                $prettyType = $type::class;
-            }
+            $prettyType = $this->getPrettyComponentType($node->type);
 
             if ($prettyType !== null) {
                 $this->output .= "<!-- <$prettyType> -->";
@@ -323,6 +322,37 @@ class HtmlSerializer implements SerializerInterface
         if ($this->debugComponents && $prettyType !== null) {
             $this->output .= "<!-- </$prettyType> -->";
         }
+    }
+
+    private function getPrettyComponentType(mixed $type): ?string
+    {
+        if (is_string($type)) {
+            if ($type === '') {
+                return null;
+            }
+
+            return $type;
+        }
+
+        if ($type instanceof Closure) {
+            $ref = new ReflectionFunction($type);
+            $scopeClass = $ref->getClosureScopeClass()?->getName();
+            $name = $ref->getName();
+
+            if ($name === 'render') {
+                return $scopeClass;
+            } elseif (str_starts_with($name, 'render')) {
+                $name = lcfirst(substr($name, 6));
+            }
+
+            return "{$scopeClass}::{$name}";
+        }
+
+        if (is_object($type)) {
+            return $type::class;
+        }
+
+        return null;
     }
 
     private function serializeChildren(Node $parent, bool $isSvgMode): void
