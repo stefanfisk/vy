@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Tests\Unit\Serialization\Html\Transformers;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use StefanFisk\Vy\Serialization\Html\HtmlableInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\StringableTransformer;
 use StefanFisk\Vy\Tests\TestCase;
 use Stringable;
@@ -23,6 +24,30 @@ class StringableTransformerTest extends TestCase
     public function testIgnoresNonStringables(): void
     {
         $value = new stdClass();
+
+        $this->assertSame(
+            $value,
+            $this->transformer->transformValue($value),
+        );
+    }
+
+    public function testIgnoresStringableHtmlable(): void
+    {
+        $value = new class ('<div>My HTML</div>') implements HtmlableInterface, Stringable {
+            public function __construct(private readonly string $html)
+            {
+            }
+
+            public function toHtml(): string
+            {
+                return $this->html;
+            }
+
+            public function __toString(): string
+            {
+                return $this->html;
+            }
+        };
 
         $this->assertSame(
             $value,
