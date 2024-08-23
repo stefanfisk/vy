@@ -29,6 +29,7 @@ class Queue
 
         $this->queue[] = $node;
 
+        // @phpstan-ignore assign.propertyType
         $node->state |= Node::STATE_ENQUEUED;
     }
 
@@ -46,6 +47,7 @@ class Queue
 
         array_splice($this->queue, $i, 1);
 
+        // @phpstan-ignore assign.propertyType
         $node->state &= ~Node::STATE_ENQUEUED;
     }
 
@@ -77,6 +79,7 @@ class Queue
         assert((bool) ($a->state & Node::STATE_ENQUEUED));
         assert(!($a->state & Node::STATE_UNMOUNTED));
 
+        // @phpstan-ignore assign.propertyType
         $a->state &= ~Node::STATE_ENQUEUED;
 
         return $a;

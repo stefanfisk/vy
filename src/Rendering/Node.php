@@ -29,7 +29,7 @@ class Node
      */
     public const STATE_UNMOUNTED = 4;
 
-    /** @var int-mask-of<Self::STATE_*> */
+    /** @var int-mask-of<self::STATE_*> */
     public int $state = self::STATE_INITIAL;
 
     public readonly int $depth;

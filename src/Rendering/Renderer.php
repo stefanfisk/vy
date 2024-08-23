@@ -163,6 +163,7 @@ class Renderer implements HookHandlerInterface
 
                 $renderChildren = ($node->component)(...$node->props);
 
+                // @phpstan-ignore assign.propertyType
                 $node->state &= ~Node::STATE_INITIAL;
 
                 if ($this->needsRender($node)) {
@@ -208,6 +209,7 @@ class Renderer implements HookHandlerInterface
         }
         assert($node->props !== null);
 
+        // @phpstan-ignore assign.propertyType
         $node->state &= ~Node::STATE_INITIAL;
 
         return $node->props['children'] ?? null;
