@@ -11,13 +11,12 @@ use StefanFisk\Vy\Rendering\Renderer;
 class CallbackHook extends Hook
 {
     /**
-     * @param Closure(TArgs):TRet $fn
+     * @param T $fn
      * @param array<mixed> $deps
      *
-     * @return Closure(TArgs):TRet
+     * @return T
      *
-     * @template TArgs
-     * @template TRet
+     * @template T of Closure
      * @psalm-suppress MixedInferredReturnType,MixedReturnStatement
      */
     public static function use(Closure $fn, array $deps): Closure

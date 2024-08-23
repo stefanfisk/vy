@@ -14,6 +14,7 @@ use StefanFisk\Vy\Errors\RenderException;
 use StefanFisk\Vy\Hooks\EffectHook;
 use StefanFisk\Vy\Hooks\StateHook;
 use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
+use StefanFisk\Vy\Tests\Support\BarComponent;
 use StefanFisk\Vy\Tests\Support\FooComponent;
 use StefanFisk\Vy\Tests\Support\FooContext;
 use StefanFisk\Vy\Tests\Support\Mocks\MocksComponentsTrait;
@@ -358,6 +359,14 @@ class VyTest extends TestCase
         $this->assertRenderMatches(
             '<div data-foo="bar"><div class="children">baz</div></div>',
             el(FooComponent::class, ['foo' => 'bar'])('baz'),
+        );
+    }
+
+    public function testStaticClassComponent(): void
+    {
+        $this->assertRenderMatches(
+            '<div data-foo="bar"><div class="children">baz</div></div>',
+            el(BarComponent::class, ['foo' => 'bar'])('baz'),
         );
     }
 

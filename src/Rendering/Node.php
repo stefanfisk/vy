@@ -29,6 +29,7 @@ class Node
      */
     public const STATE_UNMOUNTED = 4;
 
+    /** @var self::STATE_NONE|self::STATE_INITIAL|self::STATE_ENQUEUED|self::STATE_UNMOUNTED */
     public int $state = self::STATE_INITIAL;
 
     public readonly int $depth;

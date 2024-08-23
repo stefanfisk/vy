@@ -21,12 +21,13 @@ use function str_contains;
 
 class NodeFactory
 {
-    private const NODE_TYPE_COMPONENT_CLOSURE = 'COMPONENT_CLOSURE';
-    private const NODE_TYPE_COMPONENT_OBJECT = 'COMPONENT_OBJECT';
-    private const NODE_TYPE_COMPONENT_CLASS = 'COMPONENT_CLASS';
-    private const NODE_TYPE_TAG = 'TAG';
+    private const NODE_CLOSURE = 1;
+    private const NODE_OBJECT = 2;
+    private const NODE_INSTANCE_RENDER = 3;
+    private const NODE_STATIC_RENDER = 4;
+    private const NODE_TAG = 5;
 
-    /** @var array<string,(self::NODE_TYPE_COMPONENT_CLOSURE|self::NODE_TYPE_COMPONENT_OBJECT|self::NODE_TYPE_COMPONENT_CLASS|self::NODE_TYPE_TAG|non-empty-string)> */
+    /** @var array<string,(self::NODE_CLOSURE|self::NODE_OBJECT|self::NODE_INSTANCE_RENDER|self::NODE_STATIC_RENDER|self::NODE_TAG|non-empty-string)> */
     private array $elementTypeToNodeType = [];
 
     private int $nextNodeId = 0;
@@ -52,33 +53,7 @@ class NodeFactory
         // Resolve type
 
         if ($nodeType === null) {
-            if (is_string($type)) {
-                if (str_contains($type, '\\') && class_exists($type)) {
-                    if ($this->classIsRenderable($type)) {
-                        $nodeType = self::NODE_TYPE_COMPONENT_CLASS;
-                    } else {
-                        $nodeType = sprintf(
-                            '`type` class `%s` does not have a public `render()` method.',
-                            $type,
-                        );
-                    }
-                } else {
-                    $nodeType = self::NODE_TYPE_TAG;
-                }
-            } elseif ($type instanceof Closure) {
-                $nodeType = self::NODE_TYPE_COMPONENT_CLOSURE;
-            } elseif (is_object($type)) {
-                if (! $this->classIsRenderable($type::class)) {
-                    $nodeType = sprintf(
-                        '`type` object of class `%s` does not have a public `render()` method.',
-                        $type::class,
-                    );
-                }
-
-                $nodeType = self::NODE_TYPE_COMPONENT_OBJECT;
-            } else {
-                $nodeType = sprintf('Unsupported type `%s`.', gettype($type));
-            }
+            $nodeType = $this->resolveNodeType($type);
         }
 
         if (is_string($type)) {
@@ -88,20 +63,28 @@ class NodeFactory
         // Create node
 
         if (
-            $nodeType === self::NODE_TYPE_COMPONENT_CLOSURE
-            || $nodeType === self::NODE_TYPE_COMPONENT_OBJECT
-            || $nodeType === self::NODE_TYPE_COMPONENT_CLASS
+            $nodeType === self::NODE_CLOSURE
+            || $nodeType === self::NODE_OBJECT
+            || $nodeType === self::NODE_STATIC_RENDER
+            || $nodeType === self::NODE_INSTANCE_RENDER
         ) {
-            if ($nodeType === self::NODE_TYPE_COMPONENT_CLOSURE) {
+            if ($nodeType === self::NODE_CLOSURE) {
                 /** @var Closure $component */
                 $component = $type;
-            } elseif ($nodeType === self::NODE_TYPE_COMPONENT_OBJECT) {
+            } elseif ($nodeType === self::NODE_OBJECT) {
                 /**
                  * @var Closure $component
                  * @phpstan-ignore-next-line
                  * @psalm-suppress all
                  */
                 $component = $type->render(...);
+            } elseif ($nodeType === self::NODE_STATIC_RENDER) {
+                /**
+                 * @var Closure $component
+                 * @phpstan-ignore-next-line
+                 * @psalm-suppress all
+                 */
+                $component = $type::render(...);
             } else {
                 /** @var class-string $type */
                 $type = $type;
@@ -129,7 +112,7 @@ class NodeFactory
                 type: $type,
                 component: $component,
             );
-        } elseif ($nodeType === self::NODE_TYPE_TAG) {
+        } elseif ($nodeType === self::NODE_TAG) {
             /** @var string $type */
             $type = $type;
 
@@ -157,16 +140,90 @@ class NodeFactory
         }
     }
 
-    /** @param class-string $class */
-    private function classIsRenderable(string $class): bool
+    /** @return self::NODE_CLOSURE|self::NODE_OBJECT|self::NODE_INSTANCE_RENDER|self::NODE_STATIC_RENDER|self::NODE_TAG|non-empty-string */
+    private function resolveNodeType(mixed $type): mixed
     {
-        $class = new ReflectionClass($class);
-        if (!$class->hasMethod('render')) {
-            return false;
+        if (is_string($type)) {
+            if (str_contains($type, '\\')) {
+                if (!class_exists($type)) {
+                    return sprintf(
+                        '`type` class `%s` does not exist.',
+                        $type,
+                    );
+                }
+
+                $class = new ReflectionClass($type);
+
+                if (!$class->hasMethod('render')) {
+                    return sprintf(
+                        '`type` class `%s` does not have a `render()` method.',
+                        $type,
+                    );
+                }
+
+                $method = $class->getMethod('render');
+
+                if (!$method->isPublic()) {
+                    return sprintf(
+                        '`type` class `%s` does not have a public `render()` method.',
+                        $type,
+                    );
+                }
+
+                if ($method->isAbstract()) {
+                    return sprintf(
+                        '`type` class `%s` `render()` method is abstract.',
+                        $type,
+                    );
+                }
+
+                if ($method->isStatic()) {
+                    return self::NODE_STATIC_RENDER;
+                } else {
+                    return self::NODE_INSTANCE_RENDER;
+                }
+            } else {
+                return self::NODE_TAG;
+            }
         }
 
-        $method = $class->getMethod('render');
+        if ($type instanceof Closure) {
+            return self::NODE_CLOSURE;
+        }
 
-        return $method->isPublic();
+        if (is_object($type)) {
+            $class = new ReflectionClass($type);
+
+            if (!$class->hasMethod('render')) {
+                return sprintf(
+                    '`type` object of class `%s` does not have a `render()` method.',
+                    $type::class,
+                );
+            }
+
+            $method = $class->getMethod('render');
+
+            if (!$method->isPublic()) {
+                return sprintf(
+                    '`type` object of class `%s` does not have a public `render()` method.',
+                    $type::class,
+                );
+            }
+
+            if ($method->isAbstract()) {
+                return sprintf(
+                    '`type` object of class `%s` `render()` method is abstract.',
+                    $type::class,
+                );
+            }
+
+            if ($method->isStatic()) {
+                return self::NODE_STATIC_RENDER;
+            } else {
+                return self::NODE_OBJECT;
+            }
+        }
+
+        return sprintf('Unsupported type `%s`.', gettype($type));
     }
 }

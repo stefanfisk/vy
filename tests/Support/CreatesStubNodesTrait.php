@@ -29,6 +29,7 @@ trait CreatesStubNodesTrait
     /**
      * Creates a new node.
      *
+     * @param Node::STATE_NONE|Node::STATE_INITIAL|Node::STATE_ENQUEUED|Node::STATE_UNMOUNTED $state
      * @param non-empty-string|null $key
      * @param array<mixed>|null $props
      *
