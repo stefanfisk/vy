@@ -34,10 +34,10 @@ class Node
 
     public readonly int $depth;
 
-    /** @var array<mixed>|null */
-    public array | null $nextProps = null;
-    /** @var array<mixed>|null */
-    public array | null $props = null;
+    /** @var ?array<mixed> */
+    public ?array $nextProps = null;
+    /** @var array<mixed> */
+    public ?array $props = null;
 
     /** @var array<Hook> */
     public array $hooks = [];
@@ -46,14 +46,14 @@ class Node
     public array $children = [];
 
     /**
-     * @param non-empty-string|null $key
+     * @param ?non-empty-string $key
      */
     public function __construct(
         public readonly int $id,
-        public readonly Node | null $parent,
-        public readonly string | null $key,
+        public readonly ?Node $parent,
+        public readonly ?string $key,
         public readonly mixed $type,
-        public readonly Closure | null $component,
+        public readonly ?Closure $component,
     ) {
         $this->depth = $parent ? $parent->depth + 1 : 0;
     }

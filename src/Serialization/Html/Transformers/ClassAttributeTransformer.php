@@ -30,7 +30,7 @@ class ClassAttributeTransformer implements AttributeValueTransformerInterface
         return $this->apply($value);
     }
 
-    private function apply(mixed $class): string | null
+    private function apply(mixed $class): ?string
     {
         /** @var array<string,true> $effectiveClasses */
         $effectiveClasses = [];

@@ -9,7 +9,7 @@ interface PropToAttrNameMapper
     /**
      * @param non-empty-string $propName
      *
-     * @return non-empty-string|null
+     * @return ?non-empty-string
      */
     public function propToAttrName(string $propName): ?string;
 }

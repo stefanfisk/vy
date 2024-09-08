@@ -51,7 +51,7 @@ class Queue
         $node->state &= ~Node::STATE_ENQUEUED;
     }
 
-    public function poll(): Node | null
+    public function poll(): ?Node
     {
         if (!$this->queue) {
             return null;

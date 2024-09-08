@@ -15,7 +15,7 @@ class HookException extends RenderException
         string $message,
         public readonly string $hook,
         Node $node,
-        Throwable | null $previous = null,
+        ?Throwable $previous = null,
     ) {
         parent::__construct(
             message: $message,

@@ -14,7 +14,7 @@ class InvalidChildValueException extends RenderException
         Node $node,
         public readonly mixed $inValue,
         public readonly mixed $value,
-        Throwable | null $previous = null,
+        ?Throwable $previous = null,
     ) {
         parent::__construct(
             message: $message,

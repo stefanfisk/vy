@@ -17,7 +17,7 @@ class DuplicateKeyException extends Exception
         string $message,
         public readonly Element $el1,
         public readonly Element $el2,
-        public readonly Node | null $parentNode = null,
+        public readonly ?Node $parentNode = null,
     ) {
         parent::__construct(
             $message,

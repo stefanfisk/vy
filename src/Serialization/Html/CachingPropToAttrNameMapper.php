@@ -82,7 +82,7 @@ class CachingPropToAttrNameMapper implements PropToAttrNameMapper
         'zoomAndPan' => 'zoomAndPan',
     ];
 
-    /** @var array<non-empty-string,non-empty-string|null> */
+    /** @var array<non-empty-string,?non-empty-string> */
     private array $propToAttrName;
 
     /**

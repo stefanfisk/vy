@@ -17,8 +17,8 @@ class InvalidElementTypeException extends Exception
     public function __construct(
         string $message,
         public readonly Element $el,
-        public readonly Node | null $parentNode = null,
-        Throwable | null $previous = null,
+        public readonly ?Node $parentNode = null,
+        ?Throwable $previous = null,
     ) {
         parent::__construct(
             $message,

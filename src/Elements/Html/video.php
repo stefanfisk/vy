@@ -9,11 +9,11 @@ use StefanFisk\Vy\Element;
 class video
 {
     /**
-     * @param non-empty-string|null $_key
+     * @param ?non-empty-string $_key
      */
     public static function el(
         mixed $class = null,
-        string | null $_key = null,
+        ?string $_key = null,
         mixed ...$props,
     ): Element {
         if ($class !== null) {

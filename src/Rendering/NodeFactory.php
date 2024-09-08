@@ -37,7 +37,7 @@ class NodeFactory
     ) {
     }
 
-    public function createNode(Element $el, Node | null $parent): Node
+    public function createNode(Element $el, ?Node $parent): Node
     {
         $key = $el->key;
         $type = $el->type;

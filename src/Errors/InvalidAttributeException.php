@@ -14,7 +14,7 @@ class InvalidAttributeException extends RenderException
         Node $node,
         public readonly string $name,
         public readonly mixed $value,
-        Throwable | null $previous = null,
+        ?Throwable $previous = null,
     ) {
         parent::__construct(
             message: $message,

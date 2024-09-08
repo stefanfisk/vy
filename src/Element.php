@@ -43,12 +43,12 @@ class Element
     }
 
     /**
-     * @param non-empty-string|null $key
+     * @param ?non-empty-string $key
      * @param array<mixed> $props
      */
     public function __construct(
         public readonly mixed $type,
-        public readonly string | null $key = null,
+        public readonly ?string $key = null,
         public readonly array $props = [],
     ) {
         /** @psalm-suppress TypeDoesNotContainType */

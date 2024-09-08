@@ -18,7 +18,7 @@ use function reset;
 
 class Renderer implements HookHandlerInterface
 {
-    private Node | null $currentNode = null;
+    private ?Node $currentNode = null;
 
     public function __construct(
         private readonly NodeFactory $nodeFactory = new NodeFactory(),
@@ -28,7 +28,7 @@ class Renderer implements HookHandlerInterface
     ) {
     }
 
-    public function createNode(Node | null $parent, Element $el): Node
+    public function createNode(?Node $parent, Element $el): Node
     {
         $node = $this->nodeFactory->createNode(parent: $parent, el: $el);
 

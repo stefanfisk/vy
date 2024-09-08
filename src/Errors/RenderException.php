@@ -12,9 +12,9 @@ class RenderException extends Exception
 {
     public function __construct(
         string $message,
-        public readonly Node | null $node = null,
+        public readonly ?Node $node = null,
         public readonly mixed $el = null,
-        Throwable | null $previous = null,
+        ?Throwable $previous = null,
     ) {
         parent::__construct($message, 0, $previous);
     }

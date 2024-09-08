@@ -23,11 +23,11 @@ class EffectHook extends Hook
     /** @var Closure():(Closure():void|null) */
     private Closure $nextSetup;
     /** @var Closure():void|null */
-    private Closure | null $cleanup = null;
-    /** @var array<mixed>|null */
-    private array | null $nextDeps;
-    /** @var array<mixed>|null */
-    private array | null $deps = null;
+    private ?Closure $cleanup = null;
+    /** @var ?array<mixed> */
+    private ?array $nextDeps;
+    /** @var ?array<mixed> */
+    private ?array $deps = null;
 
     /**
      * @param Closure():(Closure():void|null) $setup
@@ -37,7 +37,7 @@ class EffectHook extends Hook
         Renderer $renderer,
         Node $node,
         Closure $setup,
-        array | null $deps = [],
+        ?array $deps = [],
     ) {
         parent::__construct(
             renderer: $renderer,
@@ -59,7 +59,7 @@ class EffectHook extends Hook
     {
         /** @var Closure():(Closure():void|null) $nextSetup */
         $nextSetup = $args[0];
-        /** @var array<mixed>|null $nextDeps */
+        /** @var ?array<mixed> $nextDeps */
         $nextDeps = $args[1];
 
         $this->nextSetup = $nextSetup;

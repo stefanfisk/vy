@@ -23,7 +23,7 @@ class ClassAttributeTransformerTest extends TestCase
         $this->transformer = new ClassAttributeTransformer();
     }
 
-    private function assertClassEquals(string | null $expected, mixed $value): void
+    private function assertClassEquals(?string $expected, mixed $value): void
     {
         $this->assertSame(
             $expected,

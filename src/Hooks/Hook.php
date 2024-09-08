@@ -17,7 +17,7 @@ abstract class Hook
     /** @var list<HookHandlerInterface> */
     private static array $handlerStack = [];
 
-    public static function getHandler(): HookHandlerInterface | null
+    public static function getHandler(): ?HookHandlerInterface
     {
         return end(self::$handlerStack) ?: null;
     }
@@ -29,7 +29,7 @@ abstract class Hook
         self::$handlerStack[] = $handler;
     }
 
-    public static function popHandler(): HookHandlerInterface | null
+    public static function popHandler(): ?HookHandlerInterface
     {
         return array_pop(self::$handlerStack);
     }

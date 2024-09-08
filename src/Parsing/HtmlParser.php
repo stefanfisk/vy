@@ -126,7 +126,7 @@ class HtmlParser
         ],
     ];
 
-    private DOMXPath | null $xpath = null;
+    private ?DOMXPath $xpath = null;
 
     public function __construct(private readonly HTML5 $html5 = new HTML5())
     {

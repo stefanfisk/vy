@@ -12,7 +12,7 @@ class InvalidTagException extends RenderException
     public function __construct(
         string $message,
         Node $node,
-        Throwable | null $previous = null,
+        ?Throwable $previous = null,
     ) {
         parent::__construct(
             message: $message,

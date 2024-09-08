@@ -30,19 +30,19 @@ trait CreatesStubNodesTrait
      * Creates a new node.
      *
      * @param Node::STATE_NONE|Node::STATE_INITIAL|Node::STATE_ENQUEUED|Node::STATE_UNMOUNTED $state
-     * @param non-empty-string|null $key
-     * @param array<mixed>|null $props
+     * @param ?non-empty-string $key
+     * @param ?array<mixed> $props
      *
      * Node::$state defaults to STATE_NONE.
      */
     public function createStubNode(
-        Node | null $parent = null,
-        int | null $depth = null,
+        ?Node $parent = null,
+        ?int $depth = null,
         int $state = Node::STATE_NONE,
-        string | null $key = null,
+        ?string $key = null,
         mixed $type = null,
-        Closure | null $component = null,
-        array | null $props = null,
+        ?Closure $component = null,
+        ?array $props = null,
     ): Node {
         assert($parent === null || $depth === null);
 
@@ -81,7 +81,7 @@ trait CreatesStubNodesTrait
      *     : mixed
      * )
      */
-    private function renderToStub(mixed $el, Node | null $parent = null): mixed
+    private function renderToStub(mixed $el, ?Node $parent = null): mixed
     {
         if ($el instanceof Element) {
             $key = $el->key;

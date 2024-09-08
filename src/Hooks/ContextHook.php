@@ -89,7 +89,7 @@ class ContextHook extends Hook
     }
 
     /** @param class-string<Context> $context */
-    private function getContextNode(string $context, Node | null $node): Node | null
+    private function getContextNode(string $context, ?Node $node): ?Node
     {
         for (; $node; $node = $node->parent) {
             if ($node->type === $context) {
