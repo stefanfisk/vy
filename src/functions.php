@@ -5,47 +5,15 @@ declare(strict_types=1);
 namespace StefanFisk\Vy;
 
 use Closure;
-use InvalidArgumentException;
-use StefanFisk\Vy\Components\Fragment;
-
-use function is_int;
-use function is_string;
 
 /**
- * @param string|Closure|object|class-string $type
- * @param array<mixed> $props
+ * @param string|Context<mixed>|Closure(T):mixed $type
+ * @param T $props
+ *
+ * @template T of array
  */
 // phpcs:ignore Squiz.Functions.GlobalFunction.Found
-function el(mixed $type, array $props = []): Element
+function el(string | Context | Closure $type = '', array $props = []): Element
 {
-    // Key
-
-    $key = $props['key'] ?? null;
-    unset($props['key']);
-
-    if ($key !== null) {
-        if (is_string($key)) {
-            if ($key === '') {
-                throw new InvalidArgumentException('"key" cannot be an empty string.');
-            }
-        } elseif (is_int($key)) {
-            $key = (string) $key;
-        } else {
-            throw new InvalidArgumentException('"key" must be null, string or numeric.');
-        }
-    }
-
-        // Type
-
-    if ($type === '') {
-        $type = Fragment::class;
-    }
-
-    // Create
-
-    return new Element(
-        type: $type,
-        key: $key,
-        props: $props,
-    );
+    return new Element($type, $props);
 }

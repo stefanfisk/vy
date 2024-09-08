@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Rendering;
 
 use Closure;
+use StefanFisk\Vy\Context;
 use StefanFisk\Vy\Hooks\Hook;
 
 class Node
@@ -34,9 +35,9 @@ class Node
 
     public readonly int $depth;
 
-    /** @var ?array<mixed> */
+    /** @var array<mixed>|null */
     public ?array $nextProps = null;
-    /** @var array<mixed> */
+    /** @var array<mixed>|null */
     public ?array $props = null;
 
     /** @var array<Hook> */
@@ -46,14 +47,13 @@ class Node
     public array $children = [];
 
     /**
-     * @param ?non-empty-string $key
+     * @param non-empty-string|null $key
+     * @param string|Context<mixed>|Closure(array<mixed>):mixed $type
      */
     public function __construct(
-        public readonly int $id,
         public readonly ?Node $parent,
         public readonly ?string $key,
-        public readonly mixed $type,
-        public readonly ?Closure $component,
+        public readonly string | Context | Closure $type,
     ) {
         $this->depth = $parent ? $parent->depth + 1 : 0;
     }

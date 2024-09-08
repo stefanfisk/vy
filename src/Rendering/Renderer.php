@@ -4,37 +4,72 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Rendering;
 
+use Closure;
+use Psr\Log\LoggerInterface;
+use StefanFisk\Vy\Context;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Errors\RenderException;
+use StefanFisk\Vy\Hooks\ContextProviderHook;
 use StefanFisk\Vy\Hooks\Hook;
 use StefanFisk\Vy\Hooks\HookHandlerInterface;
 use Throwable;
 
 use function assert;
 use function current;
+use function gettype;
+use function is_int;
+use function is_string;
 use function is_subclass_of;
 use function next;
 use function reset;
+use function sprintf;
 
 class Renderer implements HookHandlerInterface
 {
     private ?Node $currentNode = null;
 
     public function __construct(
-        private readonly NodeFactory $nodeFactory = new NodeFactory(),
         private readonly Comparator $comparator = new Comparator(),
         private readonly Queue $queue = new Queue(),
         private readonly Differ $differ = new Differ(),
+        private readonly ?LoggerInterface $log = null,
     ) {
     }
 
     public function createNode(?Node $parent, Element $el): Node
     {
-        $node = $this->nodeFactory->createNode(parent: $parent, el: $el);
+        /** @psalm-suppress PossiblyInvalidArgument */
+        $node = new Node(
+            parent: $parent,
+            key: $this->getKey($parent, $el),
+            type: $el->type,
+        );
 
         $node->nextProps = $el->props;
 
         return $node;
+    }
+
+    /** @return ?non-empty-string */
+    private function getKey(?Node $parent, Element $el): ?string
+    {
+        $key = $el->props['key'] ?? null;
+
+        if ($key === null) {
+            return null;
+        }
+
+        if (is_int($key)) {
+            $key = (string) $key;
+        }
+
+        if (!is_string($key) || $key === '') {
+            $this->log?->warning(sprintf('key must be int or non-empty-string, was "%s".', gettype($key)));
+
+            return null;
+        }
+
+        return $key;
     }
 
     public function valuesAreEqual(mixed $a, mixed $b): bool
@@ -103,11 +138,14 @@ class Renderer implements HookHandlerInterface
             return;
         }
 
-        if ($node->component) {
-            $renderChildren = $this->renderComponent($node);
-        } else {
-            $renderChildren = $this->renderTag($node);
-        }
+        $type = $node->type;
+
+        $renderChildren = match (true) {
+            $type === '' => $this->renderFragment($node),
+            is_string($type) => $this->renderTag($node),
+            $type instanceof Context => $this->renderContext($node),
+            $type instanceof Closure => $this->renderComponent($node),
+        };
 
         if (!$node->children) {
             $this->createInitialChildren(
@@ -130,10 +168,80 @@ class Renderer implements HookHandlerInterface
         }
     }
 
+    private function renderFragment(Node $node): mixed
+    {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+        assert($node->type === '');
+
+        if ($node->nextProps !== null) {
+            $node->props = $node->nextProps;
+            $node->nextProps = null;
+        }
+        assert($node->props !== null);
+
+        // @phpstan-ignore assign.propertyType
+        $node->state &= ~Node::STATE_INITIAL;
+
+        return $node->props['children'] ?? null;
+    }
+
+    private function renderTag(Node $node): mixed
+    {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+        assert(is_string($node->type));
+
+        if ($node->nextProps !== null) {
+            $node->props = $node->nextProps;
+            $node->nextProps = null;
+        }
+        assert($node->props !== null);
+
+        // @phpstan-ignore assign.propertyType
+        $node->state &= ~Node::STATE_INITIAL;
+
+        return $node->props['children'] ?? null;
+    }
+
+    private function renderContext(Node $node): mixed
+    {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+        assert($node->type instanceof Context);
+
+        if ($node->nextProps !== null) {
+            $node->props = $node->nextProps;
+            $node->nextProps = null;
+        }
+        assert($node->props !== null);
+
+        try {
+            Hook::pushHandler($this);
+            $this->currentNode = $node;
+
+            $this->useHook(ContextProviderHook::class, $node->props);
+
+            // @phpstan-ignore assign.propertyType
+            $node->state &= ~Node::STATE_INITIAL;
+        } catch (RenderException $e) {
+            throw $e;
+        } catch (Throwable $e) {
+            throw new RenderException(
+                message: $e->getMessage(),
+                node: $node,
+                previous: $e,
+            );
+        } finally {
+            $this->currentNode = null;
+            $poppedHandler = Hook::popHandler();
+            assert($poppedHandler === $this);
+        }
+
+        return $node->props['children'] ?? null;
+    }
+
     private function renderComponent(Node $node): mixed
     {
         assert(!($node->state & Node::STATE_UNMOUNTED));
-        assert($node->component !== null);
+        assert($node->type instanceof Closure);
 
         if ($node->nextProps !== null) {
             $node->props = $node->nextProps;
@@ -161,7 +269,7 @@ class Renderer implements HookHandlerInterface
 
                 reset($node->hooks);
 
-                $renderChildren = ($node->component)(...$node->props);
+                $renderChildren = ($node->type)($node->props);
 
                 // @phpstan-ignore assign.propertyType
                 $node->state &= ~Node::STATE_INITIAL;
@@ -196,23 +304,6 @@ class Renderer implements HookHandlerInterface
         }
 
         return $renderChildren;
-    }
-
-    private function renderTag(Node $node): mixed
-    {
-        assert(!($node->state & Node::STATE_UNMOUNTED));
-        assert($node->component === null);
-
-        if ($node->nextProps !== null) {
-            $node->props = $node->nextProps;
-            $node->nextProps = null;
-        }
-        assert($node->props !== null);
-
-        // @phpstan-ignore assign.propertyType
-        $node->state &= ~Node::STATE_INITIAL;
-
-        return $node->props['children'] ?? null;
     }
 
     private function createInitialChildren(Node $node, mixed $renderChildren): void

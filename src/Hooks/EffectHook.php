@@ -24,9 +24,9 @@ class EffectHook extends Hook
     private Closure $nextSetup;
     /** @var Closure():void|null */
     private ?Closure $cleanup = null;
-    /** @var ?array<mixed> */
+    /** @var array<mixed>|null */
     private ?array $nextDeps;
-    /** @var ?array<mixed> */
+    /** @var array<mixed>|null */
     private ?array $deps = null;
 
     /**

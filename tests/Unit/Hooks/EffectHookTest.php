@@ -35,11 +35,9 @@ class EffectHookTest extends TestCase
     protected function setUp(): void
     {
         $this->node = new Node(
-            id: -1,
             parent: null,
             key: null,
-            type: null,
-            component: null,
+            type: 'mock-node',
         );
 
         $this->setup = $this->createMockInvokable();

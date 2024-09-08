@@ -7,6 +7,7 @@ namespace StefanFisk\Vy\Tests\Support\Mocks;
 use Closure;
 use Mockery\Expectation;
 use Mockery\MockInterface;
+use StefanFisk\Vy\Element;
 
 /**
  * This is a workaround for https://github.com/sebastianbergmann/phpunit/issues/5455.
@@ -29,7 +30,18 @@ class MockComponent
             ->andReturnUsing(fn ($props) => ($this->returnCallback)(...$props));
     }
 
-    public function render(mixed ...$props): mixed
+    /**
+     * @param array<mixed> $props
+     */
+    public function el(array $props = []): Element
+    {
+        return new Element($this->render(...), $props);
+    }
+
+    /**
+     * @param array<mixed> $props
+     */
+    public function render(array $props): mixed
     {
         return ($this->mockInvokable)($props);
     }

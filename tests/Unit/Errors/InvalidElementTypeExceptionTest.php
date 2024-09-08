@@ -17,14 +17,12 @@ class InvalidElementTypeExceptionTest extends TestCase
     public function testConstructorsSetsProperties(): void
     {
         $node = new Node(
-            id: -1,
             parent: null,
             key: null,
-            type: null,
-            component: null,
+            type: '',
         );
 
-        $el = new Element(type: 'type', key: 'key');
+        $el = new Element(type: 'type', props: ['key' => 'key']);
 
         $previous = new Exception();
 

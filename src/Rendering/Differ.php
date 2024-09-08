@@ -10,6 +10,8 @@ use StefanFisk\Vy\Errors\DuplicateKeyException;
 use function assert;
 use function count;
 use function in_array;
+use function is_int;
+use function is_string;
 
 class Differ
 {
@@ -52,25 +54,26 @@ class Differ
 
         // Index the render children
 
-        /** array<int,int> $renderChildIToChildI */
+        /** @var array<int,int> $renderChildIToChildI */
         $renderChildIToChildI = [];
-        /** array<string,Element> $keyToRenderChild */
+        /** @var array<non-empty-string,Element> $keyToRenderChild */
         $keyToRenderChild = [];
 
         for ($i = 0, $j = 0; $i < count($renderChildren); $i++) {
             $renderChild = $renderChildren[$i];
+            $renderChildKey = $this->getKey($parent, $renderChild);
 
-            if ($renderChild instanceof Element && $renderChild->key !== null) {
-                if (isset($keyToRenderChild[$renderChild->key])) {
+            if ($renderChild instanceof Element && $renderChildKey !== null) {
+                if (isset($keyToRenderChild[$renderChildKey])) {
                     throw new DuplicateKeyException(
-                        message: $renderChild->key,
-                        el1: $keyToRenderChild[$renderChild->key],
+                        message: $renderChildKey,
+                        el1: $keyToRenderChild[$renderChildKey],
                         el2: $renderChild,
                         parentNode: $parent,
                     );
                 }
 
-                $keyToRenderChild[$renderChild->key] = $renderChild;
+                $keyToRenderChild[$renderChildKey] = $renderChild;
             } else {
                 $renderChildIToChildI[$i] = $j++;
             }
@@ -85,9 +88,10 @@ class Differ
 
         foreach ($renderChildren as $i => $renderChild) {
             $oldChildCandidate = null;
+            $renderChildKey = $this->getKey($parent, $renderChild);
 
-            if ($renderChild instanceof Element && $renderChild->key !== null) {
-                $oldChildCandidate = $oldKeyToChild[$renderChild->key] ?? null;
+            if ($renderChildKey !== null) {
+                $oldChildCandidate = $oldKeyToChild[$renderChildKey] ?? null;
             } else {
                 $oldChildCandidate = $oldIToChild[$renderChildIToChildI[$i]] ?? null;
             }
@@ -133,6 +137,35 @@ class Differ
     }
 
     /**
+     * @return ?non-empty-string
+     *
+     * @psalm-assert-if-true Element $renderChild
+     * @phpstan-assert-if-true Element $renderChild
+     */
+    private function getKey(?Node $parent, mixed $renderChild): ?string
+    {
+        if (!$renderChild instanceof Element) {
+            return null;
+        }
+
+        $key = $renderChild->props['key'] ?? null;
+
+        if ($key === null) {
+            return null;
+        }
+
+        if (is_int($key)) {
+            $key = (string) $key;
+        }
+
+        if (!is_string($key) || $key === '') {
+            return null;
+        }
+
+        return $key;
+    }
+
+    /**
      * @param list<mixed> $renderChildren
      */
     private function createInitialChildren(Node $parent, array $renderChildren): Diff
@@ -143,17 +176,19 @@ class Differ
         $newChildren = [];
 
         foreach ($renderChildren as $renderChild) {
-            if ($renderChild instanceof Element && $renderChild->key !== null) {
-                if (isset($keyToRenderChild[$renderChild->key])) {
+            $renderChildKey = $this->getKey($parent, $renderChild);
+
+            if ($renderChild instanceof Element && $renderChildKey !== null) {
+                if (isset($keyToRenderChild[$renderChildKey])) {
                     throw new DuplicateKeyException(
-                        message: $renderChild->key,
-                        el1: $keyToRenderChild[$renderChild->key],
+                        message: $renderChildKey,
+                        el1: $keyToRenderChild[$renderChildKey],
                         el2: $renderChild,
                         parentNode: $parent,
                     );
                 }
 
-                $keyToRenderChild[$renderChild->key] = $renderChild;
+                $keyToRenderChild[$renderChildKey] = $renderChild;
             }
 
             $newChildren[] = new DiffChild(

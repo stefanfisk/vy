@@ -6,9 +6,11 @@ namespace StefanFisk\Vy\Serialization\Html;
 
 use Closure;
 use ReflectionFunction;
+use StefanFisk\Vy\Context;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidChildValueException;
 use StefanFisk\Vy\Errors\InvalidTagException;
+use StefanFisk\Vy\Errors\RenderException;
 use StefanFisk\Vy\Rendering\Node;
 use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
@@ -17,6 +19,7 @@ use Throwable;
 
 use function array_filter;
 use function assert;
+use function count;
 use function gettype;
 use function htmlentities;
 use function is_float;
@@ -76,7 +79,6 @@ class HtmlSerializer implements SerializerInterface
 
     /** @param array<AttributeValueTransformerInterface|ChildValueTransformerInterface> $transformers */
     public function __construct(
-        private readonly PropToAttrNameMapper $propToAttrNameMapper,
         array $transformers,
         private readonly bool $encodeEntities = false,
         private readonly bool $debugComponents = false,
@@ -108,11 +110,28 @@ class HtmlSerializer implements SerializerInterface
     {
         assert($node->state === Node::STATE_NONE);
 
-        if (is_string($node->type) && !$node->component) {
-            $this->serializeTagNode($node, $isSvgMode);
-        } else {
-            $this->serializeComponent($node, $isSvgMode);
+        $type = $node->type;
+
+        match (true) {
+            $type === '' => $this->serializeFragment($node, $isSvgMode),
+            is_string($type) => $this->serializeTagNode($node, $isSvgMode),
+            $type instanceof Context => $this->serializeContext($node, $isSvgMode),
+            $type instanceof Closure => $this->serializeComponent($node, $isSvgMode),
+        };
+    }
+
+    private function serializeFragment(Node $node, bool $isSvgMode): void
+    {
+        assert($node->props !== null);
+
+        $props = $node->props;
+        unset($props['children']);
+
+        if (count($props) > 0) {
+            throw new RenderException('Fragments cannot have props.');
         }
+
+        $this->serializeChildren($node, $isSvgMode);
     }
 
     private function serializeTagNode(Node $node, bool $isSvgMode): void
@@ -172,6 +191,21 @@ class HtmlSerializer implements SerializerInterface
         $this->output .= '>';
     }
 
+    private function serializeContext(Node $node, bool $isSvgMode): void
+    {
+        assert($node->props !== null);
+
+        $props = $node->props;
+        unset($props['children']);
+        unset($props['value']);
+
+        if (count($props) > 0) {
+            throw new RenderException('Contexts can only have value and children props.');
+        }
+
+        $this->serializeChildren($node, $isSvgMode);
+    }
+
     private function serializeAttributes(Node $node): void
     {
         assert($node->props !== null);
@@ -202,33 +236,22 @@ class HtmlSerializer implements SerializerInterface
                 );
             }
 
-            $attrName = $this->propToAttrNameMapper->propToAttrName($propName);
-
-            if ($attrName === null) {
+            if ($this->isUnsafeName($propName)) {
                 throw new InvalidAttributeException(
-                    message: sprintf('Prop name `%s` could not be mapped to an attribute name.', $propName),
+                    message: sprintf('`%s` is not a valid attribute name.', $propName),
                     node: $node,
                     name: $propName,
                     value: $value,
                 );
             }
 
-            if ($this->isUnsafeName($attrName)) {
-                throw new InvalidAttributeException(
-                    message: sprintf('`%s` is not a valid attribute name.', $attrName),
-                    node: $node,
-                    name: $attrName,
-                    value: $value,
-                );
-            }
-
             try {
-                $value = $this->applyAttributeValueTransformers($attrName, $value);
+                $value = $this->applyAttributeValueTransformers($propName, $value);
             } catch (Throwable $e) {
                 throw new InvalidAttributeException(
                     message: 'Failed to apply attribute transformer.',
                     node: $node,
-                    name: $attrName,
+                    name: $propName,
                     value: $value,
                     previous: $e,
                 );
@@ -241,7 +264,7 @@ class HtmlSerializer implements SerializerInterface
                         is_object($value) ? $value::class : gettype($value),
                     ),
                     node: $node,
-                    name: $attrName,
+                    name: $propName,
                     value: $value,
                 );
             }
@@ -251,7 +274,7 @@ class HtmlSerializer implements SerializerInterface
             }
 
             $this->output .= ' ';
-            $this->output .= $attrName;
+            $this->output .= $propName;
 
             if ($value === true) {
                 continue;

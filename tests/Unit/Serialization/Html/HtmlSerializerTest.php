@@ -16,7 +16,6 @@ use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInter
 use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
 use StefanFisk\Vy\Tests\Support\CreatesStubNodesTrait;
-use StefanFisk\Vy\Tests\Support\PassthroughPropToAttrNameMapper;
 use StefanFisk\Vy\Tests\TestCase;
 use Throwable;
 use stdClass;
@@ -33,7 +32,6 @@ class HtmlSerializerTest extends TestCase
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
             transformers: [],
             encodeEntities: $encodeEntitites,
         );
@@ -49,7 +47,6 @@ class HtmlSerializerTest extends TestCase
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
             transformers: [],
         );
 
@@ -192,11 +189,15 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
-    public function testThrowsForElementWithEmptyStringType(): void
+    public function testFragment(): void
     {
-        $this->assertRenderThrows(
-            InvalidTagException::class,
-            new Element(type: ''),
+        $this->assertRenderMatches(
+            '<div>foo</div>',
+            el()(
+                el('div')(
+                    'foo',
+                ),
+            ),
         );
     }
 
@@ -309,7 +310,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo></div>',
-            el('div', ['foo']),
+            el('div', ['foo' => true]),
         );
     }
 
@@ -317,7 +318,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidAttributeException::class,
-            el('div', ['foo>']),
+            el('div', ['foo>' => 'true']),
         );
     }
 
@@ -325,7 +326,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidAttributeException::class,
-            el('div', [123]),
+            el('div', [123 => true]),
         );
     }
 
@@ -341,7 +342,6 @@ class HtmlSerializerTest extends TestCase
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
             transformers: [
                 new class implements AttributeValueTransformerInterface {
                     public function processAttributeValue(string $name, mixed $value): mixed
@@ -444,7 +444,6 @@ class HtmlSerializerTest extends TestCase
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
             transformers: [
                 new class implements ChildValueTransformerInterface {
                     public function processChildValue(mixed $value): mixed

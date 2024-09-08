@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Tests\Unit\Components;
 
+use Closure;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Components\Compose;
@@ -15,33 +16,25 @@ class ComposeTest extends TestCase
 {
     /**
      * @param list<Element> $expected
-     * @param list<mixed> $elements
+     * @param array<mixed> $elements
      */
     private function assertComposedElementsEquals(array $expected, array $elements): void
     {
+        // @phpstan-ignore argument.type
         $el123 = Compose::el($elements);
 
-        $this->assertSame(Compose::class, $el123->type);
-        $this->assertNull($el123->key);
-        $this->assertSame(
-            [
-                'elements' => $elements,
-            ],
-            $el123->props,
-        );
+        $this->assertInstanceOf(Closure::class, $el123->type);
+        $this->assertSame(['elements' => $elements], $el123->props);
 
-        $el123Instance = new Compose();
-
-        $el = $el123Instance->render(
-            elements: $el123->props['elements'],
-            children: 'foo',
-        );
+        $el = ($el123->type)([
+            ...$el123->props,
+            'children' => 'foo',
+        ]);
 
         foreach ($expected as $elT) {
             $this->assertInstanceOf(Element::class, $elT);
 
             $this->assertSame($el->type, $elT->type);
-            $this->assertNull($el->key);
             $this->assertCount(1, $el->props);
             $this->assertArrayHasKey('children', $el->props);
 
@@ -58,37 +51,25 @@ class ComposeTest extends TestCase
 
     public function testAppliesElementsInReverseOrder(): void
     {
-        $el1 = new Element(type: fn ($children) => $children);
-        $el2 = new Element(type: fn ($children) => $children);
-        $el3 = new Element(type: fn ($children) => $children);
+        $el1 = new Element(fn ($children) => $children, []);
+        $el2 = new Element(fn ($children) => $children, []);
+        $el3 = new Element(fn ($children) => $children, []);
 
         $this->assertComposedElementsEquals(
             [$el1, $el2, $el3],
             [$el1, $el2, $el3],
-        );
-    }
-
-    public function testFlattensArray(): void
-    {
-        $el1 = new Element(type: fn ($children) => $children);
-        $el2 = new Element(type: fn ($children) => $children);
-        $el3 = new Element(type: fn ($children) => $children);
-
-        $this->assertComposedElementsEquals(
-            [$el1, $el2, $el3],
-            [$el1, [$el2, [$el3]]],
         );
     }
 
     public function testFiltersNullAndBool(): void
     {
-        $el1 = new Element(type: fn ($children) => $children);
-        $el2 = new Element(type: fn ($children) => $children);
-        $el3 = new Element(type: fn ($children) => $children);
+        $el1 = new Element(fn ($children) => $children, []);
+        $el2 = new Element(fn ($children) => $children, []);
+        $el3 = new Element(fn ($children) => $children, []);
 
         $this->assertComposedElementsEquals(
             [$el1, $el2, $el3],
-            [$el1, true, [$el2, false, [$el3, null]]],
+            [$el1, true, $el2, false, $el3, null],
         );
     }
 
@@ -96,8 +77,11 @@ class ComposeTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $el = new Compose();
+        // @phpstan-ignore argument.type
+        $el = Compose::el(['foo']);
 
-        $el->render(elements: ['foo']);
+        $this->assertInstanceOf(Closure::class, $el->type);
+
+        ($el->type)($el->props);
     }
 }

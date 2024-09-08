@@ -7,49 +7,45 @@ namespace StefanFisk\Vy\Components;
 use InvalidArgumentException;
 use StefanFisk\Vy\Element;
 
-use function array_merge;
-use function array_reduce;
+use function StefanFisk\Vy\el;
+use function array_filter;
 use function array_reverse;
-use function is_array;
+use function is_bool;
 
 class Compose
 {
-    /** @param list<mixed> $elements */
+    /**
+     * @param array<Element|bool|null> $elements
+     */
     public static function el(array $elements): Element
     {
-        return new Element(
-            type: self::class,
-            props: ['elements' => $elements],
-        );
+        return el(self::render(...), [
+            'elements' => $elements,
+        ]);
     }
 
-    /** @param list<mixed> $elements */
-    public function render(
-        array $elements = [],
-        mixed $children = null,
-    ): mixed {
-        /** @var list<Element> $elements */
-        $elements = array_reduce(
-            $elements,
-            function (array $carry, mixed $el) {
-                if (is_array($el)) {
-                    return array_merge($carry, Element::toChildArray($el));
-                }
+    /**
+     * @param array{elements:array<Element|bool|null>,children?:mixed} $props
+     */
+    private static function render(array $props): mixed
+    {
+        $elements = $props['elements'] ?? [];
+        $children = $props['children'] ?? null;
 
-                if (!$el || $el === true) {
-                    return $carry;
-                }
+        // Filter non-elements
 
-                if (!$el instanceof Element) {
-                    throw new InvalidArgumentException('$elements must be Element, bool or null.');
-                }
-
-                $carry[] = $el;
-
-                return $carry;
-            },
-            [],
-        );
+        /** @var array<Element> $elements */
+        $elements = array_filter($elements, function ($el) {
+            if ($el instanceof Element) {
+                return true;
+            } elseif (is_bool($el)) {
+                return false;
+            } elseif ($el === null) {
+                return false;
+            } else {
+                throw new InvalidArgumentException('$elements must only contain Element, bool or null.');
+            }
+        });
 
         // Return a component that applies the elements in reverses order
 

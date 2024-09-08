@@ -373,22 +373,11 @@ foreach ($namespaceToTagNames as $namespace => $tagNames) {
         $src .= "class $class\n";
         $src .= "{\n";
         $src .= "    /**\n";
-        $src .= "     * @param ?non-empty-string \$_key\n";
+        $src .= "     * @param array<mixed> \$props\n";
         $src .= "     */\n";
-        $src .= "    public static function el(\n";
-        $src .= "        mixed \$class = null,\n";
-        $src .= "        ?string \$_key = null,\n";
-        $src .= "        mixed ...\$props,\n";
-        $src .= "    ): Element {\n";
-        $src .= "        if (\$class !== null) {\n";
-        $src .= "            \$props['class'] = \$class;\n";
-        $src .= "        }\n";
-        $src .= "\n";
-        $src .= "        return new Element(\n";
-        $src .= "            key: \$_key,\n";
-        $src .= "            type: '$tagName',\n";
-        $src .= "            props: \$props,\n";
-        $src .= "        );\n";
+        $src .= "    public static function el(array \$props = []): Element\n";
+        $src .= "    {\n";
+        $src .= "        return new Element('$tagName', \$props);\n";
         $src .= "    }\n";
         $src .= "}\n";
 

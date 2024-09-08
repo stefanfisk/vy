@@ -9,21 +9,10 @@ use StefanFisk\Vy\Element;
 class label
 {
     /**
-     * @param ?non-empty-string $_key
+     * @param array<mixed> $props
      */
-    public static function el(
-        mixed $class = null,
-        ?string $_key = null,
-        mixed ...$props,
-    ): Element {
-        if ($class !== null) {
-            $props['class'] = $class;
-        }
-
-        return new Element(
-            key: $_key,
-            type: 'label',
-            props: $props,
-        );
+    public static function el(array $props = []): Element
+    {
+        return new Element('label', $props);
     }
 }

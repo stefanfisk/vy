@@ -17,11 +17,9 @@ class InvalidAttributeExceptionTest extends TestCase
     public function testConstructorsSetsProperties(): void
     {
         $node = new Node(
-            id: -1,
             parent: null,
             key: null,
-            type: null,
-            component: null,
+            type: '',
         );
 
         $value = new stdClass();

@@ -12,7 +12,7 @@ use StefanFisk\Vy\Tests\TestCase;
 #[CoversClass(div::class)]
 class DivTest extends TestCase
 {
-    public function testDoesNotMergesClassIntoPropsIfNotPassed(): void
+    public function testCreatesElement(): void
     {
         $this->assertEquals(
             new Element(
@@ -21,56 +21,9 @@ class DivTest extends TestCase
                     'name' => 'value',
                 ],
             ),
-            div::el(
-                name: 'value',
-            ),
-        );
-    }
-
-    public function testDoesNotMergesClassIntoPropsIfNull(): void
-    {
-        $this->assertEquals(
-            new Element(
-                type: 'div',
-                props: [
-                    'name' => 'value',
-                ],
-            ),
-            div::el(
-                class: null,
-                name: 'value',
-            ),
-        );
-    }
-
-    public function testMergesClassIntoPropsIfPassed(): void
-    {
-        $this->assertEquals(
-            new Element(
-                type: 'div',
-                props: [
-                    'class' => 'mx-auto',
-                    'name' => 'value',
-                ],
-            ),
-            div::el(
-                class: 'mx-auto',
-                name: 'value',
-            ),
-        );
-    }
-
-    public function testPassesKey(): void
-    {
-        $this->assertEquals(
-            new Element(
-                key: 'key',
-                type: 'div',
-                props: [],
-            ),
-            div::el(
-                _key: 'key',
-            ),
+            div::el([
+                'name' => 'value',
+            ]),
         );
     }
 }

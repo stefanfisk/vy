@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Hooks;
 
 use Closure;
-use StefanFisk\Vy\Components\Context;
+use StefanFisk\Vy\Context;
 use StefanFisk\Vy\Errors\HookException;
 use StefanFisk\Vy\Rendering\Node;
 use StefanFisk\Vy\Rendering\Renderer;
@@ -15,10 +15,16 @@ use function assert;
 class ContextHook extends Hook
 {
     /**
-     * @param class-string<Context> $context
+     * @param Context<TVal> $context
+     *
+     * @return TVal
+     *
+     * @psalm-suppress MixedInferredReturnType
+     * @template TVal
      */
-    public static function use(string $context): mixed
+    public static function use(Context $context): mixed
     {
+        /** @psalm-suppress MixedReturnStatement */
         return static::useWith($context);
     }
 
@@ -26,11 +32,11 @@ class ContextHook extends Hook
     private mixed $nextValue;
     private readonly Closure $unsubscribe;
 
-    /** @param class-string<Context> $context */
+    /** @param Context<mixed> $context */
     public function __construct(
         Renderer $renderer,
         Node $node,
-        private readonly string $context,
+        private readonly Context $context,
     ) {
         parent::__construct(
             renderer: $renderer,
@@ -40,7 +46,7 @@ class ContextHook extends Hook
         $contextNode = $this->getContextNode($context, $node->parent);
 
         if (!$contextNode) {
-            $this->nextValue = $context::getDefaultValue();
+            $this->nextValue = $context->defaultValue;
             $this->value = $this->nextValue;
             $this->unsubscribe = function (): void {
             };
@@ -67,7 +73,7 @@ class ContextHook extends Hook
 
     public function rerender(mixed ...$args): mixed
     {
-        /** @var string $context */
+        /** @var Context<mixed> $context */
         $context = $args[0] ?? null;
 
         if ($context !== $this->context) {
@@ -88,8 +94,8 @@ class ContextHook extends Hook
         ($this->unsubscribe)();
     }
 
-    /** @param class-string<Context> $context */
-    private function getContextNode(string $context, ?Node $node): ?Node
+    /** @param Context<mixed> $context */
+    private function getContextNode(Context $context, ?Node $node): ?Node
     {
         for (; $node; $node = $node->parent) {
             if ($node->type === $context) {

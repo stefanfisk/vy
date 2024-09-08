@@ -14,29 +14,21 @@ class NodeTest extends TestCase
     public function testConstructorsSetsProperties(): void
     {
         $parent = new Node(
-            id: -1,
             parent: null,
             key: null,
-            type: null,
-            component: null,
+            type: 'parent',
         );
 
-        $component = fn () => null;
-
         $node = new Node(
-            id: 0,
             parent: $parent,
             key: 'key',
             type: 'type',
-            component: $component,
         );
 
-        $this->assertSame(0, $node->id);
         $this->assertSame($parent, $node->parent);
         $this->assertSame(1, $node->depth);
         $this->assertSame('key', $node->key);
         $this->assertSame('type', $node->type);
-        $this->assertSame($component, $node->component);
         $this->assertSame(Node::STATE_INITIAL, $node->state);
         $this->assertNull($node->nextProps);
         $this->assertNull($node->props);

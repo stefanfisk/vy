@@ -15,7 +15,6 @@ use DOMText;
 use DOMXPath;
 use Masterminds\HTML5;
 use Masterminds\HTML5\Elements;
-use StefanFisk\Vy\Components\Fragment;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
 
@@ -170,15 +169,12 @@ class HtmlParser
 
     private function mapDocumentNode(DOMDocument $node): mixed
     {
-        return new Element(
-            type: Fragment::class,
-            props: [
-                'children' => [
-                    $this->mapChildNodes($node),
-                    "\n",
-                ],
+        return new Element('', [
+            'children' => [
+                $this->mapChildNodes($node),
+                "\n",
             ],
-        );
+        ]);
     }
 
     private function mapElementNode(DOMElement $node): mixed
@@ -205,10 +201,7 @@ class HtmlParser
         }
         $props['children'] = $this->mapChildNodes($node);
 
-        return new Element(
-            type: $node->tagName,
-            props: $props,
-        );
+        return new Element($node->tagName, $props);
     }
 
     private function isNonBooleanAttribute(DOMAttr $attr): bool
@@ -250,12 +243,9 @@ class HtmlParser
 
     private function mapFragmentNode(DOMDocumentFragment $node): Element
     {
-        return new Element(
-            type: Fragment::class,
-            props: [
-                'children' => $this->mapChildNodes($node),
-            ],
-        );
+        return new Element('', [
+            'children' => $this->mapChildNodes($node),
+        ]);
     }
 
     private function mapCommentNode(DOMComment $node): mixed

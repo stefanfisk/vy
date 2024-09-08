@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Unit\Components;
 
-use Error;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\Vy\Components\Context;
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Context;
 use StefanFisk\Vy\Hooks\ContextHook;
-use StefanFisk\Vy\Hooks\ContextProviderHook;
-use StefanFisk\Vy\Tests\Support\FooContext;
 use StefanFisk\Vy\Tests\Support\Mocks\MocksHookHandlerTrait;
 use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
@@ -20,96 +16,27 @@ class ContextTest extends TestCase
 {
     use MocksHookHandlerTrait;
 
-    public function testElCreatesElement(): void
-    {
-        $this->assertEquals(
-            new Element(
-                type: FooContext::class,
-                props: [
-                    'value' => 'foo',
-                ],
-            ),
-            FooContext::el('foo'),
-        );
-    }
-
-    public function testRenderReturnsChildren(): void
-    {
-        $context = new FooContext();
-
-        $this->hookHandler
-            ->shouldReceive('useHook')
-            ->withAnyArgs()
-            ->once()
-            ->andReturn(null);
-
-        $children = [
-            'foo' => 'bar',
-            new stdClass(),
-        ];
-
-        $this->assertSame(
-            $children,
-            $context->render(children: $children),
-        );
-    }
-
-    public function testRenderReturnsNullForEmptyChildren(): void
-    {
-        $context = new FooContext();
-
-        $this->hookHandler
-            ->shouldReceive('useHook')
-            ->withAnyArgs()
-            ->once()
-            ->andReturn(null);
-
-        $this->assertNull($context->render());
-    }
-
-    public function testRenderThrowsForUnknownProps(): void
-    {
-        $context = new FooContext();
-
-        $this->expectException(Error::class);
-
-        $context->render(...['foo' => 'bar']); // @phpstan-ignore-line
-    }
-
-    public function testRenderCallsContextProviderHook(): void
+    public function testCreateReturnsInstance(): void
     {
         $value = new stdClass();
 
-        $this->hookHandler
-            ->shouldReceive('useHook')
-            ->with(ContextProviderHook::class, $value)
-            ->once()
-            ->andReturn(null);
+        $ctx = Context::create($value);
 
-        $context = new FooContext();
-
-        $context->render(value: $value);
+        $this->assertSame($value, $ctx->defaultValue);
     }
 
-    public function testGetDefaultValueReturnsNull(): void
+    public function testUseCallsHandler(): void
     {
-        $context = new class extends Context {
-        };
+        $value = new stdClass();
 
-        $this->assertNull($context::getDefaultValue());
-    }
-
-    public function testUseCallsContextHookUse(): void
-    {
-        $context = new class extends Context {
-        };
+        $ctx = Context::create($value);
 
         $this->hookHandler
             ->shouldReceive('useHook')
-            ->with(ContextHook::class, $context::class)
+            ->with(ContextHook::class, $ctx)
             ->once()
             ->andReturn(null);
 
-        $context::use();
+        $ctx->use();
     }
 }

@@ -28,11 +28,9 @@ class DifferTest extends TestCase
     protected function setUp(): void
     {
         $this->parent = new Node(
-            id: 0,
             parent: null,
             key: null,
-            type: null,
-            component: null,
+            type: '',
         );
         $this->differ = new Differ();
     }
@@ -181,7 +179,7 @@ class DifferTest extends TestCase
             type: '1',
         );
 
-        $el2 = new Element(type: '2');
+        $el2 = new Element('2', []);
 
         $this->assertDiffMatches(
             oldChildren: ['foo', $node1, 'bar'],
@@ -201,9 +199,9 @@ class DifferTest extends TestCase
         $node2 = $this->createStubNode(type: '2', key: '2');
         $node3 = $this->createStubNode(type: '3');
 
-        $el1 = new Element(type: '1');
-        $el2 = new Element(type: '2', key: '2');
-        $el3 = new Element(type: '3');
+        $el1 = new Element('1', []);
+        $el2 = new Element('2', ['key' => '2']);
+        $el3 = new Element('3', []);
 
         $this->assertDiffMatches(
             oldChildren: ['foo', $node1, $node2, $node3, 'bar'],
@@ -226,8 +224,8 @@ class DifferTest extends TestCase
 
     public function testThrowsForDuplicateKeys(): void
     {
-        $el1 = new Element(type: null, key: 'key');
-        $el2 = new Element(type: null, key: 'key');
+        $el1 = new Element('', ['key' => 'key']);
+        $el2 = new Element('', ['key' => 'key']);
 
         $this->expectException(DuplicateKeyException::class);
 

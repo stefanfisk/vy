@@ -18,13 +18,12 @@ class ElementTest extends TestCase
 {
     use MocksComponentsTrait;
 
-    /** @param array{key:(string|int|null),type:mixed,props:array<mixed>} $expected */
+    /** @param array{type:mixed,props:array<mixed>} $expected */
     private function assertElementEquals(array $expected, Element $actual): void
     {
         $this->assertSame(
             $expected,
             [
-                'key' => $actual->key,
                 'type' => $actual->type,
                 'props' => $actual->props,
             ],
@@ -90,7 +89,6 @@ class ElementTest extends TestCase
     {
         $this->assertElementEquals(
             [
-                'key' => null,
                 'type' => 'div',
                 'props' => [
                     'foo' => 'bar',

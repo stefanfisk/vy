@@ -7,14 +7,12 @@ namespace StefanFisk\Vy\Tests\Support;
 use Closure;
 use PHPUnit\Framework\Attributes\Before;
 use RuntimeException;
+use StefanFisk\Vy\Context;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Rendering\Node;
 
 use function array_walk_recursive;
 use function assert;
-use function class_exists;
-use function is_object;
-use function is_string;
 
 trait CreatesStubNodesTrait
 {
@@ -30,19 +28,17 @@ trait CreatesStubNodesTrait
      * Creates a new node.
      *
      * @param Node::STATE_NONE|Node::STATE_INITIAL|Node::STATE_ENQUEUED|Node::STATE_UNMOUNTED $state
-     * @param ?non-empty-string $key
-     * @param ?array<mixed> $props
-     *
-     * Node::$state defaults to STATE_NONE.
+     * @param non-empty-string|null $key
+     * @param string|Context<mixed>|Closure(array<mixed>):mixed $type
+     * @param array<mixed> $props
      */
     public function createStubNode(
         ?Node $parent = null,
         ?int $depth = null,
         int $state = Node::STATE_NONE,
         ?string $key = null,
-        mixed $type = null,
-        ?Closure $component = null,
-        ?array $props = null,
+        string | Context | Closure $type = '',
+        array $props = [],
     ): Node {
         assert($parent === null || $depth === null);
 
@@ -53,11 +49,9 @@ trait CreatesStubNodesTrait
         }
 
         $node = new Node(
-            id: $this->nextNodeId++,
             parent: $parent,
             key: $key,
             type: $type,
-            component: $component,
         );
 
         $node->state = $state;
@@ -84,23 +78,18 @@ trait CreatesStubNodesTrait
     private function renderToStub(mixed $el, ?Node $parent = null): mixed
     {
         if ($el instanceof Element) {
-            $key = $el->key;
             $type = $el->type;
             $props = $el->props;
 
-            $component = null;
-
-            if (is_object($type) || is_string($type) && class_exists($type)) {
-                $component = function (mixed ...$props) {
+            if ($type instanceof Closure) {
+                $type = function (array $props) {
                     throw new RuntimeException('Mock component.');
                 };
             }
 
             $node = $this->createStubNode(
                 parent: $parent,
-                key: $key,
                 type: $type,
-                component: $component,
                 props: $props,
             );
 

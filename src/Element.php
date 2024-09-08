@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy;
 
+use Closure;
 use InvalidArgumentException;
 
 use function array_merge;
@@ -43,36 +44,27 @@ class Element
     }
 
     /**
-     * @param ?non-empty-string $key
-     * @param array<mixed> $props
+     * @param string|Context<mixed>|Closure(TProps):mixed $type
+     * @param TProps $props
+     *
+     * @template TProps of array
      */
     public function __construct(
-        public readonly mixed $type,
-        public readonly ?string $key = null,
-        public readonly array $props = [],
+        public readonly string | Context | Closure $type,
+        public readonly array $props,
     ) {
-        /** @psalm-suppress TypeDoesNotContainType */
-        if ($key === '') {
-            throw new InvalidArgumentException("$key cannot be empty string.");
-        }
     }
 
     public function __invoke(mixed ...$children): Element
     {
-        $props = $this->props;
-
-        $oldChildren = $props['children'] ?? null;
-
-        if ($oldChildren !== null) {
+        if (isset($this->props['children'])) {
             throw new InvalidArgumentException('Element already has children.');
         }
 
-        $props['children'] = $children;
+        $newProps = $this->props;
 
-        return new Element(
-            key: $this->key,
-            type: $this->type,
-            props: $props,
-        );
+        $newProps['children'] = $children;
+
+        return new Element($this->type, $newProps);
     }
 }
