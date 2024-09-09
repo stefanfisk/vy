@@ -6,8 +6,8 @@ namespace StefanFisk\Vy\Tests\Integration;
 
 use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Components\Context;
-use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidTagException;
 use StefanFisk\Vy\Errors\RenderException;
@@ -29,7 +29,7 @@ class VyTest extends TestCase
     use MocksComponentsTrait;
     use MocksInvokablesTrait;
 
-    private function assertRenderMatches(string $expected, Element $el): void
+    private function assertRenderMatches(string $expected, BaseElement $el): void
     {
         $vy = new Vy();
 
@@ -40,7 +40,7 @@ class VyTest extends TestCase
     }
 
     /** @param class-string<Throwable> $exception */
-    private function assertRenderThrows(string $exception, Element $el): void
+    private function assertRenderThrows(string $exception, BaseElement $el): void
     {
         $vy = new Vy();
 

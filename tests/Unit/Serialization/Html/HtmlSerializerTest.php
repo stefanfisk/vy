@@ -7,7 +7,7 @@ namespace StefanFisk\Vy\Tests\Unit\Serialization\Html;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidChildValueException;
 use StefanFisk\Vy\Errors\InvalidTagException;
@@ -28,7 +28,7 @@ class HtmlSerializerTest extends TestCase
 {
     use CreatesStubNodesTrait;
 
-    private function assertRenderMatches(string $expected, Element $el, bool $encodeEntitites = false): void
+    private function assertRenderMatches(string $expected, BaseElement $el, bool $encodeEntitites = false): void
     {
         $node = $this->renderToStub($el);
 
@@ -44,7 +44,7 @@ class HtmlSerializerTest extends TestCase
     }
 
     /** @psalm-param class-string<Throwable> $exception */
-    private function assertRenderThrows(string $exception, Element $el): void
+    private function assertRenderThrows(string $exception, BaseElement $el): void
     {
         $node = $this->renderToStub($el);
 

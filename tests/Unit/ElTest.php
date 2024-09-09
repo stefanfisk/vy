@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Tests\Unit;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversFunction;
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Tests\TestCase;
 
 use function StefanFisk\Vy\el;
@@ -15,7 +15,7 @@ use function StefanFisk\Vy\el;
 class ElTest extends TestCase
 {
     /** @param array{key:(string|int|null),type:mixed,props:array<mixed>} $expected */
-    private function assertElementEquals(array $expected, Element $actual): void
+    private function assertElementEquals(array $expected, BaseElement $actual): void
     {
         $this->assertSame(
             $expected,

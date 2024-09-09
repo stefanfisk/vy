@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Rendering;
 
 use Closure;
 use ReflectionFunction;
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\BaseElement;
 
 use function count;
 use function current;
@@ -22,7 +22,7 @@ class Comparator
         return match (true) {
             $a === $b => true,
             is_array($a) && is_array($b) => $this->arraysAreEqual($a, $b),
-            $a instanceof Element && $b instanceof Element => $this->elsAreEqual($a, $b),
+            $a instanceof BaseElement && $b instanceof BaseElement => $this->elsAreEqual($a, $b),
             $a instanceof Closure && $b instanceof Closure => $this->closuresAreEqual($a, $b),
             default => false,
         };
@@ -73,7 +73,7 @@ class Comparator
         return true;
     }
 
-    private function elsAreEqual(Element $a, Element $b): bool
+    private function elsAreEqual(BaseElement $a, BaseElement $b): bool
     {
         if ($a->key !== $b->key) {
             return false;

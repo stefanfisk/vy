@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Rendering;
 
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Errors\DuplicateKeyException;
 
 use function assert;
@@ -65,7 +65,7 @@ class Differ
         for ($i = 0, $j = 0; $i < count($renderChildren); $i++) {
             $renderChild = $renderChildren[$i];
 
-            if ($renderChild instanceof Element && $renderChild->key !== null) {
+            if ($renderChild instanceof BaseElement && $renderChild->key !== null) {
                 if (isset($keyToRenderChild[$renderChild->key])) {
                     throw new DuplicateKeyException(
                         message: $renderChild->key,
@@ -91,7 +91,7 @@ class Differ
         foreach ($renderChildren as $i => $renderChild) {
             $oldChildCandidate = null;
 
-            if ($renderChild instanceof Element && $renderChild->key !== null) {
+            if ($renderChild instanceof BaseElement && $renderChild->key !== null) {
                 $oldChildCandidate = $oldKeyToChild[$renderChild->key] ?? null;
             } else {
                 $oldChildCandidate = $oldIToChild[$renderChildIToChildI[$i]] ?? null;
@@ -100,7 +100,7 @@ class Differ
             $oldChild = null;
 
             if (
-                $renderChild instanceof Element
+                $renderChild instanceof BaseElement
                 && $oldChildCandidate instanceof Node
                 && $this->comparator->valuesAreEqual($oldChildCandidate->type, $renderChild->type)
             ) {
@@ -148,7 +148,7 @@ class Differ
         $newChildren = [];
 
         foreach ($renderChildren as $renderChild) {
-            if ($renderChild instanceof Element && $renderChild->key !== null) {
+            if ($renderChild instanceof BaseElement && $renderChild->key !== null) {
                 if (isset($keyToRenderChild[$renderChild->key])) {
                     throw new DuplicateKeyException(
                         message: $renderChild->key,

@@ -9,7 +9,7 @@ use DOMDocument;
 use DOMNodeList;
 use DOMXPath;
 use Masterminds\HTML5;
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Parsing\HtmlParser;
 use StefanFisk\Vy\Rendering\Node;
 use StefanFisk\Vy\Rendering\Renderer;
@@ -60,11 +60,11 @@ $tests = [
 
             $parser = new HtmlParser();
             $el = $parser->parseDocument($exampleHtml);
-            assert($el instanceof Element);
+            assert($el instanceof BaseElement);
 
             return [$renderer, $el];
         },
-        function (Renderer $renderer, Element $el) {
+        function (Renderer $renderer, BaseElement $el) {
             $node = $renderer->createNode(parent: null, el: $el);
 
             $renderer->enqueueRender($node);
@@ -87,7 +87,7 @@ $tests = [
         function () use ($exampleHtml) {
             $parser = new HtmlParser();
             $el = $parser->parseDocument($exampleHtml);
-            assert($el instanceof Element);
+            assert($el instanceof BaseElement);
 
             $renderer = new Renderer();
 
@@ -112,7 +112,7 @@ $tests = [
         function () use ($exampleHtml) {
             $parser = new HtmlParser();
             $el = $parser->parseDocument($exampleHtml);
-            assert($el instanceof Element);
+            assert($el instanceof BaseElement);
 
             $renderer = new Renderer();
 
@@ -142,13 +142,13 @@ $tests = [
         function () use ($exampleHtml) {
             $parser = new HtmlParser();
             $el = $parser->parseDocument($exampleHtml);
-            assert($el instanceof Element);
+            assert($el instanceof BaseElement);
 
             $vy = new Vy();
 
             return [$vy, $el];
         },
-        function (Vy $vy, Element $el) {
+        function (Vy $vy, BaseElement $el) {
             $vy->render($el);
         },
     ],
