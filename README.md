@@ -36,75 +36,92 @@ composer require stefanfisk/vy
 ## Usage
 
 ``` php
-
-namespace Example;
-
+use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Elements\Html\a;
+use StefanFisk\Vy\Elements\Html\body;
+use StefanFisk\Vy\Elements\Html\div;
+use StefanFisk\Vy\Elements\Html\head;
+use StefanFisk\Vy\Elements\Html\html;
+use StefanFisk\Vy\Elements\Html\meta;
+use StefanFisk\Vy\Elements\Html\p;
+use StefanFisk\Vy\Elements\Html\script;
+use StefanFisk\Vy\Elements\Html\span;
+use StefanFisk\Vy\Elements\Html\title;
 use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
 use StefanFisk\Vy\Vy;
 
 use function StefanFisk\Vy\el;
+use function array_map;
 
 class Layout
 {
-    public function render(mixed $title, mixed $children): mixed
+    public static function el(mixed $title): Element
     {
-        return el('', [], [
+        return el(self::render(...), [
+            'title' => $title,
+        ]);
+    }
+
+    private static function render(mixed $title, mixed $children): mixed
+    {
+        return el()(
             UnsafeHtml::from('<!DOCTYPE html>'),
-            el('html', [
-                'lang'  => 'en',
-                'class' => [
+            html::el(
+                lang: 'en',
+                class: [
                     'h-full',
                 ],
-            ], [
-                el('head', [], [
-                    el('meta', ['charset' => 'UTF-8']),
-                    el('meta', ['name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0']),
-                    el('script', ['src' => 'https://cdn.tailwindcss.com']),
-                    el('title', [], $title),
-                ]),
-                el('body', [
-                    'class' => [
-                        'max-w-screen-xl',
-                        'mx-auto',
-                        'p-8',
-                        'bg-gray-100',
-                    ],
-                ], $children),
-            ]),
-        ]);
+            )(
+                head::el()(
+                    meta::el(charset: 'UTF-8'),
+                    meta::el(name: 'viewport', content: 'width=device-width, initial-scale=1.0'),
+                    script::el(src: 'https://cdn.tailwindcss.com'),
+                    title::el()($title),
+                ),
+                body::el([
+                    'max-w-screen-xl',
+                    'mx-auto',
+                    'p-8',
+                    'bg-gray-100',
+                ])(
+                    $children,
+                ),
+            ),
+        );
     }
 }
 
-class ArticleCard {
-    private array $articles = [
+class ArticleCard
+{
+    private const ARTICLES = [
         1 => [
-            'href'        => '#',
-            'imageId'     => 1,
-            'title'       => 'Labradors',
+            'href' => '#',
+            'imageId' => 1,
+            'title' => 'Labradors',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-            'tags'        => [
+            'tags' => [
                 'photography',
                 'labradors',
                 'puppies',
             ],
         ],
         2 => [
-            'href'        => '#',
-            'imageId'     => 2,
-            'title'       => 'Walruses',
+            'href' => '#',
+            'imageId' => 2,
+            'title' => 'Walruses',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-            'tags'        => [
+            'tags' => [
                 'photography',
                 'walruses',
                 'ocean',
             ],
         ],
         3 => [
-            'href'        => '#',
-            'imageId'     => 3,
-            'title'       => 'Long Haired Cows',
+            'href' => '#',
+            'imageId' => 3,
+            'title' => 'Long Haired Cows',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.',
-            'tags'        => [
+            'tags' => [
                 'photography',
                 'cows',
                 'plains',
@@ -112,57 +129,61 @@ class ArticleCard {
         ],
     ];
 
-    public function render(
-        int $articleId,
-    ): mixed {
-        $article = $this->articles[$articleId] ?? null;
+    public static function el(int $articleId): Element
+    {
+        return el(self::render(...), [
+            'articleId' => $articleId,
+        ]);
+    }
 
-        if (!$article) {
+    private static function render(int $articleId): mixed {
+        $article = self::ARTICLES[$articleId] ?? null;
+
+        if ($article === null) {
             return null;
         }
 
-        return el('a', [
-            'class' => [
+        return a::el(
+            class: [
                 'rounded',
                 'bg-white',
                 'overflow-hidden',
                 'shadow-lg',
             ],
-            'href' => $article['href'],
-        ], [
-            el(Img::class, [
-                'class' => 'w-full',
-                'imageId' => $article['imageId'],
-            ]),
-            el('div', [
-                'class' => [
-                    'px-6',
-                    'py-4',
-                ],
-            ], [
-                el('div', [
-                    'class' => [
-                        'font-bold',
-                        'text-xl',
-                        'mb-2',
-                    ],
-                ], $article['title']),
-                el('p', [
-                    'class' => [
-                        'text-gray-700',
-                        'text-base',
-                    ],
-                ], $article['description']),
-            ]),
-            el(Tags::class, [
-                'tags' => $article['tags'],
-            ]),
-        ]);
+            href: $article['href'],
+        )(
+            Img::el(
+                class: 'w-full',
+                imageId: $article['imageId'],
+            ),
+            div::el([
+                'px-6',
+                'py-4',
+            ])(
+                div::el([
+                    'font-bold',
+                    'text-xl',
+                    'mb-2',
+                ])(
+                    $article['title'],
+                ),
+                p::el([
+                    'text-gray-700',
+                    'text-base',
+                ])(
+                    $article['description'],
+                ),
+            ),
+            Tags::el(
+                tags: $article['tags'],
+            ),
+        );
     }
 }
 
-class Img {
-    private array $images = [
+class Img
+{
+    private const IMAGES = [
         1 => [
             'src' => 'https://picsum.photos/id/237/600/400',
             'alt' => 'Black labrador puppy',
@@ -177,11 +198,19 @@ class Img {
         ],
     ];
 
-    public function render(int $imageId, mixed $class): mixed
+    public static function el(int $imageId, mixed $class): Element
     {
-        $image = $this->images[$imageId] ?? null;
+        return el(self::render(...), [
+            'class' => $class,
+            'imageId' => $imageId,
+        ]);
+    }
 
-        if (!$image) {
+    private static function render(int $imageId, mixed $class): mixed
+    {
+        $image = self::IMAGES[$imageId] ?? null;
+
+        if ($image === null) {
             return null;
         }
 
@@ -193,60 +222,81 @@ class Img {
     }
 }
 
-class Tags {
-    public function render(array $tags): mixed
+class Tags
+{
+    /**
+     * @param string[] $tags
+     */
+    public static function el(array $tags): Element
     {
-        if (!$tags) {
+        return el(self::render(...), [
+            'tags' => $tags,
+        ]);
+    }
+
+    /**
+     * @param string[] $tags
+     */
+    private static function render(array $tags): ?Element
+    {
+        if ($tags === []) {
             return null;
         }
 
-        return el('div', [
-            'class' => [
-                'px-6',
-                'pt-4',
-                'pb-2',
-            ],
-        ], array_map(
-            fn($tag) => el('span', [
-                'class' => [
-                    'inline-block',
-                    'bg-gray-200',
-                    'rounded-full',
-                    'px-3',
-                    'py-1',
-                    'text-sm',
-                    'font-semibold',
-                    'text-gray-700',
-                    'mr-2',
-                    'mb-2',
-                ],
-            ], "#$tag"),
-            $tags,
-        ));
+        return div::el([
+            'px-6',
+            'pt-4',
+            'pb-2',
+        ])(
+            array_map(fn ($tag) => self::tagEl($tag), $tags),
+        );
+    }
+
+    private static function tagEl(string $tag): Element
+    {
+        return el(self::renderTag(...), [
+            'tag' => $tag,
+        ]);
+    }
+
+    private static function renderTag(string $tag): Element
+    {
+        return span::el([
+            'inline-block',
+            'bg-gray-200',
+            'rounded-full',
+            'px-3',
+            'py-1',
+            'text-sm',
+            'font-semibold',
+            'text-gray-700',
+            'mr-2',
+            'mb-2',
+        ])(
+            "#$tag",
+        );
     }
 }
 
-$el = el(Layout::class, [
-    'title' => 'Vy Example',
-], [
-    el('div', [
-        'class' => [
-            'grid',
-            'gap-8',
-            'md:grid-cols-3',
-        ],
-    ], [
-        el(ArticleCard::class, [
-            'articleId' => 1,
-        ]),
-        el(ArticleCard::class, [
-            'articleId' => 2,
-        ]),
-        el(ArticleCard::class, [
-            'articleId' => 3,
-        ]),
-    ]),
-]);
+$el = Layout::el(
+    title: 'Vy Example',
+)(
+    div::el([
+        'grid',
+        'gap-8',
+        'md:grid-cols-3',
+    ])(
+        ArticleCard::el(
+            articleId: 1,
+        ),
+        ArticleCard::el(
+            articleId: 2,
+        ),
+        ArticleCard::el(
+            articleId: 3,
+        ),
+    ),
+);
 
 $vy = new Vy();
 
