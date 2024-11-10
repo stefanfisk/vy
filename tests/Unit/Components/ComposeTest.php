@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Tests\Unit\Components;
 
+use Closure;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Components\Compose;
 use StefanFisk\Vy\Element;
+use StefanFisk\Vy\Tests\Support\RendersComponentsTrait;
 use StefanFisk\Vy\Tests\TestCase;
 
 #[CoversClass(Compose::class)]
 class ComposeTest extends TestCase
 {
+    use RendersComponentsTrait;
+
     /**
      * @param list<Element> $expected
      * @param list<mixed> $elements
@@ -21,7 +25,7 @@ class ComposeTest extends TestCase
     {
         $el123 = Compose::el($elements);
 
-        $this->assertSame(Compose::class, $el123->type);
+        $this->assertInstanceOf(Closure::class, $el123->type);
         $this->assertNull($el123->key);
         $this->assertSame(
             [
@@ -30,12 +34,7 @@ class ComposeTest extends TestCase
             $el123->props,
         );
 
-        $el123Instance = new Compose();
-
-        $el = $el123Instance->render(
-            elements: $el123->props['elements'],
-            children: 'foo',
-        );
+        $el = $this->renderComponent($el123('foo'));
 
         foreach ($expected as $elT) {
             $this->assertInstanceOf(Element::class, $elT);
@@ -53,7 +52,7 @@ class ComposeTest extends TestCase
             $el = $children[0];
         }
 
-        $this->assertSame('foo', $el);
+        $this->assertSame(['foo'], $el);
     }
 
     public function testAppliesElementsInReverseOrder(): void
@@ -96,8 +95,8 @@ class ComposeTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $el = new Compose();
+        $el = Compose::el(['foo']);
 
-        $el->render(elements: ['foo']);
+        $this->renderComponent($el);
     }
 }

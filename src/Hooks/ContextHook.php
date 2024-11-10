@@ -88,13 +88,23 @@ class ContextHook extends Hook
         ($this->unsubscribe)();
     }
 
-    /** @param class-string<Context> $context */
+    /**
+     * @param class-string<Context> $context
+     */
     private function getContextNode(string $context, ?Node $node): ?Node
     {
         for (; $node; $node = $node->parent) {
-            if ($node->type === $context) {
-                return $node;
+            $hook = $node->hooks[0] ?? null;
+
+            if (!$hook instanceof ContextProviderHook) {
+                continue;
             }
+
+            if ($hook->context !== $context) {
+                continue;
+            }
+
+            return $node;
         }
 
         return null;

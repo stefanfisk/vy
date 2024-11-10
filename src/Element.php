@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy;
 
+use Closure;
 use InvalidArgumentException;
 
 use function array_merge;
@@ -47,7 +48,7 @@ class Element
      * @param array<mixed> $props
      */
     public function __construct(
-        public readonly mixed $type,
+        public readonly string | Closure $type,
         public readonly ?string $key = null,
         public readonly array $props = [],
     ) {

@@ -9,6 +9,7 @@ use ReflectionFunction;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidChildValueException;
 use StefanFisk\Vy\Errors\InvalidTagException;
+use StefanFisk\Vy\Errors\RenderException;
 use StefanFisk\Vy\Rendering\Node;
 use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
@@ -17,6 +18,7 @@ use Throwable;
 
 use function array_filter;
 use function assert;
+use function count;
 use function gettype;
 use function htmlentities;
 use function is_float;
@@ -108,10 +110,42 @@ class HtmlSerializer implements SerializerInterface
     {
         assert($node->state === Node::STATE_NONE);
 
-        if (is_string($node->type) && !$node->component) {
+        if ($node->type === '') {
+            $this->serializeFragment($node, $isSvgMode);
+        } elseif (is_string($node->type)) {
             $this->serializeTagNode($node, $isSvgMode);
         } else {
             $this->serializeComponent($node, $isSvgMode);
+        }
+    }
+
+    private function serializeFragment(Node $node, bool $isSvgMode): void
+    {
+        $props = $node->props ?? [];
+        unset($props['children']);
+
+        if (count($props) > 0) {
+            throw new RenderException('Fragments cannot have non-children props.');
+        }
+
+        $prettyType = 'Fragment';
+        $indent = '';
+
+        if ($this->debugComponents) {
+            $indent = str_repeat('  ', $this->componentDebugLevel);
+
+            $this->output .= "<!--$indent$prettyType-->";
+        }
+
+        $componentDebugLevel = $this->componentDebugLevel;
+        $this->componentDebugLevel += 1;
+
+        $this->serializeChildren($node, $isSvgMode);
+
+        $this->componentDebugLevel = $componentDebugLevel;
+
+        if ($this->debugComponents) {
+            $this->output .= "<!--$indent/$prettyType-->";
         }
     }
 
@@ -339,7 +373,7 @@ class HtmlSerializer implements SerializerInterface
         }
     }
 
-    private function getPrettyComponentType(mixed $type): ?string
+    private function getPrettyComponentType(string | Closure $type): ?string
     {
         if (is_string($type)) {
             if ($type === '') {
@@ -349,25 +383,17 @@ class HtmlSerializer implements SerializerInterface
             return $type;
         }
 
-        if ($type instanceof Closure) {
-            $ref = new ReflectionFunction($type);
-            $scopeClass = $ref->getClosureScopeClass()?->getName();
-            $name = $ref->getName();
+        $ref = new ReflectionFunction($type);
+        $scopeClass = $ref->getClosureScopeClass()?->getName();
+        $name = $ref->getName();
 
-            if ($name === 'render') {
-                return $scopeClass;
-            } elseif (str_starts_with($name, 'render')) {
-                $name = lcfirst(substr($name, 6));
-            }
-
-            return "{$scopeClass}::{$name}";
+        if ($name === 'render') {
+            return $scopeClass;
+        } elseif (str_starts_with($name, 'render')) {
+            $name = lcfirst(substr($name, 6));
         }
 
-        if (is_object($type)) {
-            return $type::class;
-        }
-
-        return null;
+        return "{$scopeClass}::{$name}";
     }
 
     private function serializeChildren(Node $parent, bool $isSvgMode): void

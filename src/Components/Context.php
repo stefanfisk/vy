@@ -14,7 +14,7 @@ abstract class Context
 {
     public static function el(mixed $value = null): Element
     {
-        return el(static::class, [
+        return el(self::render(...), [
             'value' => $value,
         ]);
     }
@@ -33,9 +33,11 @@ abstract class Context
     {
     }
 
-    final public function render(mixed $value = null, mixed $children = null): mixed
-    {
-        ContextProviderHook::use($value);
+    private static function render(
+        mixed $value = null,
+        mixed $children = null,
+    ): mixed {
+        ContextProviderHook::use(static::class, $value);
 
         return $children;
     }

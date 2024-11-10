@@ -20,8 +20,7 @@ class InvalidElementTypeExceptionTest extends TestCase
             id: -1,
             parent: null,
             key: null,
-            type: null,
-            component: null,
+            type: '',
         );
 
         $el = new Element(type: 'type', key: 'key');

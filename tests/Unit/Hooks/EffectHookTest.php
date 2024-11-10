@@ -38,8 +38,7 @@ class EffectHookTest extends TestCase
             id: -1,
             parent: null,
             key: null,
-            type: null,
-            component: null,
+            type: '',
         );
 
         $this->setup = $this->createMockInvokable();

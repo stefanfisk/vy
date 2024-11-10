@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Rendering;
 
+use Closure;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Errors\RenderException;
 use StefanFisk\Vy\Hooks\Hook;
@@ -12,18 +13,20 @@ use Throwable;
 
 use function assert;
 use function current;
+use function is_string;
 use function is_subclass_of;
 use function next;
 use function reset;
 
 class Renderer implements HookHandlerInterface
 {
+    private int $nextNodeId = 1;
+
     private ?Node $currentNode = null;
 
     private readonly Differ $differ;
 
     public function __construct(
-        private readonly NodeFactory $nodeFactory = new NodeFactory(),
         private readonly Comparator $comparator = new Comparator(),
         private readonly Queue $queue = new Queue(),
         ?Differ $differ = null,
@@ -33,7 +36,12 @@ class Renderer implements HookHandlerInterface
 
     public function createNode(?Node $parent, Element $el): Node
     {
-        $node = $this->nodeFactory->createNode(parent: $parent, el: $el);
+        $node = new Node(
+            id: $this->nextNodeId++,
+            parent: $parent,
+            key: $el->key,
+            type: $el->type,
+        );
 
         $node->nextProps = $el->props;
 
@@ -106,10 +114,10 @@ class Renderer implements HookHandlerInterface
             return;
         }
 
-        if ($node->component) {
-            $renderChildren = $this->renderComponent($node);
-        } else {
+        if (is_string($node->type)) {
             $renderChildren = $this->renderTag($node);
+        } else {
+            $renderChildren = $this->renderComponent($node);
         }
 
         if (!$node->children) {
@@ -136,7 +144,7 @@ class Renderer implements HookHandlerInterface
     private function renderComponent(Node $node): mixed
     {
         assert(!($node->state & Node::STATE_UNMOUNTED));
-        assert($node->component !== null);
+        assert($node->type instanceof Closure);
 
         if ($node->nextProps !== null) {
             $node->props = $node->nextProps;
@@ -164,7 +172,7 @@ class Renderer implements HookHandlerInterface
 
                 reset($node->hooks);
 
-                $renderChildren = ($node->component)(...$node->props);
+                $renderChildren = ($node->type)(...$node->props);
 
                 // @phpstan-ignore assign.propertyType
                 $node->state &= ~Node::STATE_INITIAL;
@@ -204,7 +212,7 @@ class Renderer implements HookHandlerInterface
     private function renderTag(Node $node): mixed
     {
         assert(!($node->state & Node::STATE_UNMOUNTED));
-        assert($node->component === null);
+        assert(is_string($node->type));
 
         if ($node->nextProps !== null) {
             $node->props = $node->nextProps;

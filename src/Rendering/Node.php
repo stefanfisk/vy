@@ -52,8 +52,7 @@ class Node
         public readonly int $id,
         public readonly ?Node $parent,
         public readonly ?string $key,
-        public readonly mixed $type,
-        public readonly ?Closure $component,
+        public readonly string | Closure $type,
     ) {
         $this->depth = $parent ? $parent->depth + 1 : 0;
     }

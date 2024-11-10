@@ -15,7 +15,6 @@ use DOMText;
 use DOMXPath;
 use Masterminds\HTML5;
 use Masterminds\HTML5\Elements;
-use StefanFisk\Vy\Components\Fragment;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
 
@@ -171,7 +170,7 @@ class HtmlParser
     private function mapDocumentNode(DOMDocument $node): mixed
     {
         return new Element(
-            type: Fragment::class,
+            type: '',
             props: [
                 'children' => [
                     $this->mapChildNodes($node),
@@ -251,7 +250,7 @@ class HtmlParser
     private function mapFragmentNode(DOMDocumentFragment $node): Element
     {
         return new Element(
-            type: Fragment::class,
+            type: '',
             props: [
                 'children' => $this->mapChildNodes($node),
             ],

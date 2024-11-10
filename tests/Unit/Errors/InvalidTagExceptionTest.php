@@ -19,8 +19,7 @@ class InvalidTagExceptionTest extends TestCase
             id: -1,
             parent: null,
             key: null,
-            type: null,
-            component: null,
+            type: '',
         );
 
         $previous = new Exception();

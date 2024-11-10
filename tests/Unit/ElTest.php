@@ -6,7 +6,6 @@ namespace StefanFisk\Vy\Tests\Unit;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversFunction;
-use StefanFisk\Vy\Components\Fragment;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Tests\TestCase;
 
@@ -102,18 +101,6 @@ class ElTest extends TestCase
                 'props' => ['foo' => 'bar', 'children' => 'baz'],
             ],
             el('div', ['foo' => 'bar', 'children' => 'baz']),
-        );
-    }
-
-    public function testConvertsEmptyStringTypeToFragments(): void
-    {
-        $this->assertElementEquals(
-            [
-                'key' => null,
-                'type' => Fragment::class,
-                'props' => ['foo' => 'bar', 'children' => 'baz'],
-            ],
-            el('', ['foo' => 'bar', 'children' => 'baz']),
         );
     }
 }
