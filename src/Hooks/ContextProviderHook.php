@@ -15,16 +15,15 @@ use function array_filter;
 class ContextProviderHook extends Hook
 {
     /**
-     * @param class-string<Context> $context
+     * @param Context<mixed> $context
      */
-    public static function use(string $context, mixed $value): void
+    public static function use(Context $context, mixed $value): void
     {
         static::useWith($context, $value);
     }
 
-    /** @var class-string<Context> */
-    public readonly string $context;
-
+    /** @var Context<mixed> */
+    public readonly Context $context;
     private mixed $nextValue;
     private mixed $value;
 
@@ -32,12 +31,12 @@ class ContextProviderHook extends Hook
     private array $subscribers = [];
 
     /**
-     * @param class-string<Context> $context
+     * @param Context<mixed> $context
      */
     public function __construct(
         Renderer $renderer,
         Node $node,
-        string $context,
+        Context $context,
         mixed $value,
     ) {
         parent::__construct(

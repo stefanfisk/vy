@@ -114,11 +114,10 @@ class Renderer implements HookHandlerInterface
             return;
         }
 
-        if (is_string($node->type)) {
-            $renderChildren = $this->renderTag($node);
-        } else {
-            $renderChildren = $this->renderComponent($node);
-        }
+        $renderChildren = match (true) {
+            is_string($node->type) => $this->renderTag($node),
+            $node->type instanceof Closure => $this->renderComponent($node),
+        };
 
         if (!$node->children) {
             $this->createInitialChildren(
@@ -139,6 +138,23 @@ class Renderer implements HookHandlerInterface
 
             $this->render($child);
         }
+    }
+
+    private function renderTag(Node $node): mixed
+    {
+        assert(!($node->state & Node::STATE_UNMOUNTED));
+        assert(is_string($node->type));
+
+        if ($node->nextProps !== null) {
+            $node->props = $node->nextProps;
+            $node->nextProps = null;
+        }
+        assert($node->props !== null);
+
+        // @phpstan-ignore assign.propertyType
+        $node->state &= ~Node::STATE_INITIAL;
+
+        return $node->props['children'] ?? null;
     }
 
     private function renderComponent(Node $node): mixed
@@ -207,23 +223,6 @@ class Renderer implements HookHandlerInterface
         }
 
         return $renderChildren;
-    }
-
-    private function renderTag(Node $node): mixed
-    {
-        assert(!($node->state & Node::STATE_UNMOUNTED));
-        assert(is_string($node->type));
-
-        if ($node->nextProps !== null) {
-            $node->props = $node->nextProps;
-            $node->nextProps = null;
-        }
-        assert($node->props !== null);
-
-        // @phpstan-ignore assign.propertyType
-        $node->state &= ~Node::STATE_INITIAL;
-
-        return $node->props['children'] ?? null;
     }
 
     private function createInitialChildren(Node $node, mixed $renderChildren): void

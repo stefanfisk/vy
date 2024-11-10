@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use StefanFisk\Vy\Components\Context;
 use StefanFisk\Vy\Hooks\ContextHook;
-use StefanFisk\Vy\Tests\Support\FooContext;
 use StefanFisk\Vy\Tests\Support\Mocks\MocksHookHandlerTrait;
 use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
@@ -18,17 +18,19 @@ class ContextHookTest extends TestCase
 
     public function testUseCallsCurrentHandlerUseHook(): void
     {
+        $ctx = Context::create('');
+
         $ret = new stdClass();
 
         $this->hookHandler
             ->shouldReceive('useHook')
             ->once()
-            ->with(ContextHook::class, FooContext::class)
+            ->with(ContextHook::class, $ctx)
             ->andReturn($ret);
 
         $this->assertSame(
             $ret,
-            ContextHook::use(FooContext::class),
+            ContextHook::use($ctx),
         );
     }
 

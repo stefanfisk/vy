@@ -8,37 +8,58 @@ use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Hooks\ContextHook;
 use StefanFisk\Vy\Hooks\ContextProviderHook;
 
-use function StefanFisk\Vy\el;
-
-abstract class Context
+/**
+ * @template TVal
+ */
+final class Context
 {
-    public static function el(mixed $value = null): Element
+    /**
+     * @param TDef $defaultValue
+     *
+     * @return self<TDef>
+     *
+     * @template TDef
+     */
+    public static function create(mixed $defaultValue): mixed
     {
-        return el(self::render(...), [
-            'value' => $value,
-        ]);
+        return new self($defaultValue);
     }
 
-    public static function getDefaultValue(): mixed
-    {
-        return null;
+    /**
+     * @param TVal $defaultValue
+     */
+    public function __construct(
+        public readonly mixed $defaultValue,
+    ) {
     }
 
-    public static function use(): mixed
+    /**
+     * @param TVal $value
+     * @param ?non-empty-string $key
+     */
+    public function el(mixed $value, ?string $key = null): Element
     {
-        return ContextHook::use(static::class);
+        return new Element(
+            type: $this->render(...),
+            key: $key,
+            props: [
+                'value' => $value,
+            ],
+        );
     }
 
-    final public function __construct()
+    private function render(mixed $value, mixed $children = null): mixed
     {
-    }
-
-    private static function render(
-        mixed $value = null,
-        mixed $children = null,
-    ): mixed {
-        ContextProviderHook::use(static::class, $value);
+        ContextProviderHook::use($this, $value);
 
         return $children;
+    }
+
+    /**
+     * @return TVal
+     */
+    public function use(): mixed
+    {
+        return ContextHook::use($this);
     }
 }

@@ -15,7 +15,6 @@ use StefanFisk\Vy\Hooks\EffectHook;
 use StefanFisk\Vy\Hooks\StateHook;
 use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
 use StefanFisk\Vy\Tests\Support\FooComponent;
-use StefanFisk\Vy\Tests\Support\FooContext;
 use StefanFisk\Vy\Tests\Support\Mocks\MocksComponentsTrait;
 use StefanFisk\Vy\Tests\Support\Mocks\MocksInvokablesTrait;
 use StefanFisk\Vy\Tests\TestCase;
@@ -363,14 +362,12 @@ class VyTest extends TestCase
 
     public function testSingleLevelContext(): void
     {
-        $c1 = fn (mixed ...$props): mixed => FooContext::el(
-            value: 'bar',
-        )(
-            $props['children'],
-        );
+        $ctx = Context::create('');
 
-        $c2 = function (): mixed {
-            $foo = FooContext::use();
+        $c1 = fn (mixed ...$props): mixed => $ctx->el('bar')($props['children']);
+
+        $c2 = function () use ($ctx): mixed {
+            $foo = $ctx->use();
 
             return el('div')($foo);
         };
@@ -383,47 +380,44 @@ class VyTest extends TestCase
 
     public function testMultiLevelContext(): void
     {
-        $c1 = fn (mixed ...$props): mixed => FooContext::el(
-            value: 'bar',
-        )(
-            $props['children'],
-        );
+        $ctx = Context::create('foo');
 
-        $c2 = fn (mixed ...$props): mixed => FooContext::el(
-            value: 'baz',
-        )(
-            $props['children'],
-        );
-
-        $c3 = function (): mixed {
-            $foo = FooContext::use();
+        $c1 = fn (mixed $children = null) => $ctx->el('bar')($children);
+        $c2 = fn (mixed $children = null) => $ctx->el('baz')($children);
+        $c3 = function () use ($ctx): mixed {
+            $foo = $ctx->use();
 
             return el('div')($foo);
         };
 
         $this->assertRenderMatches(
             '<div>foo</div><div>bar</div><div>baz</div>',
-            el()(el($c3), el($c1)(el($c3), el($c2)(el($c3)))),
+            el()(
+                el($c3),
+                el($c1)(
+                    el($c3),
+                    el($c2)(
+                        el($c3),
+                    ),
+                ),
+            ),
         );
     }
 
     public function testParallellContexts(): void
     {
-        $ctx1 = new class extends Context {
-        };
-        $ctx2 = new class extends Context {
-        };
+        $ctx1 = Context::create('');
+        $ctx2 = Context::create('');
 
-        $c1 = fn (mixed ...$props): mixed => $ctx1::use();
-
-        $c2 = fn (mixed ...$props): mixed => $ctx2::use();
+        $c1 = fn (mixed ...$props): mixed => $ctx1->use();
+        $c2 = fn (mixed ...$props): mixed => $ctx2->use();
 
         $this->assertRenderMatches(
             'ctx1,ctx2',
-            $ctx1::el(
+            $ctx1->el(
                 value: 'ctx1',
             )(
-                $ctx2::el(
+                $ctx2->el(
                     value: 'ctx2',
                 )(
                     el($c1),
@@ -436,29 +430,27 @@ class VyTest extends TestCase
 
     public function testModifyingExistingContext(): void
     {
-        $c = function (mixed ...$props): mixed {
-            $propFoo = $props['value'] ?? null;
+        $ctx = Context::create('');
 
-            $contextFoo = FooContext::use();
+        $c = function (?string $value = null, mixed $children = null) use ($ctx): mixed {
+            $contextValue = $ctx->use();
 
-            return FooContext::el(
-                value: $propFoo ?? $contextFoo,
+            return $ctx->el(
+                value: $value ?? $contextValue,
             )(
                 el('div')(
-                    $contextFoo,
+                    $contextValue,
                 ),
-                $props['children'] ?? null,
+                $children,
             );
         };
 
         $this->assertRenderMatches(
             '<div>bar</div><div>baz</div>',
-            FooContext::el(
+            $ctx->el(
                 value: 'bar',
             )(
-                el($c, [
-                    'value' => 'baz',
-                ])(
+                el($c, ['value' => 'baz'])(
                     el($c),
                 ),
             ),
@@ -467,10 +459,14 @@ class VyTest extends TestCase
 
     public function testDefaultContextValue(): void
     {
-        $c = function (): mixed {
-            $foo = FooContext::use();
+        $ctx = Context::create('foo');
 
-            return el('div')($foo);
+        $c = function () use ($ctx): mixed {
+            $foo = $ctx->use();
+
+            return el('div')(
+                $foo,
+            );
         };
 
         $this->assertRenderMatches(

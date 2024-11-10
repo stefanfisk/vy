@@ -15,32 +15,46 @@ use function assert;
 class ContextHook extends Hook
 {
     /**
-     * @param class-string<Context> $context
+     * @param Context<TVal> $context
+     *
+     * @return TVal
+     *
+     * @psalm-suppress MixedInferredReturnType
+     * @template TVal
      */
-    public static function use(string $context): mixed
+    public static function use(Context $context): mixed
     {
+        /** @psalm-suppress MixedReturnStatement */
         return static::useWith($context);
     }
 
+    /** @var Context<mixed> */
+    private Context $context;
+
     private mixed $value;
     private mixed $nextValue;
+
     private readonly Closure $unsubscribe;
 
-    /** @param class-string<Context> $context */
+    /**
+     * @param Context<mixed> $context
+     */
     public function __construct(
         Renderer $renderer,
         Node $node,
-        private readonly string $context,
+        Context $context,
     ) {
         parent::__construct(
             renderer: $renderer,
             node: $node,
         );
 
+        $this->context = $context;
+
         $contextNode = $this->getContextNode($context, $node->parent);
 
         if (!$contextNode) {
-            $this->nextValue = $context::getDefaultValue();
+            $this->nextValue = $context->defaultValue;
             $this->value = $this->nextValue;
             $this->unsubscribe = function (): void {
             };
@@ -67,7 +81,6 @@ class ContextHook extends Hook
 
     public function rerender(mixed ...$args): mixed
     {
-        /** @var string $context */
         $context = $args[0] ?? null;
 
         if ($context !== $this->context) {
@@ -89,9 +102,9 @@ class ContextHook extends Hook
     }
 
     /**
-     * @param class-string<Context> $context
+     * @param Context<mixed> $context
      */
-    private function getContextNode(string $context, ?Node $node): ?Node
+    private function getContextNode(Context $context, ?Node $node): ?Node
     {
         for (; $node; $node = $node->parent) {
             $hook = $node->hooks[0] ?? null;
