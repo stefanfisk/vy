@@ -19,8 +19,8 @@ class DuplicateKeyExceptionTest extends TestCase
     {
         $node = $this->createStubNode();
 
-        $el1 = new Element(type: null);
-        $el2 = new Element(type: null);
+        $el1 = new Element(type: '');
+        $el2 = new Element(type: '');
 
         $e = new DuplicateKeyException(
             message: 'Message.',

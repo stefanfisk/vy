@@ -18,13 +18,13 @@ class Compose
     public static function el(array $elements): Element
     {
         return new Element(
-            type: self::class,
+            type: self::render(...),
             props: ['elements' => $elements],
         );
     }
 
     /** @param list<mixed> $elements */
-    public function render(
+    private static function render(
         array $elements = [],
         mixed $children = null,
     ): mixed {

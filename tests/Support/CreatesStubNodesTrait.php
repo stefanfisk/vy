@@ -40,8 +40,7 @@ trait CreatesStubNodesTrait
         ?int $depth = null,
         int $state = Node::STATE_NONE,
         ?string $key = null,
-        mixed $type = null,
-        ?Closure $component = null,
+        string | Closure $type = '',
         ?array $props = null,
     ): Node {
         assert($parent === null || $depth === null);
@@ -57,7 +56,6 @@ trait CreatesStubNodesTrait
             parent: $parent,
             key: $key,
             type: $type,
-            component: $component,
         );
 
         $node->state = $state;
@@ -88,10 +86,8 @@ trait CreatesStubNodesTrait
             $type = $el->type;
             $props = $el->props;
 
-            $component = null;
-
             if (is_object($type) || is_string($type) && class_exists($type)) {
-                $component = function (mixed ...$props) {
+                $type = function (mixed ...$props) {
                     throw new RuntimeException('Mock component.');
                 };
             }
@@ -100,7 +96,6 @@ trait CreatesStubNodesTrait
                 parent: $parent,
                 key: $key,
                 type: $type,
-                component: $component,
                 props: $props,
             );
 

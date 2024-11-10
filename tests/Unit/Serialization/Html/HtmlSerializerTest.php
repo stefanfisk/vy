@@ -192,14 +192,6 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
-    public function testThrowsForElementWithEmptyStringType(): void
-    {
-        $this->assertRenderThrows(
-            InvalidTagException::class,
-            new Element(type: ''),
-        );
-    }
-
     public function testThrowsForUnknownChildType(): void
     {
         $this->assertRenderThrows(

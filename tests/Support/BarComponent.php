@@ -12,13 +12,13 @@ class BarComponent
 {
     public static function el(string $foo, mixed $children = null): Element
     {
-        return el(self::class, [
+        return el(self::render(...), [
             'foo' => $foo,
             'children' => $children,
         ]);
     }
 
-    public static function render(string $foo, mixed $children): mixed
+    private static function render(string $foo, mixed $children): mixed
     {
         return el('div', [
             'data-foo' => $foo,

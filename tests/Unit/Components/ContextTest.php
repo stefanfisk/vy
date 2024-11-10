@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Unit\Components;
 
-use Error;
+use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Components\Context;
-use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Hooks\ContextHook;
 use StefanFisk\Vy\Hooks\ContextProviderHook;
 use StefanFisk\Vy\Tests\Support\FooContext;
 use StefanFisk\Vy\Tests\Support\Mocks\MocksHookHandlerTrait;
+use StefanFisk\Vy\Tests\Support\RendersComponentsTrait;
 use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
 
@@ -19,24 +19,18 @@ use stdClass;
 class ContextTest extends TestCase
 {
     use MocksHookHandlerTrait;
+    use RendersComponentsTrait;
 
     public function testElCreatesElement(): void
     {
-        $this->assertEquals(
-            new Element(
-                type: FooContext::class,
-                props: [
-                    'value' => 'foo',
-                ],
-            ),
-            FooContext::el('foo'),
-        );
+        $el = FooContext::el('foo');
+
+        $this->assertEquals(['value' => 'foo'], $el->props);
+        $this->assertInstanceOf(Closure::class, $el->type);
     }
 
     public function testRenderReturnsChildren(): void
     {
-        $context = new FooContext();
-
         $this->hookHandler
             ->shouldReceive('useHook')
             ->withAnyArgs()
@@ -44,36 +38,27 @@ class ContextTest extends TestCase
             ->andReturn(null);
 
         $children = [
-            'foo' => 'bar',
+            'foo',
             new stdClass(),
         ];
 
+        $el = FooContext::el()(...$children);
+
         $this->assertSame(
             $children,
-            $context->render(children: $children),
+            $this->renderComponent($el),
         );
     }
 
     public function testRenderReturnsNullForEmptyChildren(): void
     {
-        $context = new FooContext();
-
         $this->hookHandler
             ->shouldReceive('useHook')
             ->withAnyArgs()
             ->once()
             ->andReturn(null);
 
-        $this->assertNull($context->render());
-    }
-
-    public function testRenderThrowsForUnknownProps(): void
-    {
-        $context = new FooContext();
-
-        $this->expectException(Error::class);
-
-        $context->render(...['foo' => 'bar']); // @phpstan-ignore-line
+        $this->assertNull($this->renderComponent(FooContext::el()));
     }
 
     public function testRenderCallsContextProviderHook(): void
@@ -82,13 +67,11 @@ class ContextTest extends TestCase
 
         $this->hookHandler
             ->shouldReceive('useHook')
-            ->with(ContextProviderHook::class, $value)
+            ->with(ContextProviderHook::class, FooContext::class, $value)
             ->once()
             ->andReturn(null);
 
-        $context = new FooContext();
-
-        $context->render(value: $value);
+        $this->renderComponent(FooContext::el($value));
     }
 
     public function testGetDefaultValueReturnsNull(): void
