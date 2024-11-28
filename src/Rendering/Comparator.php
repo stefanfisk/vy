@@ -61,7 +61,7 @@ class Comparator
             //     return false;
             // }
 
-            if (! $this->valuesAreEqual($aKey, $bKey)) {
+            if ($aKey !== $bKey) {
                 return false;
             }
 
