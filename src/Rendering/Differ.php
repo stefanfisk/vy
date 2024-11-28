@@ -13,6 +13,11 @@ use function in_array;
 
 class Differ
 {
+    public function __construct(
+        private readonly Comparator $comparator,
+    ) {
+    }
+
     /**
      * @param list<mixed> $oldChildren
      * @param list<mixed> $renderChildren
@@ -97,7 +102,7 @@ class Differ
             if (
                 $renderChild instanceof Element
                 && $oldChildCandidate instanceof Node
-                && $oldChildCandidate->type === $renderChild->type
+                && $this->comparator->valuesAreEqual($oldChildCandidate->type, $renderChild->type)
             ) {
                 $oldChild = $oldChildCandidate;
 

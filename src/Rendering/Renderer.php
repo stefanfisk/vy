@@ -20,12 +20,15 @@ class Renderer implements HookHandlerInterface
 {
     private ?Node $currentNode = null;
 
+    private readonly Differ $differ;
+
     public function __construct(
         private readonly NodeFactory $nodeFactory = new NodeFactory(),
         private readonly Comparator $comparator = new Comparator(),
         private readonly Queue $queue = new Queue(),
-        private readonly Differ $differ = new Differ(),
+        ?Differ $differ = null,
     ) {
+        $this->differ = $differ ?? new Differ($comparator);
     }
 
     public function createNode(?Node $parent, Element $el): Node

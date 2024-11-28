@@ -7,6 +7,7 @@ namespace StefanFisk\Vy\Tests\Unit\Rendering;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Errors\DuplicateKeyException;
+use StefanFisk\Vy\Rendering\Comparator;
 use StefanFisk\Vy\Rendering\DiffChild;
 use StefanFisk\Vy\Rendering\Differ;
 use StefanFisk\Vy\Rendering\Node;
@@ -34,7 +35,7 @@ class DifferTest extends TestCase
             type: null,
             component: null,
         );
-        $this->differ = new Differ();
+        $this->differ = new Differ(new Comparator());
     }
 
     /**
