@@ -81,6 +81,10 @@ class Comparator
 
     private function elsAreEqual(Element $a, Element $b): bool
     {
+        if ($a->key !== $b->key) {
+            return false;
+        }
+
         if ($a->type !== $b->type) {
             return false;
         }

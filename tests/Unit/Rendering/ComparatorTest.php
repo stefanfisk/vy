@@ -4,31 +4,25 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Tests\Unit\rendering;
 
+use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Rendering\Comparator;
 use StefanFisk\Vy\Tests\TestCase;
+use stdClass;
 
 use function StefanFisk\Vy\el;
 
 #[CoversClass(Comparator::class)]
 class ComparatorTest extends TestCase
 {
-    /**
-     * @param array<mixed> $a
-     * @param array<mixed> $b
-     */
-    private function assertValuesAreEqual(array $a, array $b): void
+    private function assertValuesAreEqual(mixed $a, mixed $b): void
     {
         $comparator = new Comparator();
 
         $this->assertTrue($comparator->valuesAreEqual($a, $b));
     }
 
-    /**
-     * @param array<mixed> $a
-     * @param array<mixed> $b
-     */
-    private function assertPropsAreNotEqual(array $a, array $b): void
+    private function assertValuesAreNotEqual(mixed $a, mixed $b): void
     {
         $comparator = new Comparator();
 
@@ -45,7 +39,7 @@ class ComparatorTest extends TestCase
 
     public function testIntAndFloatAreNotEqual(): void
     {
-        $this->assertPropsAreNotEqual(
+        $this->assertValuesAreNotEqual(
             [1],
             [1.0],
         );
@@ -53,7 +47,7 @@ class ComparatorTest extends TestCase
 
     public function testIntAndStringAreNotEqual(): void
     {
-        $this->assertPropsAreNotEqual(
+        $this->assertValuesAreNotEqual(
             [1],
             ['1'],
         );
@@ -69,7 +63,7 @@ class ComparatorTest extends TestCase
 
     public function testArraysWithDifferentKeyOrderAreNotEqual(): void
     {
-        $this->assertPropsAreNotEqual(
+        $this->assertValuesAreNotEqual(
             [
                 'foo' => 1,
                 'bar' => 2,
@@ -85,7 +79,7 @@ class ComparatorTest extends TestCase
 
     public function testArraysOfDifferentLengthAreNotEqual(): void
     {
-        $this->assertPropsAreNotEqual(
+        $this->assertValuesAreNotEqual(
             [
                 'foo' => 1,
                 'bar' => 2,
@@ -96,7 +90,7 @@ class ComparatorTest extends TestCase
                 'baz' => 3,
             ],
         );
-        $this->assertPropsAreNotEqual(
+        $this->assertValuesAreNotEqual(
             [
                 'foo' => 1,
                 'bar' => 2,
@@ -117,9 +111,25 @@ class ComparatorTest extends TestCase
         );
     }
 
+    public function testElementsWithTheSameKeysAreEqual(): void
+    {
+        $this->assertValuesAreEqual(
+            [el('div', ['key' => '1', 'foo' => 'bar'])('baz')],
+            [el('div', ['key' => '1', 'foo' => 'bar'])('baz')],
+        );
+    }
+
+    public function testElementsWithDifferentKeysAreNotEqual(): void
+    {
+        $this->assertValuesAreNotEqual(
+            [el('div', ['key' => '1', 'foo' => 'bar'])('baz')],
+            [el('div', ['key' => '2', 'foo' => 'bar'])('baz')],
+        );
+    }
+
     public function testElementsOfDifferentTypeAreNotEqual(): void
     {
-        $this->assertPropsAreNotEqual(
+        $this->assertValuesAreNotEqual(
             [el('div', ['foo' => 'bar'])('baz')],
             [el('span', ['foo' => 'bar'])('baz')],
         );
@@ -127,7 +137,7 @@ class ComparatorTest extends TestCase
 
     public function testElementsWithDifferentPropsAreNotEqual(): void
     {
-        $this->assertPropsAreNotEqual(
+        $this->assertValuesAreNotEqual(
             [el('div', ['foo' => 'bar'])('baz')],
             [el('div', ['bar' => 'bar'])('baz')],
         );
