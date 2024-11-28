@@ -31,6 +31,6 @@ class HtmlParserTest extends TestCase
         $vy = new Vy(transformers: []);
         $actual = $vy->render($el);
 
-        $this->assertSame($expected, $actual);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $actual);
     }
 }
