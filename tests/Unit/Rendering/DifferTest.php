@@ -225,7 +225,7 @@ class DifferTest extends TestCase
         $this->markTestIncomplete();
     }
 
-    public function testThrowsForDuplicateKeys(): void
+    public function testThrowsForDuplicateKeysInInitialChildren(): void
     {
         $el1 = new Element(type: null, key: 'key');
         $el2 = new Element(type: null, key: 'key');
@@ -235,6 +235,22 @@ class DifferTest extends TestCase
         $this->differ->diffChildren(
             parent: $this->parent,
             oldChildren: [],
+            renderChildren: [$el1, $el2],
+        );
+    }
+
+    public function testThrowsForDuplicateKeysInRerender(): void
+    {
+        $node1 = $this->createStubNode(type: '1');
+
+        $el1 = new Element(type: null, key: 'key');
+        $el2 = new Element(type: null, key: 'key');
+
+        $this->expectException(DuplicateKeyException::class);
+
+        $this->differ->diffChildren(
+            parent: $this->parent,
+            oldChildren: [$node1],
             renderChildren: [$el1, $el2],
         );
     }
