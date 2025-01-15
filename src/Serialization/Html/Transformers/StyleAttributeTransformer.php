@@ -58,7 +58,7 @@ class StyleAttributeTransformer implements AttributeValueTransformerInterface
         array_walk_recursive(
             $styles,
             function (mixed $value, int | string $key) use ($wrapper): void {
-                if (!$value || $value === true) {
+                if ($value === null || $value === '' || $value === false || $value === true) {
                     return;
                 }
 
