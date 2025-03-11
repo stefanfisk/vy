@@ -7,6 +7,7 @@ namespace StefanFisk\Vy\Tests\Integration;
 use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Components\Context;
+use StefanFisk\Vy\Components\Fragment;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidTagException;
@@ -324,7 +325,7 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>foo</div>bar<div>baz</div>',
-            Element::create()(
+            Fragment::el()(
                 Element::create('div')(
                     'foo',
                 ),
@@ -332,18 +333,6 @@ class VyTest extends TestCase
                 Element::create('div')(
                     'baz',
                 ),
-            ),
-        );
-    }
-
-    public function testFragmentsCannotHaveProps(): void
-    {
-        $this->assertRenderThrows(
-            RenderException::class,
-            Element::create('', [
-                'foo' => 'bar',
-            ])(
-                'baz',
             ),
         );
     }
@@ -536,7 +525,7 @@ class VyTest extends TestCase
 
         $this->assertRenderMatches(
             '<div>foo</div><div>bar</div><div>baz</div>',
-            Element::create()(
+            Fragment::el()(
                 Element::create($c3),
                 Element::create($c1)(
                     Element::create($c3),

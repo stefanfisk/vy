@@ -20,7 +20,7 @@ class InvalidAttributeExceptionTest extends TestCase
             id: -1,
             parent: null,
             key: null,
-            type: '',
+            type: 'div',
         );
 
         $value = new stdClass();

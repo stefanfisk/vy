@@ -28,6 +28,7 @@ trait CreatesStubNodesTrait
      *
      * @param Node::STATE_NONE|Node::STATE_INITIAL|Node::STATE_ENQUEUED|Node::STATE_UNMOUNTED $state
      * @param ?non-empty-string $key
+     * @param non-empty-string | Closure $type
      * @param ?array<mixed> $props
      *
      * Node::$state defaults to STATE_NONE.
@@ -36,9 +37,9 @@ trait CreatesStubNodesTrait
         ?Node $parent = null,
         ?int $depth = null,
         int $state = Node::STATE_NONE,
-        ?string $key = null,
-        string | Closure $type = '',
+        string | Closure $type = 'div',
         ?array $props = null,
+        ?string $key = null,
     ): Node {
         assert($parent === null || $depth === null);
 

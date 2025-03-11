@@ -16,6 +16,7 @@ use DOMText;
 use DOMXPath;
 use Masterminds\HTML5;
 use Masterminds\HTML5\Elements;
+use StefanFisk\Vy\Components\Fragment;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
 
@@ -170,19 +171,16 @@ final class HtmlParser
 
     private function mapDocumentNode(DOMDocument $node): mixed
     {
-        return new Element(
-            type: '',
-            props: [
-                'children' => [
-                    $this->mapChildNodes($node),
-                    "\n",
-                ],
-            ],
+        return Fragment::el()(
+            $this->mapChildNodes($node),
+            "\n",
         );
     }
 
     private function mapElementNode(DOMElement $node): mixed
     {
+        assert($node->tagName !== '');
+
         $props = [];
         /** @var DOMAttr $attrNode */
         foreach ($node->attributes ?: [] as $attrNode) { // @phpstan-ignore-line
@@ -253,11 +251,8 @@ final class HtmlParser
 
     private function mapFragmentNode(DOMDocumentFragment $node): Element
     {
-        return new Element(
-            type: '',
-            props: [
-                'children' => $this->mapChildNodes($node),
-            ],
+        return Fragment::el()(
+            $this->mapChildNodes($node),
         );
     }
 

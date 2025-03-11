@@ -20,7 +20,7 @@ class InvalidChildValueExceptionTest extends TestCase
             id: -1,
             parent: null,
             key: null,
-            type: '',
+            type: 'div',
         );
 
         $inValue = new stdClass();

@@ -421,6 +421,9 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
+    /**
+     * @param non-empty-string $tagName
+     */
     #[DataProvider('voidElementsProvider')]
     public function testVoidElementsDoNotHaveEndTags(string $tagName): void
     {
@@ -432,6 +435,9 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
+    /**
+     * @param non-empty-string $tagName
+     */
     #[DataProvider('voidElementsProvider')]
     public function testThrowsIfVoidElementsHaveChildren(string $tagName): void
     {
@@ -443,6 +449,9 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
+    /**
+     * @param non-empty-string $tagName
+     */
     #[DataProvider('rawTextElementsProvider')]
     public function testDoesThrowsIfRawTextElementsHasScalarChildren(string $tagName): void
     {

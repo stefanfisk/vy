@@ -15,10 +15,11 @@ use function is_bool;
 final class Element
 {
     /**
-     * @param ?non-empty-string $key
+     * @param non-empty-string|Closure $type
      * @param array<mixed> $props
+     * @param ?non-empty-string $key
      */
-    public static function create(string | Closure $type = '', array $props = [], ?string $key = null): self
+    public static function create(string | Closure $type, array $props = [], ?string $key = null): self
     {
         return new self(
             type: $type,
@@ -58,14 +59,20 @@ final class Element
     }
 
     /**
-     * @param ?non-empty-string $key
+     * @param non-empty-string|Closure $type
      * @param array<mixed> $props
+     * @param ?non-empty-string $key
      */
     public function __construct(
         public readonly string | Closure $type,
-        public readonly ?string $key = null,
         public readonly array $props = [],
+        public readonly ?string $key = null,
     ) {
+        /** @psalm-suppress TypeDoesNotContainType */
+        if ($type === '') {
+            throw new InvalidArgumentException("$type cannot be empty string.");
+        }
+
         /** @psalm-suppress TypeDoesNotContainType */
         if ($key === '') {
             throw new InvalidArgumentException("$key cannot be empty string.");

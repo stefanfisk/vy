@@ -19,7 +19,7 @@ class InvalidTagExceptionTest extends TestCase
             id: -1,
             parent: null,
             key: null,
-            type: '',
+            type: 'div',
         );
 
         $previous = new Exception();

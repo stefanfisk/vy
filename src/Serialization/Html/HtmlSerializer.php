@@ -10,7 +10,6 @@ use ReflectionFunction;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidChildValueException;
 use StefanFisk\Vy\Errors\InvalidTagException;
-use StefanFisk\Vy\Errors\RenderException;
 use StefanFisk\Vy\Rendering\Node;
 use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
@@ -19,7 +18,6 @@ use Throwable;
 
 use function array_filter;
 use function assert;
-use function count;
 use function gettype;
 use function htmlentities;
 use function is_float;
@@ -112,42 +110,10 @@ final class HtmlSerializer implements SerializerInterface
     {
         assert($node->state === Node::STATE_NONE);
 
-        if ($node->type === '') {
-            $this->serializeFragment($node, $isSvgMode);
-        } elseif (is_string($node->type)) {
+        if (is_string($node->type)) {
             $this->serializeTagNode($node, $isSvgMode);
         } else {
             $this->serializeComponent($node, $isSvgMode);
-        }
-    }
-
-    private function serializeFragment(Node $node, bool $isSvgMode): void
-    {
-        $props = $node->props ?? [];
-        unset($props['children']);
-
-        if (count($props) > 0) {
-            throw new RenderException('Fragments cannot have non-children props.');
-        }
-
-        $prettyType = 'Fragment';
-        $indent = '';
-
-        if ($this->debugComponents) {
-            $indent = str_repeat('  ', $this->componentDebugLevel);
-
-            $this->output .= "<!--$indent$prettyType-->";
-        }
-
-        $componentDebugLevel = $this->componentDebugLevel;
-        $this->componentDebugLevel += 1;
-
-        $this->serializeChildren($node, $isSvgMode);
-
-        $this->componentDebugLevel = $componentDebugLevel;
-
-        if ($this->debugComponents) {
-            $this->output .= "<!--$indent/$prettyType-->";
         }
     }
 
@@ -158,13 +124,6 @@ final class HtmlSerializer implements SerializerInterface
         $this->componentDebugLevel = 0;
 
         $name = $node->type;
-
-        if ($name === '') {
-            throw new InvalidTagException(
-                message: 'HTML tag cannot be empty string.',
-                node: $node,
-            );
-        }
 
         if ($this->isUnsafeName($name)) {
             throw new InvalidTagException(

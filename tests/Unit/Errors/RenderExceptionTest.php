@@ -20,7 +20,7 @@ class RenderExceptionTest extends TestCase
             id: -1,
             parent: null,
             key: null,
-            type: '',
+            type: 'div',
         );
 
         $el = new Element(type: 'type', key: 'key');

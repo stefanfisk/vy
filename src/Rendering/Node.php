@@ -46,6 +46,7 @@ final class Node
     public array $children = [];
 
     /**
+     * @param non-empty-string | Closure $type
      * @param ?non-empty-string $key
      */
     public function __construct(
