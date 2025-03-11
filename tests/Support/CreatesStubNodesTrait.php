@@ -97,7 +97,7 @@ trait CreatesStubNodesTrait
                 props: $props,
             );
 
-            $renderChildren = (array) $props['children'];
+            $renderChildren = (array) ($props['children'] ?? null);
 
              // Wrap the array to make psalm happy
             $wrapper = new class {
