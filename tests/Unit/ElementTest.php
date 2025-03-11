@@ -29,6 +29,53 @@ class ElementTest extends TestCase
         );
     }
 
+    public function testCreateConstructsInstance(): void
+    {
+        $props = ['foo' => new stdClass()];
+
+        $instance = Element::create(
+            type: 'div',
+            props: $props,
+            key: 'key',
+        );
+
+        self::assertSame('div', $instance->type);
+        self::assertSame($props, $instance->props);
+        self::assertSame('key', $instance->key);
+    }
+
+    public function testCreateHasDefaultArguments(): void
+    {
+        $instance = Element::create(
+            type: 'div',
+        );
+
+        self::assertSame('div', $instance->type);
+        self::assertSame([], $instance->props);
+        self::assertNull($instance->key);
+    }
+
+    public function testCreateThrowsIfTypeIsEmptyString(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        Element::create(
+            // @phpstan-ignore argument.type
+            type: '',
+        );
+    }
+
+    public function testCreateThrowsIfKeyIsEmptyString(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        Element::create(
+            type: 'div',
+            // @phpstan-ignore argument.type
+            key: '',
+        );
+    }
+
     public function testToChildArrayWrapsSingleItemInArray(): void
     {
         $value = new stdClass();
@@ -81,6 +128,64 @@ class ElementTest extends TestCase
         $this->assertSame(
             [$value1, $value2],
             Element::toChildArray([$value1, '', $value2]),
+        );
+    }
+
+    public function testConstructorConstructsInstance(): void
+    {
+        $props = ['foo' => new stdClass()];
+
+        $instance = new Element(
+            type: 'div',
+            props: $props,
+            key: '123',
+        );
+
+        self::assertSame('div', $instance->type);
+        self::assertSame($props, $instance->props);
+        self::assertSame('123', $instance->key);
+    }
+
+    public function testConstructorHasDefaultArguments(): void
+    {
+        $instance = new Element(
+            type: 'div',
+        );
+
+        self::assertSame('div', $instance->type);
+        self::assertSame([], $instance->props);
+        self::assertNull($instance->key);
+    }
+
+    public function testConstructorThrowsIfTypeIsEmptyString(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Element(
+            // @phpstan-ignore argument.type
+            type: '',
+        );
+    }
+
+    public function testConstructorSupportsClosureType(): void
+    {
+        $fn = fn () => null;
+
+        $instance = new Element(
+            type: $fn,
+        );
+
+        self::assertSame($fn, $instance->type);
+    }
+
+    public function testConstructorThrowsIfKeyIsEmptyString(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Element(
+            type: 'div',
+            // @phpstan-ignore argument.type
+            key: '',
         );
     }
 
