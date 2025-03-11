@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class thead
+final class thead
 {
     /**
      * @param ?non-empty-string $_key

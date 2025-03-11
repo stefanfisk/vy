@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class datalist
+final class datalist
 {
     /**
      * @param ?non-empty-string $_key

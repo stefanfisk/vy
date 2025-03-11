@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Serialization\Html;
 
 use Closure;
+use Override;
 use Stringable;
 use UnexpectedValueException;
 
@@ -30,6 +31,7 @@ final class UnsafeHtml implements HtmlableInterface
     {
     }
 
+    #[Override]
     public function toHtml(): string
     {
         if (is_string($this->html)) {

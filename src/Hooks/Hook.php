@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Hooks;
 
 use StefanFisk\Vy\Errors\RenderException;
 use StefanFisk\Vy\Rendering\Node;
-use StefanFisk\Vy\Rendering\Renderer;
+use StefanFisk\Vy\Rendering\RendererInterface;
 
 use function array_pop;
 use function assert;
@@ -48,7 +48,7 @@ abstract class Hook
     }
 
     public function __construct(
-        public readonly Renderer $renderer,
+        public readonly RendererInterface $renderer,
         public readonly Node $node,
     ) {
     }

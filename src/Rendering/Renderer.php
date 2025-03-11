@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Rendering;
 
 use Closure;
+use Override;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Errors\RenderException;
 use StefanFisk\Vy\Hooks\Hook;
-use StefanFisk\Vy\Hooks\HookHandlerInterface;
 use Throwable;
 
 use function assert;
@@ -18,7 +18,7 @@ use function is_subclass_of;
 use function next;
 use function reset;
 
-class Renderer implements HookHandlerInterface
+final class Renderer implements RendererInterface
 {
     private int $nextNodeId = 1;
 
@@ -48,6 +48,7 @@ class Renderer implements HookHandlerInterface
         return $node;
     }
 
+    #[Override]
     public function valuesAreEqual(mixed $a, mixed $b): bool
     {
         return $this->comparator->valuesAreEqual($a, $b);
@@ -67,6 +68,7 @@ class Renderer implements HookHandlerInterface
         $node->nextProps = $nextProps;
     }
 
+    #[Override]
     public function enqueueRender(Node $node): void
     {
         assert(!($node->state & Node::STATE_UNMOUNTED));
@@ -293,6 +295,7 @@ class Renderer implements HookHandlerInterface
     }
 
     /** @param class-string<Hook> $class */
+    #[Override]
     public function useHook(string $class, mixed ...$args): mixed
     {
         assert(is_subclass_of($class, Hook::class));

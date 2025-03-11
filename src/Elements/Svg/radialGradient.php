@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class radialGradient
+final class radialGradient
 {
     /**
      * @param ?non-empty-string $_key

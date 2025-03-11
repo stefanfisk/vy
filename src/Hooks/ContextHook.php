@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Hooks;
 
 use Closure;
+use Override;
 use StefanFisk\Vy\Components\Context;
 use StefanFisk\Vy\Errors\HookException;
 use StefanFisk\Vy\Rendering\Node;
@@ -12,7 +13,7 @@ use StefanFisk\Vy\Rendering\Renderer;
 
 use function assert;
 
-class ContextHook extends Hook
+final class ContextHook extends Hook
 {
     /**
      * @param class-string<Context> $context
@@ -55,16 +56,19 @@ class ContextHook extends Hook
         }
     }
 
+    #[Override]
     public function needsRender(): bool
     {
         return $this->value !== $this->nextValue;
     }
 
+    #[Override]
     public function initialRender(mixed ...$args): mixed
     {
         return $this->value;
     }
 
+    #[Override]
     public function rerender(mixed ...$args): mixed
     {
         /** @var string $context */
@@ -83,6 +87,7 @@ class ContextHook extends Hook
         return $this->value;
     }
 
+    #[Override]
     public function unmount(): void
     {
         ($this->unsubscribe)();

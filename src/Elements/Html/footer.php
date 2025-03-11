@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class footer
+final class footer
 {
     /**
      * @param ?non-empty-string $_key

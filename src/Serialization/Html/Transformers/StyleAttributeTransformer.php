@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Serialization\Html\Transformers;
 
 use InvalidArgumentException;
+use Override;
 
 use function array_filter;
 use function array_map;
@@ -18,9 +19,9 @@ use function is_object;
 use function is_string;
 use function sprintf;
 
-class StyleAttributeTransformer implements AttributeValueTransformerInterface
+final class StyleAttributeTransformer implements AttributeValueTransformerInterface
 {
-    /** {@inheritDoc} */
+    #[Override]
     public function processAttributeValue(string $name, mixed $value): mixed
     {
         if ($name !== 'style') {

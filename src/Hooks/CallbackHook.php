@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Hooks;
 
 use Closure;
+use Override;
 use StefanFisk\Vy\Rendering\Node;
 use StefanFisk\Vy\Rendering\Renderer;
 
-class CallbackHook extends Hook
+final class CallbackHook extends Hook
 {
     /**
      * @param T $fn
@@ -47,11 +48,13 @@ class CallbackHook extends Hook
         $this->deps = $deps;
     }
 
+    #[Override]
     public function initialRender(mixed ...$args): mixed
     {
         return $this->fn;
     }
 
+    #[Override]
     public function rerender(mixed ...$args): mixed
     {
         /** @var Closure $fn */

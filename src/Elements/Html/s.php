@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class s
+final class s
 {
     /**
      * @param ?non-empty-string $_key

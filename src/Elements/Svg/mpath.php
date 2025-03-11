@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class mpath
+final class mpath
 {
     /**
      * @param ?non-empty-string $_key

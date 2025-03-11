@@ -12,9 +12,6 @@ use StefanFisk\Vy\Rendering\Node;
 
 use function array_walk_recursive;
 use function assert;
-use function class_exists;
-use function is_object;
-use function is_string;
 
 trait CreatesStubNodesTrait
 {
@@ -86,7 +83,7 @@ trait CreatesStubNodesTrait
             $type = $el->type;
             $props = $el->props;
 
-            if (is_object($type) || is_string($type) && class_exists($type)) {
+            if ($type instanceof Closure) {
                 $type = function (mixed ...$props) {
                     throw new RuntimeException('Mock component.');
                 };

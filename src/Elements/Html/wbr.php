@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class wbr
+final class wbr
 {
     /**
      * @param ?non-empty-string $_key

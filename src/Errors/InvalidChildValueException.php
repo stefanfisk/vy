@@ -7,7 +7,7 @@ namespace StefanFisk\Vy\Errors;
 use StefanFisk\Vy\Rendering\Node;
 use Throwable;
 
-class InvalidChildValueException extends RenderException
+final class InvalidChildValueException extends RenderException
 {
     public function __construct(
         string $message,

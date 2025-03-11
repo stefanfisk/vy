@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class feComponentTransfer
+final class feComponentTransfer
 {
     /**
      * @param ?non-empty-string $_key

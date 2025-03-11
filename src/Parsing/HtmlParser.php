@@ -10,6 +10,7 @@ use DOMDocument;
 use DOMDocumentFragment;
 use DOMDocumentType;
 use DOMElement;
+use DOMNameSpaceNode;
 use DOMNode;
 use DOMText;
 use DOMXPath;
@@ -22,7 +23,7 @@ use function assert;
 use function in_array;
 use function is_string;
 
-class HtmlParser
+final class HtmlParser
 {
      /**
      * Defined in http://www.w3.org/TR/html51/infrastructure.html#html-namespace-0.
@@ -196,9 +197,12 @@ class HtmlParser
 
         assert($this->xpath !== null);
         foreach ($this->xpath->query('namespace::*[not(.=../../namespace::*)]', $node) ?: [] as $nsNode) {
-            assert(is_string($nsNode->nodeName));
+            if (!$nsNode instanceof DOMNameSpaceNode) {
+                continue;
+            }
 
-            if (!in_array($nsNode->nodeValue, $this->implicitNamespaces)) {
+            if (!in_array($nsNode->nodeValue, $this->implicitNamespaces, true)) {
+                /** @psalm-suppress MixedArrayOffset */
                 $props[$nsNode->nodeName] = $nsNode->nodeValue;
             }
         }

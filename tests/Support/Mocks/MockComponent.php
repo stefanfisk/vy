@@ -15,7 +15,7 @@ use StefanFisk\Vy\Element;
 class MockComponent
 {
     public function __construct(
-        public readonly Invokable&MockInterface $mockInvokable,
+        public readonly Invokable & MockInterface $mockInvokable,
         private readonly Closure $returnCallback,
     ) {
     }
@@ -27,7 +27,7 @@ class MockComponent
     {
         return $this->mockInvokable
             ->shouldReceive('__invoke')
-            ->andReturnUsing(fn ($props) => ($this->returnCallback)(...$props));
+            ->andReturnUsing(fn (array $props) => ($this->returnCallback)(...$props));
     }
 
     public function el(mixed ...$props): Element

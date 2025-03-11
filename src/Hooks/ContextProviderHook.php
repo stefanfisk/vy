@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Hooks;
 
 use Closure;
+use Override;
 use StefanFisk\Vy\Components\Context;
 use StefanFisk\Vy\Errors\HookException;
 use StefanFisk\Vy\Rendering\Node;
@@ -12,7 +13,7 @@ use StefanFisk\Vy\Rendering\Renderer;
 
 use function array_filter;
 
-class ContextProviderHook extends Hook
+final class ContextProviderHook extends Hook
 {
     /**
      * @param class-string<Context> $context
@@ -51,11 +52,13 @@ class ContextProviderHook extends Hook
         $this->value = $this->nextValue;
     }
 
+    #[Override]
     public function initialRender(mixed ...$args): mixed
     {
         return null;
     }
 
+    #[Override]
     public function rerender(mixed ...$args): mixed
     {
         $context = $args[0] ?? null;
@@ -74,6 +77,7 @@ class ContextProviderHook extends Hook
         return null;
     }
 
+    #[Override]
     public function afterRender(): void
     {
         if ($this->nextValue === $this->value) {

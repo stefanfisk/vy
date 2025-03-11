@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class feTile
+final class feTile
 {
     /**
      * @param ?non-empty-string $_key

@@ -7,7 +7,7 @@ namespace StefanFisk\Vy\Rendering;
 use Closure;
 use StefanFisk\Vy\Hooks\Hook;
 
-class Node
+final class Node
 {
     public const STATE_NONE = 0;
     /**

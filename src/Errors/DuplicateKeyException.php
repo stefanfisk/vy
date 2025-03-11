@@ -11,7 +11,7 @@ use StefanFisk\Vy\Rendering\Node;
 /**
  * Thrown when render returns multiple children with the same key.
  */
-class DuplicateKeyException extends Exception
+final class DuplicateKeyException extends Exception
 {
     public function __construct(
         string $message,

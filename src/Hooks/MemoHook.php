@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Hooks;
 
 use Closure;
+use Override;
 use StefanFisk\Vy\Rendering\Node;
 use StefanFisk\Vy\Rendering\Renderer;
 
-class MemoHook extends Hook
+final class MemoHook extends Hook
 {
     /**
      * @param Closure():T $calculateValue
@@ -47,11 +48,13 @@ class MemoHook extends Hook
         $this->deps = $deps;
     }
 
+    #[Override]
     public function initialRender(mixed ...$args): mixed
     {
         return $this->value;
     }
 
+    #[Override]
     public function rerender(mixed ...$args): mixed
     {
         /** @var Closure():mixed $calculateValue */

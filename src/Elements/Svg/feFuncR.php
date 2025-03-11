@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class feFuncR
+final class feFuncR
 {
     /**
      * @param ?non-empty-string $_key

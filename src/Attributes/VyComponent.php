@@ -7,6 +7,6 @@ namespace StefanFisk\Vy\Attributes;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-class VyComponent
+final class VyComponent
 {
 }

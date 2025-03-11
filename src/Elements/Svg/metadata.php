@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class metadata
+final class metadata
 {
     /**
      * @param ?non-empty-string $_key

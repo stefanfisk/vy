@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class bdo
+final class bdo
 {
     /**
      * @param ?non-empty-string $_key

@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class feDisplacementMap
+final class feDisplacementMap
 {
     /**
      * @param ?non-empty-string $_key

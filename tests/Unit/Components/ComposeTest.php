@@ -37,6 +37,7 @@ class ComposeTest extends TestCase
         $el = $this->renderComponent($el123('foo'));
 
         foreach ($expected as $elT) {
+            $this->assertInstanceOf(Element::class, $el);
             $this->assertInstanceOf(Element::class, $elT);
 
             $this->assertSame($el->type, $elT->type);

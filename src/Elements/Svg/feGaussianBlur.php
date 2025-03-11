@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class feGaussianBlur
+final class feGaussianBlur
 {
     /**
      * @param ?non-empty-string $_key

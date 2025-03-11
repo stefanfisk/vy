@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class progress
+final class progress
 {
     /**
      * @param ?non-empty-string $_key

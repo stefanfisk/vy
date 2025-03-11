@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Serialization\Html\Transformers;
 
+use Override;
+
 abstract class ValueTransformer implements AttributeValueTransformerInterface, ChildValueTransformerInterface
 {
-    /** {@inheritDoc} */
+    #[Override]
     final public function processAttributeValue(string $name, mixed $value): mixed
     {
         return $this->transformValue($value);
     }
 
-    /** {@inheritDoc} */
+    #[Override]
     final public function processChildValue(mixed $value): mixed
     {
         return $this->transformValue($value);

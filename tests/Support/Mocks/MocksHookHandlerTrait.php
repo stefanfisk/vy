@@ -14,7 +14,7 @@ trait MocksHookHandlerTrait
 {
     use MockeryTrait;
 
-    protected HookHandlerInterface&MockInterface $hookHandler;
+    protected HookHandlerInterface & MockInterface $hookHandler;
 
     #[Before]
     protected function setUpMocksHookHandlerTrait(): void

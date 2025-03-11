@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Serialization\Html;
 
 use Closure;
+use Override;
 use ReflectionFunction;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidChildValueException;
@@ -39,7 +40,7 @@ use const ENT_QUOTES;
 use const ENT_SUBSTITUTE;
 
 /** @implements SerializerInterface<string> */
-class HtmlSerializer implements SerializerInterface
+final class HtmlSerializer implements SerializerInterface
 {
     private const VOID_ELEMENTS = [
         'area' => true,
@@ -93,6 +94,7 @@ class HtmlSerializer implements SerializerInterface
         );
     }
 
+    #[Override]
     public function serialize(Node $node): string
     {
         $this->output = '';

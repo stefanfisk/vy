@@ -12,7 +12,7 @@ use function array_reduce;
 use function array_reverse;
 use function is_array;
 
-class Compose
+final class Compose
 {
     /** @param list<mixed> $elements */
     public static function el(array $elements): Element

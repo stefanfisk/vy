@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class dialog
+final class dialog
 {
     /**
      * @param ?non-empty-string $_key

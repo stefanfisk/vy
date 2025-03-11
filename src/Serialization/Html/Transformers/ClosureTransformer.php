@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Serialization\Html\Transformers;
 
 use Closure;
+use Override;
 use Throwable;
 use UnexpectedValueException;
 
@@ -13,8 +14,9 @@ use function ob_get_clean;
 use function ob_get_level;
 use function ob_start;
 
-class ClosureTransformer extends ValueTransformer
+final class ClosureTransformer extends ValueTransformer
 {
+    #[Override]
     public function transformValue(mixed $value): mixed
     {
         if (!$value instanceof Closure) {

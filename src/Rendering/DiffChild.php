@@ -7,7 +7,7 @@ namespace StefanFisk\Vy\Rendering;
 /**
  * @codeCoverageIgnore
  */
-class DiffChild
+final class DiffChild
 {
     /**
      * @param mixed $renderChild The input element or value.

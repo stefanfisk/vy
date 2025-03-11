@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class animateTransform
+final class animateTransform
 {
     /**
      * @param ?non-empty-string $_key

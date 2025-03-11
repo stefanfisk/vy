@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Hooks;
 
 use Closure;
+use Override;
 
-class ComparatorHook extends Hook
+final class ComparatorHook extends Hook
 {
     /**
      * @return Closure(mixed,mixed):bool
@@ -19,11 +20,13 @@ class ComparatorHook extends Hook
         return static::useWith();
     }
 
+    #[Override]
     public function initialRender(mixed ...$args): mixed
     {
         return fn (mixed $a, mixed $b) => $this->renderer->valuesAreEqual($a, $b);
     }
 
+    #[Override]
     public function rerender(mixed ...$args): mixed
     {
         return fn (mixed $a, mixed $b) => $this->renderer->valuesAreEqual($a, $b);

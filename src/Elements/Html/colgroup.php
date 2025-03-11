@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class colgroup
+final class colgroup
 {
     /**
      * @param ?non-empty-string $_key

@@ -7,7 +7,7 @@ namespace StefanFisk\Vy\Errors;
 use StefanFisk\Vy\Rendering\Node;
 use Throwable;
 
-class InvalidTagException extends RenderException
+final class InvalidTagException extends RenderException
 {
     public function __construct(
         string $message,

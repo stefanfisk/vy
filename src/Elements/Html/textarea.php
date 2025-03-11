@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class textarea
+final class textarea
 {
     /**
      * @param ?non-empty-string $_key

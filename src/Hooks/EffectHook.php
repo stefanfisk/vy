@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Hooks;
 
 use Closure;
+use Override;
 use StefanFisk\Vy\Rendering\Node;
-use StefanFisk\Vy\Rendering\Renderer;
+use StefanFisk\Vy\Rendering\RendererInterface;
 use stdClass;
 
-class EffectHook extends Hook
+final class EffectHook extends Hook
 {
     /**
      * @param Closure():mixed $calculateValue
@@ -34,7 +35,7 @@ class EffectHook extends Hook
      * @param array<mixed> $deps
      */
     public function __construct(
-        Renderer $renderer,
+        RendererInterface $renderer,
         Node $node,
         Closure $setup,
         ?array $deps = [],
@@ -50,11 +51,13 @@ class EffectHook extends Hook
         $this->deps = [new stdClass()];
     }
 
+    #[Override]
     public function initialRender(mixed ...$args): mixed
     {
         return null;
     }
 
+    #[Override]
     public function rerender(mixed ...$args): mixed
     {
         /** @var Closure():(Closure():void|null) $nextSetup */
@@ -68,6 +71,7 @@ class EffectHook extends Hook
         return null;
     }
 
+    #[Override]
     public function afterRender(): void
     {
         if ($this->deps === $this->nextDeps) {
@@ -82,6 +86,7 @@ class EffectHook extends Hook
         $this->deps = $this->nextDeps;
     }
 
+    #[Override]
     public function unmount(): void
     {
         if ($this->cleanup) {

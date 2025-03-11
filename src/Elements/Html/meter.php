@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class meter
+final class meter
 {
     /**
      * @param ?non-empty-string $_key

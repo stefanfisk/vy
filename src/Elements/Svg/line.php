@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class line
+final class line
 {
     /**
      * @param ?non-empty-string $_key

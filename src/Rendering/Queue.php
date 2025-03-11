@@ -14,7 +14,7 @@ use function count;
  *
  * Nodes with lower depth are returned first. Nodes of equal depth are returned in insertion order.
  */
-class Queue
+final class Queue
 {
     /** @var list<Node> */
     private array $queue = [];

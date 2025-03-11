@@ -623,7 +623,9 @@ class VyTest extends TestCase
     public function testSetState(): void
     {
         $c = function (mixed ...$props): mixed {
-            [$val, $setVal] = StateHook::use('foo');
+            /** @var string $initialValue */
+            $initialValue = 'foo';
+            [$val, $setVal] = StateHook::use($initialValue);
             EffectHook::use(fn () => $setVal('bar'), []);
 
             return $val;
@@ -643,7 +645,9 @@ class VyTest extends TestCase
             ->once();
 
         $c = function (mixed ...$props) use ($setup): mixed {
-            [$val, $setVal] = StateHook::use('foo');
+            /** @var string $initialValue */
+            $initialValue = 'foo';
+            [$val, $setVal] = StateHook::use($initialValue);
             EffectHook::use(fn () => $setVal('bar'), []);
             EffectHook::use($setup->fn, []);
 

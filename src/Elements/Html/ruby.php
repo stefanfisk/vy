@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class ruby
+final class ruby
 {
     /**
      * @param ?non-empty-string $_key

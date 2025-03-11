@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Serialization\Html;
 
+use Override;
+
 use function assert;
 use function preg_match;
 use function preg_replace;
 use function strtolower;
 
-class DefaultPropToAttrNameMapper implements PropToAttrNameMapper
+final class DefaultPropToAttrNameMapper implements PropToAttrNameMapper
 {
-    public function propToAttrName(string $propName): ?string
+    #[Override]
+    public function propToAttrName(string $propName): string
     {
         if (preg_match('/^[a-z0-9:-]+$/', $propName)) {
             return $propName;

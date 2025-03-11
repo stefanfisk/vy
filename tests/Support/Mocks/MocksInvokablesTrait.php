@@ -10,7 +10,7 @@ trait MocksInvokablesTrait
 {
     use MockeryTrait;
 
-    public function createMockInvokable(): Invokable&MockInterface
+    public function createMockInvokable(): Invokable & MockInterface
     {
         return $this->mockery(Invokable::class, []);
     }

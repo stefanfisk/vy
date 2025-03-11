@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class feDistantLight
+final class feDistantLight
 {
     /**
      * @param ?non-empty-string $_key

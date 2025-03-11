@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class ellipse
+final class ellipse
 {
     /**
      * @param ?non-empty-string $_key

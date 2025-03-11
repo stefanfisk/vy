@@ -7,7 +7,7 @@ namespace StefanFisk\Vy\Rendering;
 /**
  * @codeCoverageIgnore
  */
-class Diff
+final class Diff
 {
     /**
      * @param list<DiffChild> $newChildren

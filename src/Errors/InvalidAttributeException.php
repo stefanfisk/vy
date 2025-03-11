@@ -7,7 +7,7 @@ namespace StefanFisk\Vy\Errors;
 use StefanFisk\Vy\Rendering\Node;
 use Throwable;
 
-class InvalidAttributeException extends RenderException
+final class InvalidAttributeException extends RenderException
 {
     public function __construct(
         string $message,

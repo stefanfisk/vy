@@ -12,7 +12,7 @@ use function array_reduce;
 use function is_array;
 use function is_bool;
 
-class Element
+final class Element
 {
     /**
      * @param ?non-empty-string $key
@@ -36,6 +36,7 @@ class Element
             $renderChildren = [$renderChildren];
         }
 
+        // @phpstan-ignore return.type
         return array_reduce(
             $renderChildren,
             /** @param list<mixed> $carry */

@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Hooks;
 
 use Closure;
+use Override;
 use StefanFisk\Vy\Rendering\Node;
-use StefanFisk\Vy\Rendering\Renderer;
+use StefanFisk\Vy\Rendering\RendererInterface;
 
-class StateHook extends Hook
+final class StateHook extends Hook
 {
     /**
      * @param T $initialValue
@@ -33,7 +34,7 @@ class StateHook extends Hook
     private array $setValueQueue = [];
 
     public function __construct(
-        Renderer $renderer,
+        RendererInterface $renderer,
         Node $node,
         mixed $initialValue,
     ) {
@@ -48,18 +49,21 @@ class StateHook extends Hook
         $this->nextValue = null;
     }
 
+    #[Override]
     public function needsRender(): bool
     {
         return $this->hasNextValue || $this->setValueQueue;
     }
 
     /** @return array{mixed,(Closure(mixed):void)} */
+    #[Override]
     public function initialRender(mixed ...$args): array
     {
         return [$this->value, $this->setValue];
     }
 
     /** @return array{mixed,(Closure(mixed):void)} */
+    #[Override]
     public function rerender(mixed ...$args): array
     {
         // Sync

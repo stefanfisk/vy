@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class polyline
+final class polyline
 {
     /**
      * @param ?non-empty-string $_key

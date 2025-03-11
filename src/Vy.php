@@ -17,7 +17,7 @@ use StefanFisk\Vy\Serialization\Html\Transformers\ClosureTransformer;
 use StefanFisk\Vy\Serialization\Html\Transformers\StringableTransformer;
 use StefanFisk\Vy\Serialization\Html\Transformers\StyleAttributeTransformer;
 
-class Vy
+final class Vy
 {
     private readonly HtmlSerializer $serializer;
     private readonly Renderer $renderer;

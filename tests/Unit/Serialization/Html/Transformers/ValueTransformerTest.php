@@ -15,7 +15,7 @@ class ValueTransformerTest extends TestCase
 {
     use MocksInvokablesTrait;
 
-    private ValueTransformer&MockInterface $transformer;
+    private ValueTransformer & MockInterface $transformer;
 
     protected function setUp(): void
     {

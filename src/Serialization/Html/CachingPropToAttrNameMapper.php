@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Serialization\Html;
 
-class CachingPropToAttrNameMapper implements PropToAttrNameMapper
+use Override;
+
+final class CachingPropToAttrNameMapper implements PropToAttrNameMapper
 {
     public const DEFAULT_PROP_TO_ATTR_NAME = [
         // SVG attributes that cannot be converted to kebab case as listed at https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
@@ -96,6 +98,7 @@ class CachingPropToAttrNameMapper implements PropToAttrNameMapper
         $this->propToAttrName = $propToAttrName;
     }
 
+    #[Override]
     public function propToAttrName(string $propName): ?string
     {
         if (isset($this->propToAttrName[$propName])) {

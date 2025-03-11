@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class feColorMatrix
+final class feColorMatrix
 {
     /**
      * @param ?non-empty-string $_key

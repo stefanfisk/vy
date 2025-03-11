@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Svg;
 
 use StefanFisk\Vy\Element;
 
-class tspan
+final class tspan
 {
     /**
      * @param ?non-empty-string $_key

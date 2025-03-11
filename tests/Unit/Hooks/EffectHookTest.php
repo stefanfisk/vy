@@ -24,8 +24,8 @@ class EffectHookTest extends TestCase
 
     private Node $node;
 
-    private Invokable&MockInterface $setup;
-    private Invokable&MockInterface $cleanup;
+    private Invokable & MockInterface $setup;
+    private Invokable & MockInterface $cleanup;
 
     /** @var array<mixed> */
     private array $deps;

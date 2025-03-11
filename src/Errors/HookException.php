@@ -8,7 +8,7 @@ use StefanFisk\Vy\Hooks\Hook;
 use StefanFisk\Vy\Rendering\Node;
 use Throwable;
 
-class HookException extends RenderException
+final class HookException extends RenderException
 {
     /** @param class-string<Hook> $hook */
     public function __construct(

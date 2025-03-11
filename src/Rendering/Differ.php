@@ -11,7 +11,7 @@ use function assert;
 use function count;
 use function in_array;
 
-class Differ
+final class Differ
 {
     public function __construct(
         private readonly Comparator $comparator,

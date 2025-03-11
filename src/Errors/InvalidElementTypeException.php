@@ -12,7 +12,7 @@ use Throwable;
 /**
  * Thrown when encountering elements with an invalid type.
  */
-class InvalidElementTypeException extends Exception
+final class InvalidElementTypeException extends Exception
 {
     public function __construct(
         string $message,

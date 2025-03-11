@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Elements\Html;
 
 use StefanFisk\Vy\Element;
 
-class blockquote
+final class blockquote
 {
     /**
      * @param ?non-empty-string $_key
