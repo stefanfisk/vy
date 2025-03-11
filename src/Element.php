@@ -14,6 +14,19 @@ use function is_bool;
 
 class Element
 {
+    /**
+     * @param ?non-empty-string $key
+     * @param array<mixed> $props
+     */
+    public static function create(string | Closure $type = '', array $props = [], ?string $key = null): self
+    {
+        return new self(
+            type: $type,
+            key: $key,
+            props: $props,
+        );
+    }
+
     /** @return list<mixed> */
     public static function toChildArray(mixed $renderChildren): array
     {

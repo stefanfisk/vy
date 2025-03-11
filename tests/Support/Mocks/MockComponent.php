@@ -9,8 +9,6 @@ use Mockery\Expectation;
 use Mockery\MockInterface;
 use StefanFisk\Vy\Element;
 
-use function StefanFisk\Vy\el;
-
 /**
  * This is a workaround for https://github.com/sebastianbergmann/phpunit/issues/5455.
  */
@@ -34,7 +32,7 @@ class MockComponent
 
     public function el(mixed ...$props): Element
     {
-        return el($this->render(...), $props);
+        return Element::create($this->render(...), $props);
     }
 
     public function render(mixed ...$props): mixed

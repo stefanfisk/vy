@@ -11,8 +11,6 @@ use StefanFisk\Vy\Tests\Support\Mocks\MocksComponentsTrait;
 use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
 
-use function StefanFisk\Vy\el;
-
 #[CoversClass(Element::class)]
 class ElementTest extends TestCase
 {
@@ -97,7 +95,15 @@ class ElementTest extends TestCase
                     'children' => [['baz', 'qux'], 'quux'],
                 ],
             ],
-            el('div', ['foo' => 'bar'])(['baz', 'qux'], 'quux'),
+            Element::create('div', [
+                'foo' => 'bar',
+            ])(
+                [
+                    'baz',
+                    'qux',
+                ],
+                'quux',
+            ),
         );
     }
 
@@ -105,6 +111,11 @@ class ElementTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        el('div', ['foo' => 'bar', 'children' => 'baz'])('quz');
+        Element::create('div', [
+            'foo' => 'bar',
+            'children' => 'baz',
+        ])(
+            'quz',
+        );
     }
 }

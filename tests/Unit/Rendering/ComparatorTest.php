@@ -6,11 +6,10 @@ namespace StefanFisk\Vy\Tests\Unit\rendering;
 
 use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
+use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Rendering\Comparator;
 use StefanFisk\Vy\Tests\TestCase;
 use stdClass;
-
-use function StefanFisk\Vy\el;
 
 #[CoversClass(Comparator::class)]
 class ComparatorTest extends TestCase
@@ -106,40 +105,40 @@ class ComparatorTest extends TestCase
     public function testIdenticalElementsAreEqual(): void
     {
         $this->assertValuesAreEqual(
-            [el('div', ['foo' => 'bar'])('baz')],
-            [el('div', ['foo' => 'bar'])('baz')],
+            [Element::create('div', ['foo' => 'bar'])('baz')],
+            [Element::create('div', ['foo' => 'bar'])('baz')],
         );
     }
 
     public function testElementsWithTheSameKeysAreEqual(): void
     {
         $this->assertValuesAreEqual(
-            [el('div', ['key' => '1', 'foo' => 'bar'])('baz')],
-            [el('div', ['key' => '1', 'foo' => 'bar'])('baz')],
+            [Element::create('div', ['foo' => 'bar'], '1')('baz')],
+            [Element::create('div', ['foo' => 'bar'], '1')('baz')],
         );
     }
 
     public function testElementsWithDifferentKeysAreNotEqual(): void
     {
         $this->assertValuesAreNotEqual(
-            [el('div', ['key' => '1', 'foo' => 'bar'])('baz')],
-            [el('div', ['key' => '2', 'foo' => 'bar'])('baz')],
+            [Element::create('div', ['foo' => 'bar'], '1')('baz')],
+            [Element::create('div', ['foo' => 'bar'], '2')('baz')],
         );
     }
 
     public function testElementsOfDifferentTypeAreNotEqual(): void
     {
         $this->assertValuesAreNotEqual(
-            [el('div', ['foo' => 'bar'])('baz')],
-            [el('span', ['foo' => 'bar'])('baz')],
+            [Element::create('div', ['foo' => 'bar'])('baz')],
+            [Element::create('span', ['foo' => 'bar'])('baz')],
         );
     }
 
     public function testElementsWithDifferentPropsAreNotEqual(): void
     {
         $this->assertValuesAreNotEqual(
-            [el('div', ['foo' => 'bar'])('baz')],
-            [el('div', ['bar' => 'bar'])('baz')],
+            [Element::create('div', ['foo' => 'bar'])('baz')],
+            [Element::create('div', ['bar' => 'bar'])('baz')],
         );
     }
 

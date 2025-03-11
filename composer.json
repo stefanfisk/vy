@@ -28,10 +28,7 @@
     "autoload": {
         "psr-4": {
             "StefanFisk\\Vy\\": "src/"
-        },
-        "files": [
-            "src/functions.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {

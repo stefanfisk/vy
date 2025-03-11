@@ -6,13 +6,11 @@ namespace StefanFisk\Vy\Tests\Support;
 
 use StefanFisk\Vy\Element;
 
-use function StefanFisk\Vy\el;
-
 class BarComponent
 {
     public static function el(string $foo, mixed $children = null): Element
     {
-        return el(self::render(...), [
+        return Element::create(self::render(...), [
             'foo' => $foo,
             'children' => $children,
         ]);
@@ -20,10 +18,10 @@ class BarComponent
 
     private static function render(string $foo, mixed $children): mixed
     {
-        return el('div', [
+        return Element::create('div', [
             'data-foo' => $foo,
         ])(
-            el('div', [
+            Element::create('div', [
                 'class' => 'children',
             ])(
                 $children,

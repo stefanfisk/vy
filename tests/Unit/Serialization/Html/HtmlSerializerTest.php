@@ -21,8 +21,6 @@ use StefanFisk\Vy\Tests\TestCase;
 use Throwable;
 use stdClass;
 
-use function StefanFisk\Vy\el;
-
 #[CoversClass(HtmlSerializer::class)]
 class HtmlSerializerTest extends TestCase
 {
@@ -96,7 +94,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderthrows(
             InvalidTagException::class,
-            el('"test"'),
+            Element::create('"test"'),
         );
     }
 
@@ -104,7 +102,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderthrows(
             InvalidAttributeException::class,
-            el('div', [
+            Element::create('div', [
                 '"foo"' => 'bar',
             ]),
         );
@@ -114,7 +112,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>Foo &lt;&gt; Bar</div>',
-            el('div')('Foo <> Bar'),
+            Element::create('div')(
+                'Foo <> Bar',
+            ),
         );
     }
 
@@ -122,7 +122,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>Foo &amp;gt; Bar</div>',
-            el('div')('Foo &gt; Bar'),
+            Element::create('div')(
+                'Foo &gt; Bar',
+            ),
         );
     }
 
@@ -130,7 +132,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>Foo &lt;&gt; Bar</div>',
-            el('div')('Foo <> Bar'),
+            Element::create('div')(
+                'Foo <> Bar',
+            ),
             encodeEntitites: true,
         );
     }
@@ -139,7 +143,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>Foo &amp;gt&semi; Bar</div>',
-            el('div')('Foo &gt; Bar'),
+            Element::create('div')(
+                'Foo &gt; Bar',
+            ),
             encodeEntitites: true,
         );
     }
@@ -148,7 +154,10 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>FooBar</div>',
-            el('div')('Foo', 'Bar'),
+            Element::create('div')(
+                'Foo',
+                'Bar',
+            ),
         );
     }
 
@@ -156,7 +165,14 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             "<div> Foo  \t\n  Bar </div>",
-            el('div')(' Foo ', ' ', "\t", "\n", ' ', ' Bar '),
+            Element::create('div')(
+                ' Foo ',
+                ' ',
+                "\t",
+                "\n",
+                ' ',
+                ' Bar ',
+            ),
         );
     }
 
@@ -164,7 +180,11 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>foobar</div>',
-            el('div')('foo', null, 'bar'),
+            Element::create('div')(
+                'foo',
+                null,
+                'bar',
+            ),
         );
     }
 
@@ -172,7 +192,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>123</div>',
-            el('div')(123),
+            Element::create('div')(
+                123,
+            ),
         );
     }
 
@@ -180,7 +202,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>123.456</div>',
-            el('div')(123.456),
+            Element::create('div')(
+                123.456,
+            ),
         );
     }
 
@@ -188,7 +212,11 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><div>foo</div></div>',
-            el('div')(el('div')('foo')),
+            Element::create('div')(
+                Element::create('div')(
+                    'foo',
+                ),
+            ),
         );
     }
 
@@ -196,7 +224,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidChildValueException::class,
-            el('div')(new stdClass()),
+            Element::create('div')(
+                new stdClass(),
+            ),
         );
     }
 
@@ -204,7 +234,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="&amp;> bar"></div>',
-            el('div', ['foo' => '&> bar']),
+            Element::create('div', [
+                'foo' => '&> bar',
+            ]),
         );
     }
 
@@ -212,7 +244,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="&amp;gt; Bar"></div>',
-            el('div', ['foo' => '&gt; Bar']),
+            Element::create('div', [
+                'foo' => '&gt; Bar',
+            ]),
         );
     }
 
@@ -220,7 +254,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="&quot;Bar&quot; \'Baz\'"></div>',
-            el('div', ['foo' => '"Bar" \'Baz\'']),
+            Element::create('div', [
+                'foo' => '"Bar" \'Baz\'',
+            ]),
         );
     }
 
@@ -228,7 +264,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="&amp;&gt; bar"></div>',
-            el('div', ['foo' => '&> bar']),
+            Element::create('div', [
+                'foo' => '&> bar',
+            ]),
             encodeEntitites: true,
         );
     }
@@ -237,7 +275,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="&amp;> bar"></div>',
-            el('div', ['foo' => '&> bar']),
+            Element::create('div', [
+                'foo' => '&> bar',
+            ]),
         );
     }
 
@@ -245,7 +285,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="&amp;gt; Bar"></div>',
-            el('div', ['foo' => '&gt; Bar']),
+            Element::create('div', [
+                'foo' => '&gt; Bar',
+            ]),
         );
     }
 
@@ -253,7 +295,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="&quot;Bar&quot; \'Baz\'"></div>',
-            el('div', ['foo' => '"Bar" \'Baz\'']),
+            Element::create('div', [
+                'foo' => '"Bar" \'Baz\'',
+            ]),
         );
     }
 
@@ -261,7 +305,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="123"></div>',
-            el('div', ['foo' => 123]),
+            Element::create('div', [
+                'foo' => 123,
+            ]),
         );
     }
 
@@ -269,7 +315,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="123.456"></div>',
-            el('div', ['foo' => 123.456]),
+            Element::create('div', [
+                'foo' => 123.456,
+            ]),
         );
     }
 
@@ -277,7 +325,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo></div>',
-            el('div', ['foo' => true]),
+            Element::create('div', [
+                'foo' => true,
+            ]),
         );
     }
 
@@ -285,7 +335,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div></div>',
-            el('div', ['foo' => false]),
+            Element::create('div', [
+                'foo' => false,
+            ]),
         );
     }
 
@@ -293,7 +345,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div></div>',
-            el('div', ['foo' => null]),
+            Element::create('div', [
+                'foo' => null,
+            ]),
         );
     }
 
@@ -301,7 +355,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo></div>',
-            el('div', ['foo']),
+            Element::create('div', [
+                'foo',
+            ]),
         );
     }
 
@@ -309,7 +365,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidAttributeException::class,
-            el('div', ['foo>']),
+            Element::create('div', [
+                'foo>',
+            ]),
         );
     }
 
@@ -317,7 +375,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidAttributeException::class,
-            el('div', [123]),
+            Element::create('div', [
+                123,
+            ]),
         );
     }
 
@@ -328,7 +388,9 @@ class HtmlSerializerTest extends TestCase
 
     public function testThrowsWhenAttributeTransformerThrows(): void
     {
-        $el = el('div', ['foo' => new stdClass()]);
+        $el = Element::create('div', [
+            'foo' => new stdClass(),
+        ]);
 
         $node = $this->renderToStub($el);
 
@@ -353,7 +415,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidAttributeException::class,
-            el('div', ['foo' => new stdClass()]),
+            Element::create('div', [
+                'foo' => new stdClass(),
+            ]),
         );
     }
 
@@ -362,7 +426,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             "<$tagName foo=\"bar\">",
-            el($tagName, ['foo' => 'bar']),
+            Element::create($tagName, [
+                'foo' => 'bar',
+            ]),
         );
     }
 
@@ -371,7 +437,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidTagException::class,
-            el($tagName)('foo'),
+            Element::create($tagName)(
+                'foo',
+            ),
         );
     }
 
@@ -380,7 +448,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidChildValueException::class,
-            el($tagName)('foo'),
+            Element::create($tagName)(
+                'foo',
+            ),
         );
     }
 
@@ -388,7 +458,9 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div')(UnsafeHtml::from('<h1 class="unsafe">bar</h1>')),
+            Element::create('div')(
+                UnsafeHtml::from('<h1 class="unsafe">bar</h1>'),
+            ),
         );
     }
 
@@ -396,7 +468,16 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><div baz="qux"></div>quux</div>',
-            el('div')(el(fn () => null, ['foo' => 'bar'])(el('div', ['baz' => 'qux']), 'quux')),
+            Element::create('div')(
+                Element::create(fn () => null, [
+                    'foo' => 'bar',
+                ])(
+                    Element::create('div', [
+                        'baz' => 'qux',
+                    ]),
+                    'quux',
+                ),
+            ),
         );
     }
 
@@ -404,15 +485,17 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<svg width="190" height="160" xmlns="http://www.w3.org/2000/svg"><path d="M 130 60 C 120 80, 180 80, 170 60" stroke="black" fill="transparent" /></svg>', // phpcs:ignore Generic.Files.LineLength.TooLong
-            el('svg', [
+            Element::create('svg', [
                 'width' => 190,
                 'height' => 160,
                 'xmlns' => 'http://www.w3.org/2000/svg',
-            ])(el('path', [
-                'd' => 'M 130 60 C 120 80, 180 80, 170 60',
-                'stroke' => 'black',
-                'fill' => 'transparent',
-            ])),
+            ])(
+                Element::create('path', [
+                    'd' => 'M 130 60 C 120 80, 180 80, 170 60',
+                    'stroke' => 'black',
+                    'fill' => 'transparent',
+                ]),
+            ),
         );
     }
 
@@ -420,7 +503,13 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<svg><foreignObject><div>Foo</div></foreignObject></svg>',
-            el('svg')(el('foreignObject')(el('div')('Foo'))),
+            Element::create('svg')(
+                Element::create('foreignObject')(
+                    Element::create('div')(
+                        'Foo',
+                    ),
+                ),
+            ),
         );
     }
 
@@ -431,7 +520,9 @@ class HtmlSerializerTest extends TestCase
 
     public function testThrowsWhenValueTransformerThrows(): void
     {
-        $el = el('div')(new stdClass());
+        $el = Element::create('div')(
+            new stdClass(),
+        );
 
         $node = $this->renderToStub($el);
 

@@ -22,8 +22,6 @@ use StefanFisk\Vy\Tests\TestCase;
 use StefanFisk\Vy\Vy;
 use Throwable;
 
-use function StefanFisk\Vy\el;
-
 #[CoversClass(Vy::class)]
 class VyTest extends TestCase
 {
@@ -54,7 +52,7 @@ class VyTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidTagException::class,
-            el('"test"'),
+            Element::create('"test"'),
         );
     }
 
@@ -62,7 +60,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidAttributeException::class,
-            el('div', ['"foo"' => 'bar']),
+            Element::create('div', [
+                '"foo"' => 'bar',
+            ]),
         );
     }
 
@@ -70,7 +70,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>Foo &gt; Bar</div>',
-            el('div')('Foo > Bar'),
+            Element::create('div')(
+                'Foo > Bar',
+            ),
         );
     }
 
@@ -78,7 +80,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>Foo &amp;gt; Bar</div>',
-            el('div')('Foo &gt; Bar'),
+            Element::create('div')(
+                'Foo &gt; Bar',
+            ),
         );
     }
 
@@ -86,7 +90,10 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>FooBar</div>',
-            el('div')('Foo', 'Bar'),
+            Element::create('div')(
+                'Foo',
+                'Bar',
+            ),
         );
     }
 
@@ -94,7 +101,13 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>FooBar</div>',
-            el('div')(true, 'Foo', false, 'Bar', true),
+            Element::create('div')(
+                true,
+                'Foo',
+                false,
+                'Bar',
+                true,
+            ),
         );
     }
 
@@ -102,7 +115,14 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             "<div> Foo  \t\n  Bar </div>",
-            el('div')(' Foo ', ' ', "\t", "\n", ' ', ' Bar '),
+            Element::create('div')(
+                ' Foo ',
+                ' ',
+                "\t",
+                "\n",
+                ' ',
+                ' Bar ',
+            ),
         );
     }
 
@@ -110,7 +130,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>123</div>',
-            el('div')(123),
+            Element::create('div')(
+                123,
+            ),
         );
     }
 
@@ -118,7 +140,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>123.456</div>',
-            el('div')(123.456),
+            Element::create('div')(
+                123.456,
+            ),
         );
     }
 
@@ -126,7 +150,11 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><div>foo</div></div>',
-            el('div')(el('div')('foo')),
+            Element::create('div')(
+                Element::create('div')(
+                    'foo',
+                ),
+            ),
         );
     }
 
@@ -134,11 +162,17 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><div>foo</div><div>bar</div></div>',
-            el('div')([
+            Element::create('div')([
                 [
-                    el('div')(['foo']),
+                    Element::create('div')(
+                        [
+                            'foo',
+                        ],
+                    ),
                 ],
-            ], el('div')('bar')),
+            ], Element::create('div')(
+                'bar',
+            )),
         );
     }
 
@@ -146,7 +180,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="&amp;> bar"></div>',
-            el('div', ['foo' => '&> bar']),
+            Element::create('div', [
+                'foo' => '&> bar',
+            ]),
         );
     }
 
@@ -154,7 +190,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="&amp;gt; Bar"></div>',
-            el('div', ['foo' => '&gt; Bar']),
+            Element::create('div', [
+                'foo' => '&gt; Bar',
+            ]),
         );
     }
 
@@ -162,7 +200,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="&quot;Bar&quot; \'Baz\'"></div>',
-            el('div', ['foo' => '"Bar" \'Baz\'']),
+            Element::create('div', [
+                'foo' => '"Bar" \'Baz\'',
+            ]),
         );
     }
 
@@ -170,7 +210,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="123"></div>',
-            el('div', ['foo' => 123]),
+            Element::create('div', [
+                'foo' => 123,
+            ]),
         );
     }
 
@@ -178,7 +220,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo="123.456"></div>',
-            el('div', ['foo' => 123.456]),
+            Element::create('div', [
+                'foo' => 123.456,
+            ]),
         );
     }
 
@@ -186,7 +230,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div></div>',
-            el('div', ['class' => '']),
+            Element::create('div', [
+                'class' => '',
+            ]),
         );
     }
 
@@ -194,7 +240,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div></div>',
-            el('div', ['class' => [null]]),
+            Element::create('div', [
+                'class' => [null],
+            ]),
         );
     }
 
@@ -202,7 +250,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div class="bar foo"></div>',
-            el('div', ['class' => 'foo bar']),
+            Element::create('div', [
+                'class' => 'foo bar',
+            ]),
         );
     }
 
@@ -210,7 +260,13 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div class="bar foo"></div>',
-            el('div', ['class' => ['foo', 'bar' => true, 'baz' => false]]),
+            Element::create('div', [
+                'class' => [
+                    'foo',
+                    'bar' => true,
+                    'baz' => false,
+                ],
+            ]),
         );
     }
 
@@ -218,7 +274,17 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div class="bar foo"></div>',
-            el('div', ['class' => ['foo', ['bar' => true], ['baz' => false]]]),
+            Element::create('div', [
+                'class' => [
+                    'foo',
+                    [
+                        'bar' => true,
+                    ],
+                    [
+                        'baz' => false,
+                    ],
+                ],
+            ]),
         );
     }
 
@@ -226,7 +292,11 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div class="bar foo"></div>',
-            el('div', ['class' => ['foo bar' => true]]),
+            Element::create('div', [
+                'class' => [
+                    'foo bar' => true,
+                ],
+            ]),
         );
     }
 
@@ -234,7 +304,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<img foo="bar">',
-            el('img', ['foo' => 'bar']),
+            Element::create('img', [
+                'foo' => 'bar',
+            ]),
         );
     }
 
@@ -242,7 +314,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderThrows(
             RenderException::class,
-            el('img')('foo'),
+            Element::create('img')(
+                'foo',
+            ),
         );
     }
 
@@ -250,7 +324,15 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div>foo</div>bar<div>baz</div>',
-            el()(el('div')('foo'), 'bar', el('div')('baz')),
+            Element::create()(
+                Element::create('div')(
+                    'foo',
+                ),
+                'bar',
+                Element::create('div')(
+                    'baz',
+                ),
+            ),
         );
     }
 
@@ -258,7 +340,11 @@ class VyTest extends TestCase
     {
         $this->assertRenderThrows(
             RenderException::class,
-            el('', ['foo' => 'bar'])('baz'),
+            Element::create('', [
+                'foo' => 'bar',
+            ])(
+                'baz',
+            ),
         );
     }
 
@@ -266,7 +352,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div')(UnsafeHtml::from('<h1 class="unsafe">bar</h1>')),
+            Element::create('div')(
+                UnsafeHtml::from('<h1 class="unsafe">bar</h1>'),
+            ),
         );
     }
 
@@ -274,7 +362,9 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div')(fn () => UnsafeHtml::from('<h1 class="unsafe">bar</h1>')),
+            Element::create('div')(
+                fn () => UnsafeHtml::from('<h1 class="unsafe">bar</h1>'),
+            ),
         );
     }
 
@@ -282,74 +372,113 @@ class VyTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div><h1 class="unsafe">bar</h1></div>',
-            el('div')(UnsafeHtml::from(function (): void {
-                echo '<h1 class="unsafe">bar</h1>';
-            })),
+            Element::create('div')(
+                UnsafeHtml::from(function (): void {
+                    echo '<h1 class="unsafe">bar</h1>';
+                }),
+            ),
         );
     }
 
     public function testParentComponent(): void
     {
-        $c = fn (mixed ...$props): mixed => el(
-            'div',
-            ['data-foo' => $props['foo']],
-        )(el('div', ['class' => 'children'])($props['children']));
+        $c = fn (mixed ...$props): mixed => Element::create('div', [
+            'data-foo' => $props['foo'],
+        ])(
+            Element::create('div', [
+                'class' => 'children',
+            ])(
+                $props['children'],
+            ),
+        );
 
         $this->assertRenderMatches(
             '<div data-foo="bar"><div class="children">baz</div></div>',
-            el($c, ['foo' => 'bar'])('baz'),
+            Element::create($c, ['foo' => 'bar'])('baz'),
         );
     }
 
     public function testChildComponent(): void
     {
-        $c = fn (mixed ...$props): mixed => el(
-            'div',
-            ['data-foo' => $props['foo']],
-        )(el('div', ['class' => 'children'])($props['children']));
+        $c = fn (mixed ...$props): mixed => Element::create('div', [
+            'data-foo' => $props['foo'],
+        ])(
+            Element::create('div', [
+                'class' => 'children',
+            ])(
+                $props['children'],
+            ),
+        );
 
         $this->assertRenderMatches(
             '<div><div data-foo="bar"><div class="children">baz</div></div></div>',
-            el('div')(el($c, ['foo' => 'bar'])('baz')),
+            Element::create('div')(
+                Element::create($c, [
+                    'foo' => 'bar',
+                ])(
+                    'baz',
+                ),
+            ),
         );
     }
 
     public function testNestedComponents(): void
     {
-        $c = fn (mixed ...$props): mixed => el(
-            'div',
-            ['data-foo' => $props['foo']],
-        )(el('div', ['class' => 'children'])($props['children']));
+        $c = fn (mixed ...$props): mixed => Element::create('div', [
+            'data-foo' => $props['foo'],
+        ])(
+            Element::create('div', [
+                'class' => 'children',
+            ])(
+                $props['children'],
+            ),
+        );
 
         $this->assertRenderMatches(
             '<div data-foo="bar"><div class="children"><div data-foo="baz"><div class="children">qux</div></div></div></div>', // phpcs:ignore Generic.Files.LineLength.TooLong
-            el($c, ['foo' => 'bar'])(el($c, ['foo' => 'baz'])('qux')),
+            Element::create($c, [
+                'foo' => 'bar',
+            ])(
+                Element::create($c, [
+                    'foo' => 'baz',
+                ])(
+                    'qux',
+                ),
+            ),
         );
     }
 
     public function testClosureComponent(): void
     {
-        $c = fn (mixed ...$props): mixed => el(
-            'div',
-            ['data-foo' => $props['foo']],
-        )(el('div', ['class' => 'children'])($props['children']));
+        $c = fn (mixed ...$props): mixed => Element::create('div', [
+            'data-foo' => $props['foo'],
+        ])(
+            Element::create('div', [
+                'class' => 'children',
+            ])(
+                $props['children'],
+            ),
+        );
 
         $this->assertRenderMatches(
             '<div data-foo="bar"><div class="children">baz</div></div>',
-            el($c, ['foo' => 'bar'])('baz'),
+            Element::create($c, [
+                'foo' => 'bar',
+            ])(
+                'baz',
+            ),
         );
     }
 
     public function testClosureComponentWithoutArgs(): void
     {
-        $c = fn (): mixed => el(
-            'div',
-            ['data-foo' => 'bar'],
-        );
+        $c = fn (): mixed => Element::create('div', [
+            'data-foo' => 'bar',
+        ]);
 
         $this->assertRenderMatches(
             '<div data-foo="bar"></div>',
-            el($c),
+            Element::create($c),
         );
     }
 
@@ -372,12 +501,16 @@ class VyTest extends TestCase
         $c2 = function (): mixed {
             $foo = FooContext::use();
 
-            return el('div')($foo);
+            return Element::create('div')(
+                $foo,
+            );
         };
 
         $this->assertRenderMatches(
             '<div>bar</div>',
-            el($c1)(el($c2)),
+            Element::create($c1)(
+                Element::create($c2),
+            ),
         );
     }
 
@@ -398,12 +531,20 @@ class VyTest extends TestCase
         $c3 = function (): mixed {
             $foo = FooContext::use();
 
-            return el('div')($foo);
+            return Element::create('div')($foo);
         };
 
         $this->assertRenderMatches(
             '<div>foo</div><div>bar</div><div>baz</div>',
-            el()(el($c3), el($c1)(el($c3), el($c2)(el($c3)))),
+            Element::create()(
+                Element::create($c3),
+                Element::create($c1)(
+                    Element::create($c3),
+                    Element::create($c2)(
+                        Element::create($c3),
+                    ),
+                ),
+            ),
         );
     }
 
@@ -426,9 +567,9 @@ class VyTest extends TestCase
                 $ctx2::el(
                     value: 'ctx2',
                 )(
-                    el($c1),
+                    Element::create($c1),
                     ',',
-                    el($c2),
+                    Element::create($c2),
                 ),
             ),
         );
@@ -444,7 +585,7 @@ class VyTest extends TestCase
             return FooContext::el(
                 value: $propFoo ?? $contextFoo,
             )(
-                el('div')(
+                Element::create('div')(
                     $contextFoo,
                 ),
                 $props['children'] ?? null,
@@ -456,10 +597,10 @@ class VyTest extends TestCase
             FooContext::el(
                 value: 'bar',
             )(
-                el($c, [
+                Element::create($c, [
                     'value' => 'baz',
                 ])(
-                    el($c),
+                    Element::create($c),
                 ),
             ),
         );
@@ -470,12 +611,12 @@ class VyTest extends TestCase
         $c = function (): mixed {
             $foo = FooContext::use();
 
-            return el('div')($foo);
+            return Element::create('div')($foo);
         };
 
         $this->assertRenderMatches(
             '<div>foo</div>',
-            el($c),
+            Element::create($c),
         );
     }
 
@@ -490,7 +631,7 @@ class VyTest extends TestCase
 
         $this->assertRenderMatches(
             'bar',
-            el($c),
+            Element::create($c),
         );
     }
 
@@ -511,7 +652,7 @@ class VyTest extends TestCase
 
         $this->assertRenderMatches(
             'bar',
-            el($c),
+            Element::create($c),
         );
     }
 
@@ -560,15 +701,17 @@ class VyTest extends TestCase
 
     public function testRootComponent(): void
     {
-        $root = fn ($children) => el('html')($children);
+        $root = fn ($children) => Element::create('html')($children);
 
         $vy = new Vy(
-            rootComponent: el($root),
+            rootComponent: Element::create($root),
         );
 
         $this->assertEquals(
             '<html><div>child</div></html>',
-            $vy->render(el('div')('child')),
+            $vy->render(Element::create('div')(
+                'child',
+            )),
         );
     }
 }

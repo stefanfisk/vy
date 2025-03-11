@@ -8,13 +8,11 @@ use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Hooks\ContextHook;
 use StefanFisk\Vy\Hooks\ContextProviderHook;
 
-use function StefanFisk\Vy\el;
-
 abstract class Context
 {
     public static function el(mixed $value = null): Element
     {
-        return el(self::render(...), [
+        return Element::create(self::render(...), [
             'value' => $value,
         ]);
     }

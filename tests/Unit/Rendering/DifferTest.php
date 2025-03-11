@@ -15,7 +15,6 @@ use StefanFisk\Vy\Tests\Support\CreatesStubNodesTrait;
 use StefanFisk\Vy\Tests\Support\DebugObject;
 use StefanFisk\Vy\Tests\TestCase;
 
-use function StefanFisk\Vy\el;
 use function array_map;
 
 #[CoversClass(Differ::class)]
@@ -142,7 +141,7 @@ class DifferTest extends TestCase
 
     public function testReturnsNullForNewElements(): void
     {
-        $el = el('div');
+        $el = Element::create('div');
 
         $this->assertDiffMatches(
             oldChildren: ['foo', 'bar'],
@@ -158,7 +157,7 @@ class DifferTest extends TestCase
 
     public function testReusesNodesForElementsWithSameTypeAndIndexWhenAllAreIndexed(): void
     {
-        $el = el('div');
+        $el = Element::create('div');
         $node = $this->createStubNode(
             type: 'div',
         );
