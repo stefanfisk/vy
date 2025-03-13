@@ -9,6 +9,15 @@ use StefanFisk\Vy\Elements\Html\a;
 use StefanFisk\Vy\Elements\Html\div;
 use StefanFisk\Vy\Elements\Html\p;
 
+/**
+ * @phpstan-type Article array{
+ *     href: string,
+ *     imageId: int<1,max>,
+ *     title: string,
+ *     description: string,
+ *     tags: list<string>,
+ * }
+ */
 class ArticleCard
 {
     private const ARTICLES = [
@@ -76,26 +85,46 @@ class ArticleCard
                 class: 'w-full',
                 imageId: $article['imageId'],
             ),
-            div::el([
-                'px-6',
-                'py-4',
-            ])(
-                div::el([
-                    'font-bold',
-                    'text-xl',
-                    'mb-2',
-                ])(
-                    $article['title'],
-                ),
-                p::el([
-                    'text-gray-700',
-                    'text-base',
-                ])(
-                    $article['description'],
-                ),
+            self::contentEl(
+                article: $article,
             ),
             Tags::el(
                 tags: $article['tags'],
+            ),
+        );
+    }
+
+    /**
+     * @param Article $article
+     */
+    private static function contentEl(array $article): Element
+    {
+        return Element::create(self::renderContent(...), [
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * @param Article $article
+     */
+    private static function renderContent(array $article): mixed
+    {
+        return div::el([
+            'px-6',
+            'py-4',
+        ])(
+            div::el([
+                'font-bold',
+                'text-xl',
+                'mb-2',
+            ])(
+                $article['title'],
+            ),
+            p::el([
+                'text-gray-700',
+                'text-base',
+            ])(
+                $article['description'],
             ),
         );
     }
