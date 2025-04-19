@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Examples\ArticleCardGrid;
 
-use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Elements\Html\img;
+use StefanFisk\Vy\VoidElement;
 
 class MediaLibraryImg
 {
@@ -24,9 +24,9 @@ class MediaLibraryImg
         ],
     ];
 
-    public static function el(int $imageId, mixed $class = null): Element
+    public static function el(int $imageId, mixed $class = null): VoidElement
     {
-        return Element::create(self::render(...), [
+        return new VoidElement(self::render(...), [
             'imageId' => $imageId,
             'class' => $class,
         ]);

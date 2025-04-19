@@ -7,6 +7,7 @@ namespace StefanFisk\Vy\Tests\Unit\Components;
 use Closure;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Components\Compose;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Tests\Support\RendersComponentsTrait;
@@ -37,8 +38,8 @@ class ComposeTest extends TestCase
         $el = $this->renderComponent($el123('foo'));
 
         foreach ($expected as $elT) {
-            $this->assertInstanceOf(Element::class, $el);
-            $this->assertInstanceOf(Element::class, $elT);
+            $this->assertInstanceOf(BaseElement::class, $el);
+            $this->assertInstanceOf(BaseElement::class, $elT);
 
             $this->assertSame($el->type, $elT->type);
             $this->assertNull($el->key);

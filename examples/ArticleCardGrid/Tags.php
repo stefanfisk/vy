@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Examples\ArticleCardGrid;
 
-use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Elements\Html\div;
 use StefanFisk\Vy\Elements\Html\span;
+use StefanFisk\Vy\VoidElement;
 
 use function array_map;
 
@@ -15,9 +15,9 @@ class Tags
     /**
      * @param array<non-empty-string> $tags
      */
-    public static function el(array $tags): Element
+    public static function el(array $tags): VoidElement
     {
-        return Element::create(self::render(...), [
+        return new VoidElement(self::render(...), [
             'tags' => $tags,
         ]);
     }

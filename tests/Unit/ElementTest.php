@@ -6,6 +6,7 @@ namespace StefanFisk\Vy\Tests\Unit;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Tests\Support\Mocks\MocksComponentsTrait;
 use StefanFisk\Vy\Tests\TestCase;
@@ -17,7 +18,7 @@ class ElementTest extends TestCase
     use MocksComponentsTrait;
 
     /** @param array{key:(string|int|null),type:mixed,props:array<mixed>} $expected */
-    private function assertElementEquals(array $expected, Element $actual): void
+    private function assertElementEquals(array $expected, BaseElement $actual): void
     {
         $this->assertSame(
             $expected,

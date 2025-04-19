@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Examples\ArticleCardGrid;
 
-use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Elements\Html\a;
 use StefanFisk\Vy\Elements\Html\div;
 use StefanFisk\Vy\Elements\Html\p;
+use StefanFisk\Vy\VoidElement;
 
 /**
  * @phpstan-type Article array{
@@ -56,9 +56,9 @@ class ArticleCard
         ],
     ];
 
-    public static function el(int $articleId): Element
+    public static function el(int $articleId): VoidElement
     {
-        return Element::create(self::render(...), [
+        return new VoidElement(self::render(...), [
             'articleId' => $articleId,
         ]);
     }
@@ -97,9 +97,9 @@ class ArticleCard
     /**
      * @param Article $article
      */
-    private static function contentEl(array $article): Element
+    private static function contentEl(array $article): VoidElement
     {
-        return Element::create(self::renderContent(...), [
+        return new VoidElement(self::renderContent(...), [
             'article' => $article,
         ]);
     }

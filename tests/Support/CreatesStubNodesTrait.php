@@ -7,7 +7,7 @@ namespace StefanFisk\Vy\Tests\Support;
 use Closure;
 use PHPUnit\Framework\Attributes\Before;
 use RuntimeException;
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Rendering\Node;
 
 use function array_walk_recursive;
@@ -72,14 +72,14 @@ trait CreatesStubNodesTrait
      *
      * @template T of mixed
      * @psalm-return (
-     *     T is Element
+     *     T is BaseElement
      *     ? Node
      *     : mixed
      * )
      */
     private function renderToStub(mixed $el, ?Node $parent = null): mixed
     {
-        if ($el instanceof Element) {
+        if ($el instanceof BaseElement) {
             $key = $el->key;
             $type = $el->type;
             $props = $el->props;

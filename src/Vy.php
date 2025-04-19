@@ -52,7 +52,7 @@ final class Vy
         );
     }
 
-    public function render(Element $el): string
+    public function render(BaseElement $el): string
     {
         if ($this->rootComponent) {
             $el = ($this->rootComponent)(

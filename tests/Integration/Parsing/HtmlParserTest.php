@@ -6,7 +6,7 @@ namespace StefanFisk\Vy\Tests\Integration;
 
 use Masterminds\HTML5;
 use PHPUnit\Framework\Attributes\CoversNothing;
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Parsing\HtmlParser;
 use StefanFisk\Vy\Tests\TestCase;
 use StefanFisk\Vy\Vy;
@@ -25,7 +25,7 @@ class HtmlParserTest extends TestCase
 
         $expected = $html5->saveHTML($html5->parse($exampleHtml));
 
-        /** @var Element $el */
+        /** @var BaseElement $el */
         $el = $parser->parseDocument($exampleHtml);
 
         $vy = new Vy(transformers: []);

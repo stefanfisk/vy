@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Elements\Svg;
 
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\VoidElement;
 
 final class ellipse
 {
@@ -15,12 +15,12 @@ final class ellipse
         mixed $class = null,
         ?string $_key = null,
         mixed ...$props,
-    ): Element {
+    ): VoidElement {
         if ($class !== null) {
             $props['class'] = $class;
         }
 
-        return new Element(
+        return new VoidElement(
             key: $_key,
             type: 'ellipse',
             props: $props,

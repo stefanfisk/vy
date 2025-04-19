@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Errors;
 
 use Exception;
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Rendering\Node;
 use Throwable;
 
@@ -16,7 +16,7 @@ final class InvalidElementTypeException extends Exception
 {
     public function __construct(
         string $message,
-        public readonly Element $el,
+        public readonly BaseElement $el,
         public readonly ?Node $parentNode = null,
         ?Throwable $previous = null,
     ) {

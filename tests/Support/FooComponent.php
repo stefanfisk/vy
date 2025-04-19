@@ -8,11 +8,10 @@ use StefanFisk\Vy\Element;
 
 class FooComponent
 {
-    public static function el(string $foo, mixed $children = null): Element
+    public static function el(string $foo): Element
     {
         return Element::create(self::render(...), [
             'foo' => $foo,
-            'children' => $children,
         ]);
     }
 

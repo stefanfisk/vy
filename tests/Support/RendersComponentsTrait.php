@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace StefanFisk\Vy\Tests\Support;
 
 use Closure;
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\BaseElement;
 
 trait RendersComponentsTrait
 {
-    protected function renderComponent(Element $el): mixed
+    protected function renderComponent(BaseElement $el): mixed
     {
         $this->assertInstanceOf(Closure::class, $el->type);
 

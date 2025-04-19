@@ -6,6 +6,7 @@ namespace StefanFisk\Vy\Rendering;
 
 use Closure;
 use Override;
+use StefanFisk\Vy\BaseElement;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Errors\RenderException;
 use StefanFisk\Vy\Hooks\Hook;
@@ -34,7 +35,7 @@ final class Renderer implements RendererInterface
         $this->differ = $differ ?? new Differ($comparator);
     }
 
-    public function createNode(?Node $parent, Element $el): Node
+    public function createNode(?Node $parent, BaseElement $el): Node
     {
         $node = new Node(
             id: $this->nextNodeId++,
@@ -235,7 +236,7 @@ final class Renderer implements RendererInterface
         $newChildren = [];
 
         foreach ($renderChildren as $renderChild) {
-            if ($renderChild instanceof Element) {
+            if ($renderChild instanceof BaseElement) {
                 $newChild = $this->createNode(
                     parent: $node,
                     el: $renderChild,
@@ -267,7 +268,7 @@ final class Renderer implements RendererInterface
             $newChild = $diffChild->oldChild;
 
             if (!$newChild) {
-                if ($renderChild instanceof Element) {
+                if ($renderChild instanceof BaseElement) {
                     $newChild = $this->createNode(
                         parent: $node,
                         el: $renderChild,
@@ -276,7 +277,7 @@ final class Renderer implements RendererInterface
                     $newChild = $renderChild;
                 }
             } else {
-                assert($renderChild instanceof Element);
+                assert($renderChild instanceof BaseElement);
 
                 $this->giveNodeNextProps(
                     node: $newChild,
