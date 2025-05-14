@@ -58,7 +58,6 @@ class StateHookTest extends TestCase
         $this->assertIsArray($ret);
         $this->assertCount(2, $ret);
         $this->assertSame('foo', $ret[0]);
-        // @phpstan-ignore method.alreadyNarrowedType
         $this->assertInstanceOf(Closure::class, $ret[1]);
     }
 
@@ -70,7 +69,6 @@ class StateHookTest extends TestCase
         $this->assertIsArray($ret);
         $this->assertCount(2, $ret);
         $this->assertSame('foo', $ret[0]);
-        // @phpstan-ignore method.alreadyNarrowedType
         $this->assertInstanceOf(Closure::class, $ret[1]);
     }
 
