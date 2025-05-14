@@ -10,12 +10,11 @@ use Override;
 use function array_filter;
 use function array_map;
 use function array_walk_recursive;
-use function gettype;
+use function get_debug_type;
 use function implode;
 use function is_array;
 use function is_float;
 use function is_int;
-use function is_object;
 use function is_string;
 use function sprintf;
 
@@ -44,10 +43,7 @@ final class StyleAttributeTransformer implements AttributeValueTransformerInterf
         }
 
         if (! is_array($styles)) {
-            throw new InvalidArgumentException(sprintf(
-                'Unsupported type `%s`.',
-                is_object($styles) ? $styles::class : gettype($styles),
-            ));
+            throw new InvalidArgumentException(sprintf('Unsupported type `%s`.', get_debug_type($styles)));
         }
 
         // We wrap $effectiveStyles to make psalm happy.
@@ -68,10 +64,7 @@ final class StyleAttributeTransformer implements AttributeValueTransformerInterf
                 }
 
                 if (!is_string($value)) {
-                    throw new InvalidArgumentException(sprintf(
-                        'Unsupported type `%s`.',
-                        is_object($value) ? $value::class : gettype($value),
-                    ));
+                    throw new InvalidArgumentException(sprintf('Unsupported type `%s`.', get_debug_type($value)));
                 }
 
                 if (is_int($key)) {

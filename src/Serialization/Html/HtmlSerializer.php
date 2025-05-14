@@ -18,11 +18,10 @@ use Throwable;
 
 use function array_filter;
 use function assert;
-use function gettype;
+use function get_debug_type;
 use function htmlentities;
 use function is_float;
 use function is_int;
-use function is_object;
 use function is_scalar;
 use function is_string;
 use function lcfirst;
@@ -233,7 +232,7 @@ final class HtmlSerializer implements SerializerInterface
                 throw new InvalidAttributeException(
                     message: sprintf(
                         'Attribute value is of type `%s`, expected (null|scalar).',
-                        is_object($value) ? $value::class : gettype($value),
+                        get_debug_type($value),
                     ),
                     node: $node,
                     name: $attrName,
@@ -298,7 +297,7 @@ final class HtmlSerializer implements SerializerInterface
             throw new InvalidChildValueException(
                 message: sprintf(
                     'Node value is of type `%s`, expected (string|int|float|HtmlableInterface|null).',
-                    is_object($value) ? $value::class : gettype($value),
+                    get_debug_type($value),
                 ),
                 node: $parent,
                 inValue: $inValue,

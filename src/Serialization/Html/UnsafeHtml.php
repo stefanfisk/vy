@@ -9,10 +9,9 @@ use Override;
 use Stringable;
 use UnexpectedValueException;
 
-use function gettype;
+use function get_debug_type;
 use function is_float;
 use function is_int;
-use function is_object;
 use function is_string;
 use function ob_end_clean;
 use function ob_get_clean;
@@ -54,7 +53,7 @@ final class UnsafeHtml implements HtmlableInterface
             if (!is_int($ret) && !is_float($ret) && !is_string($ret) && !$ret instanceof Stringable) {
                 throw new UnexpectedValueException(sprintf(
                     'Closure returned %s, must be null, int, float, string or Stringable.',
-                    is_object($ret) ? $ret::class : gettype($ret),
+                    get_debug_type($ret),
                 ));
             }
 

@@ -10,11 +10,10 @@ use Override;
 use function array_filter;
 use function array_keys;
 use function explode;
-use function gettype;
+use function get_debug_type;
 use function implode;
 use function is_array;
 use function is_int;
-use function is_object;
 use function is_string;
 use function sort;
 use function sprintf;
@@ -77,10 +76,7 @@ final class ClassAttributeTransformer implements AttributeValueTransformerInterf
                 $this->walk($class, $effectiveClasses);
             }
         } else {
-            throw new InvalidArgumentException(sprintf(
-                'Unsupported type `%s`.',
-                is_object($class) ? $class::class : gettype($class),
-            ));
+            throw new InvalidArgumentException(sprintf('Unsupported type `%s`.', get_debug_type($class)));
         }
     }
 }
