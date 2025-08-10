@@ -120,6 +120,7 @@ final class HtmlSerializer implements SerializerInterface
     {
         assert(is_string($node->type));
 
+        $componentDebugLevel = $this->componentDebugLevel;
         $this->componentDebugLevel = 0;
 
         $name = $node->type;
@@ -164,6 +165,8 @@ final class HtmlSerializer implements SerializerInterface
         $this->output .= '</';
         $this->output .= $name;
         $this->output .= '>';
+
+        $this->componentDebugLevel = $componentDebugLevel;
     }
 
     private function serializeAttributes(Node $node): void
