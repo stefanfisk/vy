@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Tests\Benchmark;
 
-use DOMAttr;
 use DOMDocument;
-use DOMNodeList;
-use DOMXPath;
 use Masterminds\HTML5;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Parsing\HtmlParser;
@@ -153,20 +150,37 @@ $tests = [
         },
     ],
     'class-attribute-transformer' => [
-        function () use ($exampleHtml) {
-            $html5 = new HTML5();
-            $doc = $html5->loadHTML($exampleHtml);
+        function () {
+            $classes = [
+                'foo' => false,
+                'bar' => true,
+                'baz',
+                'qux',
+                [
+                    true,
+                    false,
+                    null,
+                    'foo' => true,
+                ],
+                [
+                    'bar' => false,
+                ],
+            ];
 
-            $xpath = new DOMXPath($doc);
+            $classes = [
+                ...$classes,
+                $classes,
+            ];
 
-            /** @var DOMNodeList<DOMAttr> $attrNodes */
-            $attrNodes = $xpath->query('//@class');
+            $classes = [
+                ...$classes,
+                $classes,
+            ];
 
-            $classes = [];
-
-            foreach ($attrNodes as $attrNode) {
-                $classes[] = $attrNode->value;
-            }
+            $classes = [
+                ...$classes,
+                $classes,
+            ];
 
             return [new ClassAttributeTransformer(), $classes];
         },
@@ -174,6 +188,34 @@ $tests = [
             foreach ($classes as $class) {
                 $transformer->processAttributeValue('class', $class);
             }
+        },
+    ],
+    'to-child-array' => [
+        function () {
+            $children = [
+                null,
+                true,
+                false,
+                '',
+                'foo',
+                'bar',
+                'baz',
+                'qux',
+                1,
+                2.0,
+            ];
+
+            for ($i = 0; $i < 10; $i++) {
+                $children = [
+                    ...$children,
+                    $children,
+                ];
+            }
+
+            return [$children];
+        },
+        function ($children) {
+            Element::toChildArray($children);
         },
     ],
 ];

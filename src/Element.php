@@ -7,8 +7,7 @@ namespace StefanFisk\Vy;
 use Closure;
 use InvalidArgumentException;
 
-use function array_merge;
-use function array_reduce;
+use function array_walk_recursive;
 use function is_array;
 use function is_bool;
 
@@ -29,33 +28,25 @@ final class Element
     }
 
     /** @return list<mixed> */
-    public static function toChildArray(mixed $renderChildren): array
+    public static function toChildArray(mixed $inChildren): array
     {
         // Flatten the render children and remove empty items
 
-        if (! is_array($renderChildren)) {
-            $renderChildren = [$renderChildren];
+        if (! is_array($inChildren)) {
+            $inChildren = [$inChildren];
         }
 
-        // @phpstan-ignore return.type
-        return array_reduce(
-            $renderChildren,
-            /** @param list<mixed> $carry */
-            function (array $carry, mixed $el) {
-                if (is_array($el)) {
-                    return array_merge($carry, self::toChildArray($el));
-                }
+        $children = [];
 
-                if ($el === null || is_bool($el) || $el === '') {
-                    return $carry;
-                }
+        array_walk_recursive($inChildren, function (mixed $child) use (&$children) {
+            if ($child === null || is_bool($child) || $child === '') {
+                return;
+            }
 
-                $carry[] = $el;
+            $children[] = $child;
+        });
 
-                return $carry;
-            },
-            [],
-        );
+        return $children;
     }
 
     /**
