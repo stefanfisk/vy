@@ -318,7 +318,7 @@ final class HtmlSerializer implements SerializerInterface
             $prettyType = $this->getPrettyComponentType($node->type);
 
             if ($prettyType !== null) {
-                $indent = str_repeat('  ', $this->componentDebugLevel);
+                $indent = str_repeat('__', $this->componentDebugLevel);
 
                 $this->output .= "<!--$indent$prettyType-->";
             }
