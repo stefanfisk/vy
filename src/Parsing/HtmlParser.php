@@ -200,7 +200,10 @@ final class HtmlParser
             }
 
             if (!in_array($nsNode->nodeValue, $this->implicitNamespaces, true)) {
-                /** @psalm-suppress MixedArrayOffset */
+                /**
+                 * @psalm-suppress MixedArrayOffset
+                 * @phpstan-ignore offsetAccess.invalidOffset
+                 */
                 $props[$nsNode->nodeName] = $nsNode->nodeValue;
             }
         }
