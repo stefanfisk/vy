@@ -35,8 +35,7 @@ final class HtmlParser
     private const NAMESPACE_XML = 'http://www.w3.org/XML/1998/namespace';
     private const NAMESPACE_XMLNS = 'http://www.w3.org/2000/xmlns/';
 
-    /** @var list<string> */
-    private array $implicitNamespaces = [
+    private const IMPLICIT_NAMESPACES = [
         self::NAMESPACE_HTML,
         self::NAMESPACE_SVG,
         self::NAMESPACE_MATHML,
@@ -44,8 +43,7 @@ final class HtmlParser
         self::NAMESPACE_XMLNS,
     ];
 
-    /** @var list<array{nodeNamespace:string,xpath?:string,attrName?:list<string>}> */
-    private array $nonBooleanAttributes = [
+    private const NON_BOOLEAN_ATTRIBUTES = [
         [
             'nodeNamespace' => 'http://www.w3.org/1999/xhtml',
             'attrName' => [
@@ -199,7 +197,7 @@ final class HtmlParser
                 continue;
             }
 
-            if (!in_array($nsNode->nodeValue, $this->implicitNamespaces, true)) {
+            if (!in_array($nsNode->nodeValue, self::IMPLICIT_NAMESPACES, true)) {
                 /**
                  * @psalm-suppress MixedArrayOffset
                  * @phpstan-ignore offsetAccess.invalidOffset
@@ -220,8 +218,8 @@ final class HtmlParser
         $ele = $attr->ownerElement;
         assert($ele instanceof DOMElement);
 
-        foreach ($this->nonBooleanAttributes as $rule) {
-            if (isset($rule['nodeNamespace']) && $rule['nodeNamespace'] !== $ele->namespaceURI) {
+        foreach (self::NON_BOOLEAN_ATTRIBUTES as $rule) {
+            if ($rule['nodeNamespace'] !== $ele->namespaceURI) {
                 continue;
             }
             if (isset($rule['attrName']) && !in_array($attr->localName, $rule['attrName'], true)) {
