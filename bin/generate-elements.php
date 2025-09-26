@@ -114,7 +114,7 @@ $htmlTagNames = [
     'ruby' => Element::class,
     's' => Element::class,
     'samp' => Element::class,
-    'script' => Element::class,
+    'script' => RawTextElement::class,
     'search' => Element::class,
     'section' => Element::class,
     'select' => Element::class,
@@ -123,7 +123,7 @@ $htmlTagNames = [
     'source' => VoidElement::class,
     'span' => Element::class,
     'strong' => Element::class,
-    'style' => Element::class,
+    'style' => RawTextElement::class,
     'sub' => Element::class,
     'summary' => Element::class,
     'sup' => Element::class,
@@ -131,12 +131,12 @@ $htmlTagNames = [
     'tbody' => Element::class,
     'td' => Element::class,
     'template' => Element::class,
-    'textarea' => Element::class,
+    'textarea' => EscapableRawTextElement::class,
     'tfoot' => Element::class,
     'th' => Element::class,
     'thead' => Element::class,
     'time' => Element::class,
-    'title' => Element::class,
+    'title' => EscapableRawTextElement::class,
     'tr' => Element::class,
     'track' => VoidElement::class,
     'u' => Element::class,
@@ -198,10 +198,10 @@ $svgTagNames = [
     'polyline' => VoidElement::class,
     'radialGradient' => Element::class,
     'rect' => VoidElement::class,
-    'script' => Element::class,
+    'script' => RawTextElement::class,
     'set' => Element::class,
     'stop' => VoidElement::class,
-    'style' => Element::class,
+    'style' => RawTextElement::class,
     'svg' => Element::class,
     'switch' => Element::class,
     'symbol' => Element::class,
@@ -340,7 +340,7 @@ function rmrf(string $path): void
         }
     }
 
-        assert(rmdir($path) === true);
+    assert(rmdir($path) === true);
 }
 
 delete_old_classes($basePath);

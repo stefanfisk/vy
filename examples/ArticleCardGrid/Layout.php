@@ -15,14 +15,14 @@ use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
 
 class Layout
 {
-    public static function el(mixed $title = null): Element
+    public static function el(?string $title = null): Element
     {
         return Element::create(self::render(...), [
             'title' => $title,
         ]);
     }
 
-    private static function render(mixed $title = null, mixed $children = null): mixed
+    private static function render(?string $title = null, mixed $children = null): mixed
     {
         return [
             UnsafeHtml::from('<!DOCTYPE html>'),

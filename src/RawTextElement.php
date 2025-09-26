@@ -38,26 +38,41 @@ final class RawTextElement extends BaseElement
     ) {
         $children = $props['children'] ?? null;
 
-        if ($children !== null) {
-            $children = Element::toChildArray($children);
-
-            if (count($children) > 1) {
-                throw new InvalidArgumentException('Raw text elements can only have a single child.');
-            }
-
-            if (count($children) === 1) {
-                $child = $children[0];
-
-                if (!$child instanceof HtmlableInterface) {
-                    throw new InvalidArgumentException('Raw text elements child must be HtmlableInterface.');
-                }
-            }
-        }
+        self::assertChildren($children);
 
         parent::__construct($type, $props, $key);
     }
 
-    public function __invoke(HtmlableInterface $text): VoidElement
+    private static function assertChildren(mixed $children): void
+    {
+        if ($children === null) {
+            return;
+        }
+
+        $children = Element::toChildArray($children);
+
+        if ($children === []) {
+            return;
+        }
+
+        if (count($children) > 1) {
+            throw new InvalidArgumentException('Raw text elements can only have a single child.');
+        }
+
+        $child = $children[0];
+
+        if ($child === null) {
+            return;
+        }
+
+        if ($child instanceof HtmlableInterface) {
+            return;
+        }
+
+        throw new InvalidArgumentException('Raw text elements child must be HtmlableInterface.');
+    }
+
+    public function __invoke(?HtmlableInterface $text): VoidElement
     {
         $props = $this->props;
 

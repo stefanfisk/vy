@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Elements\Html;
 
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\EscapableRawTextElement;
 
 final class title
 {
@@ -15,12 +15,12 @@ final class title
         mixed $class = null,
         ?string $_key = null,
         mixed ...$props,
-    ): Element {
+    ): EscapableRawTextElement {
         if ($class !== null) {
             $props['class'] = $class;
         }
 
-        return new Element(
+        return new EscapableRawTextElement(
             key: $_key,
             type: 'title',
             props: $props,

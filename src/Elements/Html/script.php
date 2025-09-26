@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Elements\Html;
 
-use StefanFisk\Vy\Element;
+use StefanFisk\Vy\RawTextElement;
 
 final class script
 {
@@ -15,12 +15,12 @@ final class script
         mixed $class = null,
         ?string $_key = null,
         mixed ...$props,
-    ): Element {
+    ): RawTextElement {
         if ($class !== null) {
             $props['class'] = $class;
         }
 
-        return new Element(
+        return new RawTextElement(
             key: $_key,
             type: 'script',
             props: $props,
