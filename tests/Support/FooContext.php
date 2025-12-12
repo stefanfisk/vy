@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Tests\Support;
 
-use StefanFisk\Vy\Components\Context;
+use StefanFisk\Vy\IsStaticContextTrait;
 
-class FooContext extends Context
+final class FooContext
 {
-    public static function getDefaultValue(): string
+    /** @use IsStaticContextTrait<string> */
+    use IsStaticContextTrait;
+
+    protected static function getDefaultValue(): mixed
     {
         return 'foo';
-    }
-
-    public static function use(): string
-    {
-        /** @phpstan-ignore-next-line */
-        return (string) parent::use();
     }
 }

@@ -7,6 +7,7 @@ namespace StefanFisk\Vy\Serialization\Html;
 use Closure;
 use Override;
 use ReflectionFunction;
+use StefanFisk\Vy\Context;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidChildValueException;
 use StefanFisk\Vy\Errors\InvalidTagException;
@@ -348,6 +349,15 @@ final class HtmlSerializer implements SerializerInterface
 
         $ref = new ReflectionFunction($type);
         $scopeClass = $ref->getClosureScopeClass()?->getName();
+
+        if ($scopeClass === Context::class) {
+            $scopeThis = $ref->getClosureThis();
+
+            if ($scopeThis instanceof Context) {
+                $scopeClass = "Context($scopeThis->name)";
+            }
+        }
+
         $name = $ref->getName();
 
         if ($name === 'render') {

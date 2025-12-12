@@ -6,8 +6,8 @@ namespace StefanFisk\Vy\Tests\Integration;
 
 use Closure;
 use PHPUnit\Framework\Attributes\CoversClass;
-use StefanFisk\Vy\Components\Context;
 use StefanFisk\Vy\Components\Fragment;
+use StefanFisk\Vy\Context;
 use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidTagException;
@@ -505,16 +505,16 @@ class VyTest extends TestCase
 
     public function testMultiLevelContext(): void
     {
-        $c1 = fn (mixed ...$props): mixed => FooContext::el(
+        $c1 = fn ($children = null) => FooContext::el(
             value: 'bar',
         )(
-            $props['children'],
+            $children,
         );
 
-        $c2 = fn (mixed ...$props): mixed => FooContext::el(
+        $c2 = fn ($children = null) => FooContext::el(
             value: 'baz',
         )(
-            $props['children'],
+            $children,
         );
 
         $c3 = function (): mixed {
@@ -539,21 +539,19 @@ class VyTest extends TestCase
 
     public function testParallellContexts(): void
     {
-        $ctx1 = new class extends Context {
-        };
-        $ctx2 = new class extends Context {
-        };
+        $ctx1 = new Context();
+        $ctx2 = new Context();
 
-        $c1 = fn (mixed ...$props): mixed => $ctx1::use();
+        $c1 = fn (mixed ...$props): mixed => $ctx1->use();
 
-        $c2 = fn (mixed ...$props): mixed => $ctx2::use();
+        $c2 = fn (mixed ...$props): mixed => $ctx2->use();
 
         $this->assertRenderMatches(
             'ctx1,ctx2',
-            $ctx1::el(
+            $ctx1->el(
                 value: 'ctx1',
             )(
-                $ctx2::el(
+                $ctx2->el(
                     value: 'ctx2',
                 )(
                     Element::create($c1),
@@ -566,18 +564,16 @@ class VyTest extends TestCase
 
     public function testModifyingExistingContext(): void
     {
-        $c = function (mixed ...$props): mixed {
-            $propFoo = $props['value'] ?? null;
-
-            $contextFoo = FooContext::use();
+        $c = function (?string $value = null, mixed $children = null): mixed {
+            $contextValue = FooContext::use();
 
             return FooContext::el(
-                value: $propFoo ?? $contextFoo,
+                value: $value ?? $contextValue,
             )(
                 Element::create('div')(
-                    $contextFoo,
+                    $contextValue,
                 ),
-                $props['children'] ?? null,
+                $children,
             );
         };
 

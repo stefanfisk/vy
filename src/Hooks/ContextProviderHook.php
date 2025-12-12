@@ -6,25 +6,30 @@ namespace StefanFisk\Vy\Hooks;
 
 use Closure;
 use Override;
-use StefanFisk\Vy\Components\Context;
+use StefanFisk\Vy\Context;
 use StefanFisk\Vy\Errors\HookException;
 use StefanFisk\Vy\Rendering\Node;
 use StefanFisk\Vy\Rendering\Renderer;
 
 use function array_filter;
 
+/**
+ * @template T
+ */
 final class ContextProviderHook extends Hook
 {
     /**
-     * @param class-string<Context> $context
+     * @param Context<TVal> $context
+     *
+     * @template TVal
      */
-    public static function use(string $context, mixed $value): void
+    public static function use(Context $context, mixed $value): void
     {
         static::useWith($context, $value);
     }
 
-    /** @var class-string<Context> */
-    public readonly string $context;
+    /** @var Context<T> */
+    public readonly Context $context;
 
     private mixed $nextValue;
     private mixed $value;
@@ -33,12 +38,12 @@ final class ContextProviderHook extends Hook
     private array $subscribers = [];
 
     /**
-     * @param class-string<Context> $context
+     * @param Context<T> $context
      */
     public function __construct(
         Renderer $renderer,
         Node $node,
-        string $context,
+        Context $context,
         mixed $value,
     ) {
         parent::__construct(
