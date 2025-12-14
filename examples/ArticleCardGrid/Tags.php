@@ -31,13 +31,13 @@ class Tags
             return null;
         }
 
-        return div::el([
+        return div::cx([
             'px-6',
             'pt-4',
             'pb-2',
         ])(
             array_map(
-                fn ($tag) => span::el([
+                fn ($tag) => span::cx([
                     'inline-block',
                     'bg-gray-200',
                     'rounded-full',

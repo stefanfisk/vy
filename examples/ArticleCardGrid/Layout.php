@@ -26,19 +26,19 @@ class Layout
     {
         return [
             UnsafeHtml::from('<!DOCTYPE html>'),
-            html::el(
-                lang: 'en',
-                class: [
+            html::el([
+                'lang' => 'en',
+                'class' => [
                     'h-full',
                 ],
-            )(
+            ])(
                 head::el()(
-                    meta::el(charset: 'UTF-8'),
-                    meta::el(name: 'viewport', content: 'width=device-width, initial-scale=1.0'),
-                    script::el(src: 'https://cdn.tailwindcss.com'),
+                    meta::el(['charset' => 'UTF-8']),
+                    meta::el(['name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0']),
+                    script::el(['src' => 'https://cdn.tailwindcss.com']),
                     title::el()($title),
                 ),
-                body::el([
+                body::cx([
                     'max-w-screen-xl',
                     'mx-auto',
                     'p-8',
