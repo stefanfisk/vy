@@ -11,8 +11,9 @@ use StefanFisk\Vy\Element;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidChildValueException;
 use StefanFisk\Vy\Errors\InvalidTagException;
+use StefanFisk\Vy\Errors\RenderException;
 use StefanFisk\Vy\Serialization\Html\HtmlSerializer;
-use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInterface;
+use StefanFisk\Vy\Serialization\Html\Transformers\AttributesTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
 use StefanFisk\Vy\Tests\Support\CreatesStubNodesTrait;
@@ -397,8 +398,9 @@ class HtmlSerializerTest extends TestCase
         $serializer = new HtmlSerializer(
             propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
             transformers: [
-                new class implements AttributeValueTransformerInterface {
-                    public function processAttributeValue(string $name, mixed $value): mixed
+                new class implements AttributesTransformerInterface {
+                    /** {@inheritDoc} */
+                    public function processAttributes(array $attributes): array
                     {
                         throw new RuntimeException('Transformer failed.');
                     }
@@ -406,7 +408,7 @@ class HtmlSerializerTest extends TestCase
             ],
         );
 
-        $this->expectException(InvalidAttributeException::class);
+        $this->expectException(RenderException::class);
 
         $serializer->serialize($node);
     }

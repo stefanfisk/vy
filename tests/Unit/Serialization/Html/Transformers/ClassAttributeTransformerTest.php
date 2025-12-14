@@ -7,64 +7,76 @@ namespace StefanFisk\Vy\Tests\Unit\Serialization\Html\Transformers;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Serialization\Html\Transformers\ClassAttributeTransformer;
-use StefanFisk\Vy\Tests\Support\Mocks\MocksInvokablesTrait;
 use StefanFisk\Vy\Tests\TestCase;
+use Throwable;
 use stdClass;
 
 #[CoversClass(ClassAttributeTransformer::class)]
 class ClassAttributeTransformerTest extends TestCase
 {
-    use MocksInvokablesTrait;
-
-    private ClassAttributeTransformer $transformer;
-
-    protected function setUp(): void
+    /**
+     * @param array<non-empty-string,mixed> $expected
+     * @param array<non-empty-string,mixed> $attributes
+     */
+    private static function assertAttributesEquals(array $expected, array $attributes): void
     {
-        $this->transformer = new ClassAttributeTransformer();
+        $transformer = new ClassAttributeTransformer();
+
+        self::assertSame($expected, $transformer->processAttributes($attributes));
     }
 
-    private function assertClassEquals(?string $expected, mixed $value): void
+   /**
+     * @param class-string<Throwable> $exception
+     * @param array<non-empty-string,mixed> $attributes
+     */
+    private function assertThrowsForAttributes(string $exception, array $attributes): void
     {
-        $this->assertSame(
-            $expected,
-            $this->transformer->processAttributeValue(
-                name: 'class',
-                value: $value,
-            ),
-        );
+        $transformer = new ClassAttributeTransformer();
+
+        $this->expectException($exception);
+
+        $transformer->processAttributes($attributes);
+    }
+
+    /**
+     * @param ?non-empty-string $expected
+     */
+    private static function assertClassEquals(?string $expected, mixed $value): void
+    {
+        if ($expected !== null) {
+            $expected = ['class' => $expected];
+        } else {
+            $expected = [];
+        }
+
+        self::assertAttributesEquals($expected, ['class' => $value]);
+    }
+
+    /**
+     * @param class-string<Throwable> $exception
+     */
+    private function assertThrowsForClass(string $exception, mixed $value): void
+    {
+        $this->assertThrowsForAttributes($exception, ['class' => $value]);
     }
 
     public function testIgnoresNonClassAttributes(): void
     {
         $value = new stdClass();
 
-        $this->assertSame(
-            $value,
-            $this->transformer->processAttributeValue(
-                name: 'foo',
-                value: $value,
-            ),
-        );
+        self::assertAttributesEquals(['foo' => $value], ['foo' => $value]);
     }
 
     public function testThrowsForObjectValue(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->transformer->processAttributeValue(
-            name: 'class',
-            value: new stdClass(),
-        );
+        $this->assertThrowsForClass(InvalidArgumentException::class, new stdClass());
     }
 
     public function testThrowsForObjectSubvalue(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        $this->transformer->processAttributeValue(
-            name: 'class',
-            value: [new stdClass()],
-        );
+        $this->assertThrowsForClass(InvalidArgumentException::class, [new stdClass()]);
     }
 
     public function testNull(): void

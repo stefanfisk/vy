@@ -10,7 +10,7 @@ use StefanFisk\Vy\Serialization\Html\CachingPropToAttrNameMapper;
 use StefanFisk\Vy\Serialization\Html\DefaultPropToAttrNameMapper;
 use StefanFisk\Vy\Serialization\Html\HtmlSerializer;
 use StefanFisk\Vy\Serialization\Html\PropToAttrNameMapper;
-use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInterface;
+use StefanFisk\Vy\Serialization\Html\Transformers\AttributesTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\ClassAttributeTransformer;
 use StefanFisk\Vy\Serialization\Html\Transformers\ClosureTransformer;
@@ -24,7 +24,7 @@ final class Vy
 
     /**
      * @param list<PropToAttrNameMapper> $propToAttrNameMappers
-     * @param array<AttributeValueTransformerInterface|ChildValueTransformerInterface> $transformers
+     * @param array<AttributesTransformerInterface|ChildValueTransformerInterface> $transformers
      */
     public function __construct(
         Comparator $comparator = new Comparator(),
