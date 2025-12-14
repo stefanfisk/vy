@@ -11,8 +11,9 @@ use StefanFisk\Vy\Context;
 use StefanFisk\Vy\Errors\InvalidAttributeException;
 use StefanFisk\Vy\Errors\InvalidChildValueException;
 use StefanFisk\Vy\Errors\InvalidTagException;
+use StefanFisk\Vy\Errors\RenderException;
 use StefanFisk\Vy\Rendering\Node;
-use StefanFisk\Vy\Serialization\Html\Transformers\AttributeValueTransformerInterface;
+use StefanFisk\Vy\Serialization\Html\Transformers\AttributesTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
 use StefanFisk\Vy\Serialization\SerializerInterface;
 use Throwable;
@@ -66,8 +67,8 @@ final class HtmlSerializer implements SerializerInterface
         'xmp' => true,
     ];
 
-    /** @var array<AttributeValueTransformerInterface> */
-    private readonly array $attributeValueTransformers;
+    /** @var array<AttributesTransformerInterface> */
+    private readonly array $attributesTransformers;
     /** @var array<ChildValueTransformerInterface> */
     private readonly array $nodeValueTransformers;
 
@@ -75,16 +76,16 @@ final class HtmlSerializer implements SerializerInterface
 
     private string $output = '';
 
-    /** @param array<AttributeValueTransformerInterface|ChildValueTransformerInterface> $transformers */
+    /** @param array<AttributesTransformerInterface|ChildValueTransformerInterface> $transformers */
     public function __construct(
         private readonly PropToAttrNameMapper $propToAttrNameMapper,
         array $transformers,
         private readonly bool $encodeEntities = false,
         private readonly bool $debugComponents = false,
     ) {
-        $this->attributeValueTransformers = array_filter(
+        $this->attributesTransformers = array_filter(
             $transformers,
-            fn ($m) => $m instanceof AttributeValueTransformerInterface,
+            fn ($m) => $m instanceof AttributesTransformerInterface,
         );
         $this->nodeValueTransformers = array_filter(
             $transformers,
@@ -176,6 +177,8 @@ final class HtmlSerializer implements SerializerInterface
         $props = $node->props;
         unset($props['children']);
 
+        $attributes = [];
+
         foreach ($props as $propName => $value) {
             if (is_int($propName)) {
                 if (!is_string($value)) {
@@ -220,18 +223,20 @@ final class HtmlSerializer implements SerializerInterface
                 );
             }
 
-            try {
-                $value = $this->applyAttributeValueTransformers($attrName, $value);
-            } catch (Throwable $e) {
-                throw new InvalidAttributeException(
-                    message: 'Failed to apply attribute transformer.',
-                    node: $node,
-                    name: $attrName,
-                    value: $value,
-                    previous: $e,
-                );
-            }
+            $attributes[$attrName] = $value;
+        }
 
+        try {
+            $attributes = $this->applyAttributesTransformers($attributes);
+        } catch (Throwable $e) {
+            throw new RenderException(
+                message: 'Failed to apply attribute transformer.',
+                node: $node,
+                previous: $e,
+            );
+        }
+
+        foreach ($attributes as $attrName => $value) {
             if ($value !== null && !is_scalar($value)) {
                 throw new InvalidAttributeException(
                     message: sprintf(
@@ -385,13 +390,18 @@ final class HtmlSerializer implements SerializerInterface
         return preg_match('/[\s\n\\/=\'"\0<>]/', $name) === 1;
     }
 
-    private function applyAttributeValueTransformers(string $name, mixed $value): mixed
+    /**
+     * @param array<non-empty-string,mixed> $attributes
+     *
+     * @return array<non-empty-string,mixed>
+     */
+    private function applyAttributesTransformers(array $attributes): array
     {
-        foreach ($this->attributeValueTransformers as $transformer) {
-            $value = $transformer->processAttributeValue($name, $value);
+        foreach ($this->attributesTransformers as $transformer) {
+            $attributes = $transformer->processAttributes($attributes);
         }
 
-        return $value;
+        return $attributes;
     }
 
     private function applyChildValueTransformers(mixed $value): mixed

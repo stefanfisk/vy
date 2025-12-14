@@ -7,7 +7,6 @@ namespace StefanFisk\Vy\Tests\Unit\Serialization\Html\Transformers;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use StefanFisk\Vy\Serialization\Html\Transformers\StyleAttributeTransformer;
-use StefanFisk\Vy\Tests\Support\Mocks\MocksInvokablesTrait;
 use StefanFisk\Vy\Tests\TestCase;
 use Throwable;
 use stdClass;
@@ -15,48 +14,57 @@ use stdClass;
 #[CoversClass(StyleAttributeTransformer::class)]
 class StyleAttributeTransformerTest extends TestCase
 {
-    use MocksInvokablesTrait;
-
-    private StyleAttributeTransformer $transformer;
-
-    protected function setUp(): void
+    /**
+     * @param array<non-empty-string,mixed> $expected
+     * @param array<non-empty-string,mixed> $attributes
+     */
+    private static function assertAttributesEquals(array $expected, array $attributes): void
     {
-        $this->transformer = new StyleAttributeTransformer();
+        $transformer = new StyleAttributeTransformer();
+
+        self::assertSame($expected, $transformer->processAttributes($attributes));
     }
 
-    private function assertStyleEquals(?string $expected, mixed $value): void
+   /**
+     * @param class-string<Throwable> $exception
+     * @param array<non-empty-string,mixed> $attributes
+     */
+    private function assertThrowsForAttributes(string $exception, array $attributes): void
     {
-        $this->assertSame(
-            $expected,
-            $this->transformer->processAttributeValue(
-                name: 'style',
-                value: $value,
-            ),
-        );
-    }
+        $transformer = new StyleAttributeTransformer();
 
-    /** @param class-string<Throwable> $exception */
-    private function assertThrowsForStyle(string $exception, mixed $value): void
-    {
         $this->expectException($exception);
 
-        $this->transformer->processAttributeValue(
-            name: 'style',
-            value: $value,
-        );
+        $transformer->processAttributes($attributes);
+    }
+
+    /**
+     * @param ?non-empty-string $expected
+     */
+    private static function assertStyleEquals(?string $expected, mixed $value): void
+    {
+        if ($expected !== null) {
+            $expected = ['style' => $expected];
+        } else {
+            $expected = [];
+        }
+
+        self::assertAttributesEquals($expected, ['style' => $value]);
+    }
+
+    /**
+     * @param class-string<Throwable> $exception
+     */
+    private function assertThrowsForStyle(string $exception, mixed $value): void
+    {
+        $this->assertThrowsForAttributes($exception, ['style' => $value]);
     }
 
     public function testIgnoresNonStyleAttributes(): void
     {
         $value = new stdClass();
 
-        $this->assertSame(
-            $value,
-            $this->transformer->processAttributeValue(
-                name: 'foo',
-                value: $value,
-            ),
-        );
+        self::assertAttributesEquals(['foo' => $value], ['foo' => $value]);
     }
 
     public function testThrowsForObjectValue(): void

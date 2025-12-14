@@ -6,12 +6,21 @@ namespace StefanFisk\Vy\Serialization\Html\Transformers;
 
 use Override;
 
-abstract class ValueTransformer implements AttributeValueTransformerInterface, ChildValueTransformerInterface
+abstract class ValueTransformer implements AttributesTransformerInterface, ChildValueTransformerInterface
 {
+    /** {@inheritDoc} */
     #[Override]
-    final public function processAttributeValue(string $name, mixed $value): mixed
+    final public function processAttributes(array $attributes): array
     {
-        return $this->transformValue($value);
+        $newAttributes = [];
+
+        foreach ($attributes as $name => $value) {
+            $newValue = $this->transformValue($value);
+
+            $newAttributes[$name] = $newValue;
+        }
+
+        return $newAttributes;
     }
 
     #[Override]

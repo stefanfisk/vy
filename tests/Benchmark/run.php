@@ -186,7 +186,7 @@ $tests = [
         },
         function (ClassAttributeTransformer $transformer, array $classes) {
             foreach ($classes as $class) {
-                $transformer->processAttributeValue('class', $class);
+                $transformer->processAttributes(['class' => $class]);
             }
         },
     ],

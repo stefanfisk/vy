@@ -31,12 +31,9 @@ class ValueTransformerTest extends TestCase
             ->with('bar')
             ->andReturn('baz');
 
-        $ret = $this->transformer->processAttributeValue(
-            name: 'foo',
-            value: 'bar',
-        );
+        $ret = $this->transformer->processAttributes(['foo' => 'bar']);
 
-        $this->assertSame('baz', $ret);
+        $this->assertSame(['foo' => 'baz'], $ret);
     }
 
     public function testCallsTransformValueForNode(): void

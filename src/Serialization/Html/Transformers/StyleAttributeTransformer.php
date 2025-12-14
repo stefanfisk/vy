@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Override;
 
 use function array_filter;
+use function array_key_exists;
 use function array_map;
 use function array_walk_recursive;
 use function get_debug_type;
@@ -18,32 +19,30 @@ use function is_int;
 use function is_string;
 use function sprintf;
 
-final class StyleAttributeTransformer implements AttributeValueTransformerInterface
+final class StyleAttributeTransformer implements AttributesTransformerInterface
 {
+    /** {@inheritDoc} */
     #[Override]
-    public function processAttributeValue(string $name, mixed $value): mixed
+    public function processAttributes(array $attributes): array
     {
-        if ($name !== 'style') {
-            return $value;
+        if (!array_key_exists('style', $attributes)) {
+            return $attributes;
         }
 
-        $value = $this->apply($value);
+        $styleAttr = $attributes['style'];
 
-        return $value;
-    }
+        if (!$styleAttr) {
+            unset($attributes['style']);
 
-    private function apply(mixed $styles): ?string
-    {
-        if (! $styles) {
-            return null;
+            return $attributes;
         }
 
-        if (is_string($styles)) {
-            return $styles;
+        if (is_string($styleAttr)) {
+            return $attributes;
         }
 
-        if (! is_array($styles)) {
-            throw new InvalidArgumentException(sprintf('Unsupported type `%s`.', get_debug_type($styles)));
+        if (! is_array($styleAttr)) {
+            throw new InvalidArgumentException(sprintf('Unsupported type `%s`.', get_debug_type($styleAttr)));
         }
 
         // We wrap $effectiveStyles to make psalm happy.
@@ -53,7 +52,7 @@ final class StyleAttributeTransformer implements AttributeValueTransformerInterf
         };
 
         array_walk_recursive(
-            $styles,
+            $styleAttr,
             function (mixed $value, int | string $key) use ($wrapper): void {
                 if ($value === null || $value === '' || $value === false || $value === true) {
                     return;
@@ -81,6 +80,14 @@ final class StyleAttributeTransformer implements AttributeValueTransformerInterf
         $effectiveStyles = array_filter($effectiveStyles);
         $effectiveStyles = implode(';', $effectiveStyles);
 
-        return $effectiveStyles ?: null;
+        if ($effectiveStyles === '') {
+            unset($attributes['style']);
+
+            return $attributes;
+        }
+
+        $attributes['style'] = $effectiveStyles;
+
+        return $attributes;
     }
 }

@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Override;
 
 use function array_filter;
+use function array_key_exists;
 use function array_keys;
 use function explode;
 use function get_debug_type;
@@ -18,34 +19,38 @@ use function is_string;
 use function sort;
 use function sprintf;
 
-final class ClassAttributeTransformer implements AttributeValueTransformerInterface
+final class ClassAttributeTransformer implements AttributesTransformerInterface
 {
+    /** {@inheritDoc} */
     #[Override]
-    public function processAttributeValue(string $name, mixed $value): mixed
+    public function processAttributes(array $attributes): array
     {
-        if ($name !== 'class') {
-            return $value;
+        if (!array_key_exists('class', $attributes)) {
+            return $attributes;
         }
 
-        return $this->apply($value);
-    }
+        $oldValue = $attributes['class'];
 
-    private function apply(mixed $class): ?string
-    {
-        /** @var array<string,true> $effectiveClasses */
-        $effectiveClasses = [];
+        /** @var array<string,true> $classToTrue */
+        $classToTrue = [];
 
-        $this->walk($class, $effectiveClasses);
+        $this->walk($oldValue, $classToTrue);
 
-        if (!$effectiveClasses) {
-            return null;
+        if ($classToTrue === []) {
+            unset($attributes['class']);
+
+            return $attributes;
         }
 
-        $classes = array_keys($effectiveClasses);
+        $classes = array_keys($classToTrue);
 
         sort($classes);
 
-        return implode(' ', $classes);
+        $newValue = implode(' ', $classes);
+
+        $attributes['class'] = $newValue;
+
+        return $attributes;
     }
 
     /** @param array<string,true> &$effectiveClasses */
