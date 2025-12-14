@@ -78,7 +78,6 @@ final class HtmlSerializer implements SerializerInterface
 
     /** @param array<AttributesTransformerInterface|ChildValueTransformerInterface> $transformers */
     public function __construct(
-        private readonly PropToAttrNameMapper $propToAttrNameMapper,
         array $transformers,
         private readonly bool $encodeEntities = false,
         private readonly bool $debugComponents = false,
@@ -203,27 +202,7 @@ final class HtmlSerializer implements SerializerInterface
                 );
             }
 
-            $attrName = $this->propToAttrNameMapper->propToAttrName($propName);
-
-            if ($attrName === null) {
-                throw new InvalidAttributeException(
-                    message: sprintf('Prop name `%s` could not be mapped to an attribute name.', $propName),
-                    node: $node,
-                    name: $propName,
-                    value: $value,
-                );
-            }
-
-            if ($this->isUnsafeName($attrName)) {
-                throw new InvalidAttributeException(
-                    message: sprintf('`%s` is not a valid attribute name.', $attrName),
-                    node: $node,
-                    name: $attrName,
-                    value: $value,
-                );
-            }
-
-            $attributes[$attrName] = $value;
+            $attributes[$propName] = $value;
         }
 
         try {
@@ -237,6 +216,15 @@ final class HtmlSerializer implements SerializerInterface
         }
 
         foreach ($attributes as $attrName => $value) {
+            if ($this->isUnsafeName($attrName)) {
+                throw new InvalidAttributeException(
+                    message: sprintf('`%s` is not a valid attribute name.', $attrName),
+                    node: $node,
+                    name: $attrName,
+                    value: $value,
+                );
+            }
+
             if ($value !== null && !is_scalar($value)) {
                 throw new InvalidAttributeException(
                     message: sprintf(

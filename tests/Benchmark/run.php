@@ -15,7 +15,6 @@ use StefanFisk\Vy\Serialization\Html\Transformers\ClassAttributeTransformer;
 use StefanFisk\Vy\Serialization\Html\Transformers\ClosureTransformer;
 use StefanFisk\Vy\Serialization\Html\Transformers\StringableTransformer;
 use StefanFisk\Vy\Serialization\Html\Transformers\StyleAttributeTransformer;
-use StefanFisk\Vy\Tests\Support\PassthroughPropToAttrNameMapper;
 use StefanFisk\Vy\Vy;
 
 use function array_sum;
@@ -95,7 +94,6 @@ $tests = [
             $renderer->processRenderQueue();
 
             $serializer = new HtmlSerializer(
-                propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
                 transformers: [],
             );
 
@@ -120,7 +118,6 @@ $tests = [
             $renderer->processRenderQueue();
 
             $serializer = new HtmlSerializer(
-                propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
                 transformers: [
                     new ClosureTransformer(),
                     new StringableTransformer(),
