@@ -17,7 +17,6 @@ use StefanFisk\Vy\Serialization\Html\Transformers\AttributesTransformerInterface
 use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
 use StefanFisk\Vy\Tests\Support\CreatesStubNodesTrait;
-use StefanFisk\Vy\Tests\Support\PassthroughPropToAttrNameMapper;
 use StefanFisk\Vy\Tests\TestCase;
 use Throwable;
 use stdClass;
@@ -32,7 +31,6 @@ class HtmlSerializerTest extends TestCase
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
             transformers: [],
             encodeEntities: $encodeEntitites,
         );
@@ -48,7 +46,6 @@ class HtmlSerializerTest extends TestCase
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
             transformers: [],
         );
 
@@ -396,7 +393,6 @@ class HtmlSerializerTest extends TestCase
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
             transformers: [
                 new class implements AttributesTransformerInterface {
                     /** {@inheritDoc} */
@@ -538,7 +534,6 @@ class HtmlSerializerTest extends TestCase
         $node = $this->renderToStub($el);
 
         $serializer = new HtmlSerializer(
-            propToAttrNameMapper: new PassthroughPropToAttrNameMapper(),
             transformers: [
                 new class implements ChildValueTransformerInterface {
                     public function processChildValue(mixed $value): mixed
