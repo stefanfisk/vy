@@ -8,11 +8,16 @@ use Closure;
 use InvalidArgumentException;
 
 use function array_walk_recursive;
+use function get_debug_type;
 use function is_array;
 use function is_bool;
+use function is_string;
+use function sprintf;
 
 final class Element
 {
+    public const KEY = '@@key';
+
     /**
      * @param non-empty-string|Closure $type
      * @param array<mixed> $props
@@ -20,11 +25,7 @@ final class Element
      */
     public static function create(string | Closure $type, array $props = [], ?string $key = null): self
     {
-        return new self(
-            type: $type,
-            key: $key,
-            props: $props,
-        );
+        return new self($type, $props, $key);
     }
 
     /** @return list<mixed> */
@@ -49,6 +50,12 @@ final class Element
         return $children;
     }
 
+    /** @var array<mixed> */
+    public readonly array $props;
+
+    /** @var ?non-empty-string */
+    public readonly ?string $key;
+
     /**
      * @param non-empty-string|Closure $type
      * @param array<mixed> $props
@@ -56,18 +63,43 @@ final class Element
      */
     public function __construct(
         public readonly string | Closure $type,
-        public readonly array $props = [],
-        public readonly ?string $key = null,
+        array $props = [],
+        ?string $key = null,
     ) {
         /** @psalm-suppress TypeDoesNotContainType */
         if ($type === '') {
-            throw new InvalidArgumentException("$type cannot be empty string.");
+            throw new InvalidArgumentException('$type cannot be empty string.');
         }
 
         /** @psalm-suppress TypeDoesNotContainType */
         if ($key === '') {
-            throw new InvalidArgumentException("$key cannot be empty string.");
+            throw new InvalidArgumentException('$key cannot be empty string.');
         }
+
+        $propKey = $props[self::KEY] ?? null;
+        if ($propKey !== null) {
+            if (!is_string($propKey)) {
+                throw new InvalidArgumentException(
+                    sprintf('Key must be be non-empty string, got %s.', get_debug_type($key)),
+                );
+            }
+
+            if ($propKey === '') {
+                throw new InvalidArgumentException('$key cannot be empty string.');
+            }
+
+            if ($key !== null && $key !== $propKey) {
+                throw new InvalidArgumentException(
+                    'Both argument key and prop key were passed but their values did not match.',
+                );
+            }
+
+            $key = $propKey;
+        }
+        unset($props[self::KEY]);
+
+        $this->props = $props;
+        $this->key = $key;
     }
 
     public function __invoke(mixed ...$children): Element

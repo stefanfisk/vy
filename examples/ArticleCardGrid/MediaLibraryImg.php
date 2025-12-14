@@ -40,10 +40,10 @@ class MediaLibraryImg
             return null;
         }
 
-        return img::el(
-            class: $class,
-            src: $image['src'],
-            alt: $image['alt'],
-        );
+        return img::el([
+            'class' => $class,
+            'src' => $image['src'],
+            'alt' => $image['alt'],
+        ]);
     }
 }

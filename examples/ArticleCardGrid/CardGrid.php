@@ -16,7 +16,7 @@ class CardGrid
 
     private static function render(mixed $children = null): mixed
     {
-        return div::el([
+        return div::cx([
             'grid',
             'gap-8',
             'md:grid-cols-3',

@@ -9,21 +9,17 @@ use StefanFisk\Vy\Element;
 final class head
 {
     /**
-     * @param ?non-empty-string $_key
+     * @param array<mixed> $attrs
      */
-    public static function el(
-        mixed $class = null,
-        ?string $_key = null,
-        mixed ...$props,
-    ): Element {
-        if ($class !== null) {
-            $props['class'] = $class;
-        }
+    public static function el(array $attrs = []): Element
+    {
+        return new Element('head', $attrs);
+    }
 
-        return new Element(
-            key: $_key,
-            type: 'head',
-            props: $props,
-        );
+    public static function cx(mixed $class): Element
+    {
+        return new Element('head', [
+            'class' => $class,
+        ]);
     }
 }

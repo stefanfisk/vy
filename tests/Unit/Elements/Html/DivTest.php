@@ -21,42 +21,9 @@ class DivTest extends TestCase
                     'name' => 'value',
                 ],
             ),
-            div::el(
-                name: 'value',
-            ),
-        );
-    }
-
-    public function testDoesNotMergesClassIntoPropsIfNull(): void
-    {
-        $this->assertEquals(
-            new Element(
-                type: 'div',
-                props: [
-                    'name' => 'value',
-                ],
-            ),
-            div::el(
-                class: null,
-                name: 'value',
-            ),
-        );
-    }
-
-    public function testMergesClassIntoPropsIfPassed(): void
-    {
-        $this->assertEquals(
-            new Element(
-                type: 'div',
-                props: [
-                    'class' => 'mx-auto',
-                    'name' => 'value',
-                ],
-            ),
-            div::el(
-                class: 'mx-auto',
-                name: 'value',
-            ),
+            div::el([
+                'name' => 'value',
+            ]),
         );
     }
 
@@ -68,9 +35,9 @@ class DivTest extends TestCase
                 type: 'div',
                 props: [],
             ),
-            div::el(
-                _key: 'key',
-            ),
+            div::el([
+                Element::KEY => 'key',
+            ]),
         );
     }
 }

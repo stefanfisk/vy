@@ -9,21 +9,17 @@ use StefanFisk\Vy\Element;
 final class feFuncA
 {
     /**
-     * @param ?non-empty-string $_key
+     * @param array<mixed> $attrs
      */
-    public static function el(
-        mixed $class = null,
-        ?string $_key = null,
-        mixed ...$props,
-    ): Element {
-        if ($class !== null) {
-            $props['class'] = $class;
-        }
+    public static function el(array $attrs = []): Element
+    {
+        return new Element('feFuncA', $attrs);
+    }
 
-        return new Element(
-            key: $_key,
-            type: 'feFuncA',
-            props: $props,
-        );
+    public static function cx(mixed $class): Element
+    {
+        return new Element('feFuncA', [
+            'class' => $class,
+        ]);
     }
 }

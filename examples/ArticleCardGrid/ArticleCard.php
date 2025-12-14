@@ -72,15 +72,15 @@ class ArticleCard
             return null;
         }
 
-        return a::el(
-            class: [
+        return a::el([
+            'class' => [
                 'rounded',
                 'bg-white',
                 'overflow-hidden',
                 'shadow-lg',
             ],
-            href: $article['href'],
-        )(
+            'href' => $article['href'],
+        ])(
             MediaLibraryImg::el(
                 class: 'w-full',
                 imageId: $article['imageId'],
@@ -109,18 +109,18 @@ class ArticleCard
      */
     private static function renderContent(array $article): mixed
     {
-        return div::el([
+        return div::cx([
             'px-6',
             'py-4',
         ])(
-            div::el([
+            div::cx([
                 'font-bold',
                 'text-xl',
                 'mb-2',
             ])(
                 $article['title'],
             ),
-            p::el([
+            p::cx([
                 'text-gray-700',
                 'text-base',
             ])(
