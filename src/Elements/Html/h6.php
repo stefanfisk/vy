@@ -9,7 +9,7 @@ use StefanFisk\Vy\Element;
 final class h6
 {
     /**
-     * @param array<mixed> $attrs
+     * @param array<non-empty-string,mixed> $attrs
      */
     public static function el(array $attrs = []): Element
     {
