@@ -29,7 +29,7 @@ trait CreatesStubNodesTrait
      * @param Node::STATE_NONE|Node::STATE_INITIAL|Node::STATE_ENQUEUED|Node::STATE_UNMOUNTED $state
      * @param ?non-empty-string $key
      * @param non-empty-string | Closure $type
-     * @param ?array<mixed> $props
+     * @param ?array<non-empty-string,mixed> $props
      *
      * Node::$state defaults to STATE_NONE.
      */

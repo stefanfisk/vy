@@ -9,7 +9,7 @@ use StefanFisk\Vy\Element;
 final class canvas
 {
     /**
-     * @param array<mixed> $attrs
+     * @param array<non-empty-string,mixed> $attrs
      */
     public static function el(array $attrs = []): Element
     {

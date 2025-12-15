@@ -182,15 +182,23 @@ final class HtmlParser
         assert($node->tagName !== '');
 
         $props = [];
-        /** @var DOMAttr $attrNode */
-        foreach ($node->attributes ?: [] as $attrNode) { // @phpstan-ignore-line
-            $value = $attrNode->nodeValue;
+
+        foreach ($node->attributes ?? [] as $attrNode) {
+            assert($attrNode instanceof DOMAttr);
+
+            $name = $attrNode->nodeName;
+
+            if ($name === '') {
+                continue;
+            }
+
+            $value = $attrNode->nodeValue ?? '';
 
             if ($value === '' && !$this->isNonBooleanAttribute($attrNode)) {
                 $value = true;
             }
 
-            $props[$attrNode->nodeName] = $value;
+            $props[$name] = $value;
         }
 
         assert($this->xpath !== null);
@@ -199,17 +207,25 @@ final class HtmlParser
                 continue;
             }
 
-            if (!in_array($nsNode->nodeValue, $this->implicitNamespaces, true)) {
-                /** @psalm-suppress MixedArrayOffset */
-                $props[$nsNode->nodeName] = $nsNode->nodeValue;
+            /** @var string $name */
+            $name = $nsNode->nodeName;
+
+            if ($name === '') {
+                continue;
             }
+
+            $value = $nsNode->nodeValue ?? '';
+
+            if (in_array($value, $this->implicitNamespaces, true)) {
+                continue;
+            }
+
+            $props[$name] = $value;
         }
+
         $props['children'] = $this->mapChildNodes($node);
 
-        return new Element(
-            type: $node->tagName,
-            props: $props,
-        );
+        return new Element($node->tagName, $props);
     }
 
     private function isNonBooleanAttribute(DOMAttr $attr): bool

@@ -353,6 +353,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderMatches(
             '<div foo></div>',
+            // @phpstan-ignore argument.type
             Element::create('div', [
                 'foo',
             ]),
@@ -363,6 +364,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidAttributeException::class,
+            // @phpstan-ignore argument.type
             Element::create('div', [
                 'foo>',
             ]),
@@ -373,6 +375,7 @@ class HtmlSerializerTest extends TestCase
     {
         $this->assertRenderThrows(
             InvalidAttributeException::class,
+            // @phpstan-ignore argument.type
             Element::create('div', [
                 123,
             ]),

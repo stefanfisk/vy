@@ -20,7 +20,7 @@ final class Element
 
     /**
      * @param non-empty-string|Closure $type
-     * @param array<mixed> $props
+     * @param array<non-empty-string,mixed> $props
      * @param ?non-empty-string $key
      */
     public static function create(string | Closure $type, array $props = [], ?string $key = null): self
@@ -50,7 +50,7 @@ final class Element
         return $children;
     }
 
-    /** @var array<mixed> */
+    /** @var array<non-empty-string,mixed> */
     public readonly array $props;
 
     /** @var ?non-empty-string */
@@ -58,7 +58,7 @@ final class Element
 
     /**
      * @param non-empty-string|Closure $type
-     * @param array<mixed> $props
+     * @param array<non-empty-string,mixed> $props
      * @param ?non-empty-string $key
      */
     public function __construct(

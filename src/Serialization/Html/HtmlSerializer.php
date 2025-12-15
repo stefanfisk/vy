@@ -179,8 +179,10 @@ final class HtmlSerializer implements SerializerInterface
         $attributes = [];
 
         foreach ($props as $propName => $value) {
+            /** @psalm-suppress DocblockTypeContradiction */
             if (is_int($propName)) {
                 if (!is_string($value)) {
+                    /** @psalm-suppress NoValue,InvalidCast */
                     throw new InvalidAttributeException(
                         message: sprintf('Indexed property `%s` must be a string.', $propName),
                         node: $node,

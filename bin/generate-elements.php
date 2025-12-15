@@ -373,7 +373,7 @@ foreach ($namespaceToTagNames as $namespace => $tagNames) {
         $src .= "final class $class\n";
         $src .= "{\n";
         $src .= "    /**\n";
-        $src .= "     * @param array<mixed> \$attrs\n";
+        $src .= "     * @param array<non-empty-string,mixed> \$attrs\n";
         $src .= "     */\n";
         $src .= "    public static function el(array \$attrs = []): Element\n";
         $src .= "    {\n";

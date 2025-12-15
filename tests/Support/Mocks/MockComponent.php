@@ -8,6 +8,7 @@ use Closure;
 use Mockery\Expectation;
 use Mockery\MockInterface;
 use StefanFisk\Vy\Element;
+use Webmozart\Assert\Assert;
 
 /**
  * This is a workaround for https://github.com/sebastianbergmann/phpunit/issues/5455.
@@ -32,7 +33,15 @@ class MockComponent
 
     public function el(mixed ...$props): Element
     {
-        return Element::create($this->render(...), $props);
+        $renderProps = [];
+
+        foreach ($props as $key => $value) {
+            Assert::stringNotEmpty($key);
+
+            $renderProps[$key] = $value;
+        }
+
+        return Element::create($this->render(...), $renderProps);
     }
 
     public function render(mixed ...$props): mixed

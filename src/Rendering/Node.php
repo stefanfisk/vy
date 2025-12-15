@@ -34,9 +34,9 @@ final class Node
 
     public readonly int $depth;
 
-    /** @var ?array<mixed> */
+    /** @var ?array<non-empty-string,mixed> */
     public ?array $nextProps = null;
-    /** @var array<mixed> */
+    /** @var array<non-empty-string,mixed> */
     public ?array $props = null;
 
     /** @var array<Hook> */

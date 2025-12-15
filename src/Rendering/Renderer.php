@@ -54,7 +54,7 @@ final class Renderer implements RendererInterface
         return $this->comparator->valuesAreEqual($a, $b);
     }
 
-    /** @param array<mixed> $nextProps */
+    /** @param array<non-empty-string,mixed> $nextProps */
     public function giveNodeNextProps(Node $node, array $nextProps): void
     {
         assert(!($node->state & Node::STATE_UNMOUNTED));
