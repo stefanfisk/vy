@@ -16,6 +16,7 @@ use StefanFisk\Vy\Serialization\Html\HtmlSerializer;
 use StefanFisk\Vy\Serialization\Html\Transformers\AttributesTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\Transformers\ChildValueTransformerInterface;
 use StefanFisk\Vy\Serialization\Html\UnsafeHtml;
+use StefanFisk\Vy\Tests\Fixtures\FooBarBazEnum;
 use StefanFisk\Vy\Tests\Support\CreatesStubNodesTrait;
 use StefanFisk\Vy\Tests\TestCase;
 use Throwable;
@@ -206,6 +207,16 @@ class HtmlSerializerTest extends TestCase
         );
     }
 
+    public function testBackedEnumChild(): void
+    {
+        $this->assertRenderMatches(
+            '<div>foo</div>',
+            Element::create('div')(
+                FooBarBazEnum::Foo,
+            ),
+        );
+    }
+
     public function testElementChild(): void
     {
         $this->assertRenderMatches(
@@ -335,6 +346,16 @@ class HtmlSerializerTest extends TestCase
             '<div></div>',
             Element::create('div', [
                 'foo' => false,
+            ]),
+        );
+    }
+
+    public function testBackedEnumProp(): void
+    {
+        $this->assertRenderMatches(
+            '<div data-foo="bar"></div>',
+            Element::create('div', [
+                'data-foo' => FooBarBazEnum::Bar,
             ]),
         );
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFisk\Vy\Serialization\Html;
 
+use BackedEnum;
 use Closure;
 use Override;
 use ReflectionFunction;
@@ -227,6 +228,10 @@ final class HtmlSerializer implements SerializerInterface
                 );
             }
 
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
+            }
+
             if ($value !== null && !is_scalar($value)) {
                 throw new InvalidAttributeException(
                     message: sprintf(
@@ -274,6 +279,10 @@ final class HtmlSerializer implements SerializerInterface
 
         if ($value === null) {
             return;
+        }
+
+        if ($value instanceof BackedEnum) {
+            $value = $value->value;
         }
 
         if (is_string($value) || is_int($value) || is_float($value)) {
